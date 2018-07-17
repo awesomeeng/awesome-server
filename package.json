@@ -16,5 +16,9 @@
         "mocha": "*"
     },
     "optionalDependencies": {
-    }
+    },
+	"nodemonConfig": {
+		"spawn": true,
+		"verbose": true
+	}
 }

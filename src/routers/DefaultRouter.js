@@ -54,13 +54,16 @@ class DefaultRouter extends AbstractRouter {
 	}
 
 	add(method,path,handler) {
+		if (this.prefix && path.startsWith(this.prefix)) path = path.slice(this.prefix.length);
+
 		this.remove(method,path,handler);
 		this[$ROUTES].push({
 			method,
 			path,
 			handler
 		});
-		Log.info("DefaultRouter","Added route "+method+" "+path);
+
+		Log.info("DefaultRouter","Added route "+method+" "+this.prefix+path);
 	}
 
 	remove(method,path,handler) {
@@ -70,7 +73,7 @@ class DefaultRouter extends AbstractRouter {
 			if (nothit) hits += 1;
 			return nothit;
 		});
-		if (hits) Log.info("DefaultRouter","Removed route "+method+" "+path);
+		if (hits) Log.info("DefaultRouter","Removed route "+method+" "+this.prefix+path);
 	}
 }
 
