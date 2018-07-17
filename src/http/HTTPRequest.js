@@ -3,12 +3,13 @@
 "use strict";
 
 const QS = require("querystring");
+const URL = require("url");
 
 const AbstractRequest = require("../AbstractRequest");
 
 class HTTPRequest extends AbstractRequest{
 	constructor(request) {
-		super(request);		
+		super(request);
 	}
 
 	get origin() {
@@ -44,11 +45,11 @@ class HTTPRequest extends AbstractRequest{
 	}
 
 	get contentType() {
-		return this.headers["content-type"].replace(/^((.*);.*$|^(.*)$)/,"$2");
+		return this.headers && this.headers["content-type"] && this.headers["content-type"].replace(/^((.*);.*$|^(.*)$)/,"$2$3") || "";
 	}
 
 	get contentEncoding() {
-		let parameters = this.headers["content-type"].replace(/^(.*;(.*)$|^.*$)/,"$2").trim();
+		let parameters = this.headers && this.headers["content-type"] && this.headers["content-type"].replace(/^(.*;(.*)$|^.*$)/,"$2").trim() || "";
 		return parameters && QS.parse(parameters).charset || "utf-8";
 	}
 

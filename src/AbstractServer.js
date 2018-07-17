@@ -2,19 +2,22 @@
 
 "use strict";
 
+const $CONFIG = Symbol("config");
+
 class AbstractServer {
-	constructor() {
+	constructor(config) {
+		this[$CONFIG] = config;
+	}
+
+	get config() {
+		return this[$CONFIG];
 	}
 
 	get running() {
 		throw new Error("To be implemented by subclass.");
 	}
 
-	get config() {
-		throw new Error("To be implemented by subclass.");
-	}
-
-	get underlyingServer() {
+	get original() {
 		throw new Error("To be implemented by subclass.");
 	}
 

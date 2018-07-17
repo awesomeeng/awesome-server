@@ -17,7 +17,7 @@ class AbstractRequest {
 		throw new Error("To be implemented by subclass.");
 	}
 
-	get url() {
+	get hostname() {
 		throw new Error("To be implemented by subclass.");
 	}
 
@@ -25,7 +25,19 @@ class AbstractRequest {
 		throw new Error("To be implemented by subclass.");
 	}
 
+	get url() {
+		throw new Error("To be implemented by subclass.");
+	}
+
 	get path() {
+		throw new Error("To be implemented by subclass.");
+	}
+
+	get query() {
+		throw new Error("To be implemented by subclass.");
+	}
+
+	get querystring() {
 		throw new Error("To be implemented by subclass.");
 	}
 
@@ -33,12 +45,32 @@ class AbstractRequest {
 		throw new Error("To be implemented by subclass.");
 	}
 
-	get content() {
+	get contentType() {
+		throw new Error("To be implemented by subclass.");
+	}
+
+	get contentEncoding() {
 		throw new Error("To be implemented by subclass.");
 	}
 
 	get useragent() {
 		throw new Error("To be implemented by subclass.");
+	}
+
+	read() {
+		return this.content;
+	}
+
+	readJSON() {
+		return new Promise(async (resolve,reject)=>{
+			try {
+				let content = await this.read;
+				resolve(JSON.parse(content));
+			}
+			catch (ex) {
+				return reject(ex);
+			}
+		});
 	}
 }
 

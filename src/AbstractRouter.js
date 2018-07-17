@@ -4,10 +4,9 @@
 
 class AbstractRouter {
 	constructor() {
-
 	}
 
-	route(request,response) {
+	route(/*request,response*/) {
 		// To be implemented
 	}
 }

@@ -5,9 +5,12 @@
 const Log = require("AwesomeLog");
 
 const AbstractServer = require("./AbstractServer");
+const AbstractRequest = require("./AbstractRequest");
+const AbstractResponse = require("./AbstractResponse");
 const HTTPServer = require("./http/HTTPServer");
 
 const AbstractRouter = require("./AbstractRouter");
+const DefaultRouter = require("./routers/DefaultRouter");
 
 const $SERVERS = Symbol("servers");
 const $ROUTER = Symbol("router");
@@ -15,7 +18,7 @@ const $ROUTER = Symbol("router");
 class AwesomeServer {
 	constructor() {
 		this[$SERVERS] = new Set();
-		this[$ROUTER] = null;
+		this[$ROUTER] = new DefaultRouter();
 	}
 
 	get AbstractServer() {
@@ -49,7 +52,7 @@ class AwesomeServer {
 		}
 		else {
 			await Promise.all([...this[$SERVERS]].map((server)=>{
-				let prom = server.start();
+				let prom = server.start(this.handler.bind(this));
 				if (prom instanceof Promise) return prom;
 				return Promise.resolve();
 			}));
@@ -93,8 +96,31 @@ class AwesomeServer {
 		this[$SERVERS].delete(server);
 	}
 
+	async handler(request,response) {
+		if (!request) throw new Error("Missing request.");
+		if (!(request instanceof AbstractRequest)) throw new Error("Invalid request.");
+		if (!response) throw new Error("Missing response.");
+		if (!(response instanceof AbstractResponse)) throw new Error("Invalid response.");
 
+		let url = request.method+" "+(request.url && request.url.href || request.url && request.url.toString() || request.url.toString());
 
+		Log.access("AwesomeServer","Request "+url+" from "+request.origin+".");
+
+		try {
+			if (this[$ROUTER] && this[$ROUTER].route) await this[$ROUTER].route(request,response);
+		}
+		catch (ex) {
+			Log.error("AwesomeServer","Error handling request "+url+".",ex);
+			response.writeError(500,"Error handling request "+url+".");
+			return;
+		}
+
+		if (!response.finished) {
+			Log.error("AwesomeServer","404 Not found "+url+".");
+			response.writeError(404,"404 Not found "+url+".");
+		}
+	}
 }
+
 
 module.exports = AwesomeServer;

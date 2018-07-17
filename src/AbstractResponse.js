@@ -7,30 +7,14 @@ const $ORIGINAL = Symbol("original");
 class AbstractResponse {
 	constructor(original) {
 		this[$ORIGINAL] = original;
-		console.log(original);
+		// console.log(original);
 	}
 
 	get original() {
 		return this[$ORIGINAL];
 	}
 
-	get complete() {
-		throw new Error("To be implemented by subclass.");
-	}
-
-	get contentEncoding() {
-		throw new Error("To be implemented by subclass.");
-	}
-
-	set contentEncoding(s) {
-		throw new Error("To be implemented by subclass.");
-	}
-
-	get contentType() {
-		throw new Error("To be implemented by subclass.");
-	}
-
-	set contentType(s) {
+	get finished() {
 		throw new Error("To be implemented by subclass.");
 	}
 
@@ -38,7 +22,11 @@ class AbstractResponse {
 		throw new Error("To be implemented by subclass.");
 	}
 
-	set statusCode(n) {
+	get contentEncoding() {
+		throw new Error("To be implemented by subclass.");
+	}
+
+	get contentType() {
 		throw new Error("To be implemented by subclass.");
 	}
 
@@ -46,22 +34,36 @@ class AbstractResponse {
 		throw new Error("To be implemented by subclass.");
 	}
 
-	write(/*data*/) {
+	write(/*data,encoding*/) {
 		throw new Error("To be implemented by subclass.");
 	}
 
-	end(/*data*/) {
-		throw new Error("To be implemented by subclass.");
-	}
-
-	writeHeaders() {
+	end(/*data,encoding*/) {
 		throw new Error("To be implemented by subclass.");
 	}
 
 	writeJSON(json) {
-		this.writeHead("application/json");
+		this.writeHead(200,null,{
+			"Content-Type":"application/json"
+		});
 		if (typeof json!=="string") json = JSON.stringify(json);
 		this.write(json);
+		this.end();
+	}
+
+	writeText(text) {
+		this.writeHead(200,null,{
+			"Content-Type":"text/plain"
+		});
+		this.write(text);
+		this.end();
+	}
+
+	writeHTML(html) {
+		this.writeHead(200,null,{
+			"Content-Type":"text/html"
+		});
+		this.write(html);
 		this.end();
 	}
 

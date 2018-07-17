@@ -12,31 +12,24 @@ const HTTPResponse = require("./HTTPResponse");
 
 const $SERVER = Symbol("server");
 const $RUNNING = Symbol("running");
-const $CONFIG = Symbol("config");
 
 class HTTPServer extends AbstractServer {
 	constructor(config) {
-		super();
-
-		this[$CONFIG] = Object.assign({
+		super(Object.assign({
 			hostname: "localhost",
 			port: 7080
-		},config);
+		},config));
 	}
 
 	get running() {
 		return this[$SERVER] && this[$RUNNING];
 	}
 
-	get config() {
-		return this[$CONFIG];
-	}
-
-	get underlying() {
+	get original() {
 		return this[$SERVER];
 	}
 
-	start() {
+	start(handler) {
 		if (this[$SERVER]) return Promise.resolve();
 
 		let hostname = this.config.hostname || "127.0.0.1";
@@ -51,7 +44,7 @@ class HTTPServer extends AbstractServer {
 					Log.error("HTTPServer","Error on HTTP Server on "+hostname+":"+port+":",err);
 				});
 
-				server.on("request",this.handleRequest);
+				server.on("request",this.handleRequest.bind(this,handler));
 
 				server.listen(this.config.port,this.config.hostname,this.config.backlog,(err)=>{
 					if (err) {
@@ -109,9 +102,10 @@ class HTTPServer extends AbstractServer {
 		});
 	}
 
-	handleRequest(request,response) {
+	handleRequest(handler,request,response) {
 		request = new HTTPRequest(request);
 		response = new HTTPResponse(response);
+		handler(request,response);
 	}
 }
 
