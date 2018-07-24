@@ -7,6 +7,8 @@ const Log = require("AwesomeLog");
 const AbstractServer = require("./AbstractServer");
 const AbstractRequest = require("./AbstractRequest");
 const AbstractResponse = require("./AbstractResponse");
+const AbstractController = require("./AbstractController");
+
 const HTTPServer = require("./http/HTTPServer");
 
 const AbstractRouter = require("./AbstractRouter");
@@ -21,12 +23,24 @@ class AwesomeServer {
 		this[$ROUTER] = new DefaultRouter();
 	}
 
-	get AbstractServer() {
+	static get AbstractServer() {
 		return AbstractServer;
 	}
 
-	get AbstractRouter() {
+	static get AbstractRouter() {
 		return AbstractRouter;
+	}
+
+	static get AbstractRequest() {
+		return AbstractRequest;
+	}
+
+	static get AbstractResponse() {
+		return AbstractResponse;
+	}
+
+	static get AbstractController() {
+		return AbstractController;
 	}
 
 	get servers() {
