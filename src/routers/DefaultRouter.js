@@ -28,7 +28,7 @@ class DefaultRouter extends AbstractRouter {
 
 	set prefix(s="/") {
 		if (typeof s!=="string") throw new Error("Invalid prefix, must be a string.");
-		this[$PREFIX] = s;		
+		this[$PREFIX] = s;
 	}
 
 	route(request,response) {
@@ -105,14 +105,13 @@ class DefaultRouter extends AbstractRouter {
 	removeController(path,controller) {
 		if (!path) throw new Error("Missing path.");
 		if (typeof path!=="string") throw new Error("Invalid path.");
-		if (!controller) throw new Error("Missing controller.");
-		if (!(controller instanceof AbstractController)) throw new Error("Invalid controller.");
+		if (controller && !(controller instanceof AbstractController)) throw new Error("Invalid controller.");
 
 		if (this.prefix && path.startsWith(this.prefix)) path = path.slice(this.prefix.length);
 		path = this.prefix+path;
 		path = path.replace(/^\/\//g,"/");
 
-		remove.call(this,"*",path,controller.handlerRef);
+		remove.call(this,"*",path,controller && controller.handlerRef || null);
 
 		Log.info("DefaultRouter","Removed controller "+path);
 	}
@@ -168,13 +167,19 @@ class DefaultRouter extends AbstractRouter {
 	}
 
 	removeControllerFile(path,filename) {
-		if (path && !filename) [path,filename] = [Path.basename(path,Path.extname(path)),path];
+		if (path && !filename) [path,filename] = ["",path];
+
+		filename = AwesomeUtils.Module.resolve(module,filename);
 
 		if (this.prefix && path.startsWith(this.prefix)) path = path.slice(this.prefix.length);
 		path = this.prefix+path;
 		path = path.replace(/^\/\//g,"/");
 
-		return remove.call(this,"*",path);
+		if (!filename) throw new Error("Missing filename.");
+		if (!AwesomeUtils.FS.existsSync(filename)) return this.removeControllerDirectory(path,filename);
+		if (FS.statSync(filename).isDirectory()) return this.removeControllerDirectory(path,filename);
+
+		return this.removeController(path);
 	}
 
 	addControllerDirectory(path,dir) {
@@ -204,8 +209,31 @@ class DefaultRouter extends AbstractRouter {
 		});
 	}
 
-	removeControllerDirectory(path,glob) {
+	removeControllerDirectory(path,dir) {
+		if (path && !dir) [path,dir] = ["",path];
+		if (!dir) throw new Error("Missing directory "+dir);
 
+		if (this.prefix && path.startsWith(this.prefix)) path = path.slice(this.prefix.length);
+		path = this.prefix+path;
+		path = path.replace(/^\/\//g,"/");
+
+		FS.readdirSync(dir).forEach((filename)=>{
+			filename = Path.resolve(dir,filename);
+			let filepath = (path && path!=="/" && path!=="." && path!==".." ? path+"/" : "")+Path.basename(filename,Path.extname(filename));
+			let ext = Path.extname(filename);
+			let stats = null;
+			try {
+				stats = FS.statSync(filename);
+			}
+			catch (ex) {
+				stats = null;
+			}
+			if (!stats) return;
+
+			if (stats.isDirectory()) return this.removeControllerDirectory(filepath,filename);
+
+			if (ext===".js" || ext===".node") this.removeControllerFile(filepath,filename);
+		});
 	}
 }
 
@@ -232,8 +260,11 @@ const remove = function remove(method,path,handler) {
 	if (!method) method = "*";
 	if (!path) throw new Error("Missing path.");
 	if (typeof path!=="string") throw new Error("Invalid path.");
-	if (!handler) throw new Error("Missing handler.");
-	if (!(handler instanceof Function)) throw new Error("Invalid handler.");
+	if (handler && !(handler instanceof Function)) throw new Error("Invalid handler.");
+
+	path = path.replace(/^\/\//g,"/");
+
+	if (this.prefix && path.startsWith(this.prefix)) path = path.slice(this.prefix.length);
 
 	let hits = 0;
 	this[$ROUTES] = this[$ROUTES].filter((route)=>{
