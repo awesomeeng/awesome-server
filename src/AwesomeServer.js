@@ -27,10 +27,6 @@ class AwesomeServer {
 		return AbstractServer;
 	}
 
-	static get AbstractRouter() {
-		return AbstractRouter;
-	}
-
 	static get AbstractRequest() {
 		return AbstractRequest;
 	}
@@ -41,6 +37,14 @@ class AwesomeServer {
 
 	static get AbstractController() {
 		return AbstractController;
+	}
+
+	static get AbstractRouter() {
+		return AbstractRouter;
+	}
+
+	static get DefaultRouter() {
+		return DefaultRouter;
 	}
 
 	get servers() {
