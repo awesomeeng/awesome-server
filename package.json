@@ -12,10 +12,7 @@
     "engines": {
         "node": ">=10.5.0"
     },
-    "dependencies": {
-        "glob": "^7.1.2",
-        "node-forge": "^0.7.5"
-    },
+    "dependencies": {},
     "devDependencies": {
         "mocha": "*"
     },

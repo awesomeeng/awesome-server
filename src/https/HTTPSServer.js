@@ -3,8 +3,11 @@
 "use strict";
 
 const HTTPS = require("https");
+const FS = require("fs");
+const Path = require("path");
 
 const Log = require("AwesomeLog");
+const AwesomeUtils = require("AwesomeUtils");
 
 const HTTPServer = require("../http/HTTPServer");
 const HTTPSRequest = require("./HTTPSRequest");
@@ -38,6 +41,11 @@ class HTTPSServer extends HTTPServer {
 		Log.info("HTTPSServer","Starting HTTPS Server on "+hostname+":"+port+"...");
 		return new Promise((resolve,reject)=>{
 			try {
+
+				this.config.cert = resolveCertConfig(this.config.cert,"cert");
+				this.config.key = resolveCertConfig(this.config.key,"key");
+				this.config.pfx = resolveCertConfig(this.config.pfx,"pfx");
+
 				let server = HTTPS.createServer(this.config);
 
 				server.on("error",(err)=>{
@@ -106,5 +114,32 @@ class HTTPSServer extends HTTPServer {
 		handler(request,response);
 	}
 }
+
+const resolveCertConfig = function resolveCertConfig(value,type="certificate") {
+	if (value && typeof value==="string" && !value.startsWith("----")) {
+		let filename = Path.resolve(process.cwd(),value);
+		Log.info("HTTPSServer","Loading "+type+" from "+filename+".");
+
+		if (AwesomeUtils.FS.existsSync(filename)) {
+			try {
+				let pfx = FS.readFileSync(filename);
+				if (!pfx) throw new Error(type+" file empty: "+filename+".");
+				value = pfx;
+			}
+			catch (ex) {
+				Log.error("HTTPSServer","Error reading "+type+" from "+filename+".",ex);
+			}
+		}
+		else {
+			Log.info("HTTPSServer",type+" file not found: "+filename+".");
+		}
+	}
+	else  if (value) {
+		Log.info("HTTPSServer","Using passed contents for "+type+" value.");
+	}
+
+	return value;
+};
+
 
 module.exports = HTTPSServer;
