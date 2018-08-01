@@ -42,9 +42,9 @@ class HTTPSServer extends HTTPServer {
 		return new Promise((resolve,reject)=>{
 			try {
 
-				this.config.cert = resolveCertConfig(this.config.cert,"cert");
-				this.config.key = resolveCertConfig(this.config.key,"key");
-				this.config.pfx = resolveCertConfig(this.config.pfx,"pfx");
+				this.config.cert = HTTPSServer.resolveCertConfig(this.config.cert,"cert");
+				this.config.key = HTTPSServer.resolveCertConfig(this.config.key,"key");
+				this.config.pfx = HTTPSServer.resolveCertConfig(this.config.pfx,"pfx");
 
 				let server = HTTPS.createServer(this.config);
 
@@ -113,33 +113,32 @@ class HTTPSServer extends HTTPServer {
 		response = new HTTPSResponse(response);
 		handler(request,response);
 	}
+
+	static resolveCertConfig(value,type="certificate",parentName="HTTPSServer") {
+		if (value && typeof value==="string" && !value.startsWith("----")) {
+			let filename = Path.resolve(process.cwd(),value);
+			Log.info(parentName,"Loading "+type+" from "+filename+".");
+
+			if (AwesomeUtils.FS.existsSync(filename)) {
+				try {
+					let pfx = FS.readFileSync(filename);
+					if (!pfx) throw new Error(type+" file empty: "+filename+".");
+					value = pfx;
+				}
+				catch (ex) {
+					Log.error(parentName,"Error reading "+type+" from "+filename+".",ex);
+				}
+			}
+			else {
+				Log.info(parentName,type+" file not found: "+filename+".");
+			}
+		}
+		else  if (value) {
+			Log.info(parentName,"Using passed contents for "+type+" value.");
+		}
+
+		return value;
+	}
 }
-
-const resolveCertConfig = function resolveCertConfig(value,type="certificate") {
-	if (value && typeof value==="string" && !value.startsWith("----")) {
-		let filename = Path.resolve(process.cwd(),value);
-		Log.info("HTTPSServer","Loading "+type+" from "+filename+".");
-
-		if (AwesomeUtils.FS.existsSync(filename)) {
-			try {
-				let pfx = FS.readFileSync(filename);
-				if (!pfx) throw new Error(type+" file empty: "+filename+".");
-				value = pfx;
-			}
-			catch (ex) {
-				Log.error("HTTPSServer","Error reading "+type+" from "+filename+".",ex);
-			}
-		}
-		else {
-			Log.info("HTTPSServer",type+" file not found: "+filename+".");
-		}
-	}
-	else  if (value) {
-		Log.info("HTTPSServer","Using passed contents for "+type+" value.");
-	}
-
-	return value;
-};
-
 
 module.exports = HTTPSServer;

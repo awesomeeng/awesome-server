@@ -5,8 +5,8 @@
 const $ORIGINAL = Symbol("original");
 
 class AbstractRequest {
-	constructor(original) {
-		this[$ORIGINAL] = original;
+	constructor(originalRequest) {
+		this[$ORIGINAL] = originalRequest;
 	}
 
 	get original() {

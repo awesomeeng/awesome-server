@@ -5,9 +5,8 @@
 const $ORIGINAL = Symbol("original");
 
 class AbstractResponse {
-	constructor(original) {
-		this[$ORIGINAL] = original;
-		// console.log(original);
+	constructor(originalResponse) {
+		this[$ORIGINAL] = originalResponse;
 	}
 
 	get original() {
@@ -43,38 +42,90 @@ class AbstractResponse {
 	}
 
 	writeJSON(json) {
-		this.writeHead(200,null,{
-			"Content-Type":"application/json"
+		return new Promise(async (resolve,reject)=>{
+			try {
+				this.writeHead(200,null,{
+					"Content-Type":"application/json"
+				});
+				if (typeof json!=="string") json = JSON.stringify(json);
+				await this.write(json);
+				await this.end();
+
+				resolve();
+			}
+			catch (ex) {
+				return reject(ex);
+			}
 		});
-		if (typeof json!=="string") json = JSON.stringify(json);
-		this.write(json);
-		this.end();
 	}
 
 	writeText(text) {
-		this.writeHead(200,null,{
-			"Content-Type":"text/plain"
+		return new Promise(async (resolve,reject)=>{
+			try {
+				this.writeHead(200,null,{
+					"Content-Type":"text/plain"
+				});
+				await this.write(text);
+				await this.end();
+
+				resolve();
+			}
+			catch (ex) {
+				return reject(ex);
+			}
 		});
-		this.write(text);
-		this.end();
+	}
+
+	writeCSS(css) {
+		return new Promise(async (resolve,reject)=>{
+			try {
+				this.writeHead(200,null,{
+					"Content-Type":"text/css"
+				});
+				await this.write(css);
+				await this.end();
+
+				resolve();
+			}
+			catch (ex) {
+				return reject(ex);
+			}
+		});
 	}
 
 	writeHTML(html) {
-		this.writeHead(200,null,{
-			"Content-Type":"text/html"
+		return new Promise(async (resolve,reject)=>{
+			try {
+				this.writeHead(200,null,{
+					"Content-Type":"text/html"
+				});
+				await this.write(html);
+				await this.end();
+
+				resolve();
+			}
+			catch (ex) {
+				return reject(ex);
+			}
 		});
-		this.write(html);
-		this.end();
 	}
 
 	writeError(statusCode,message) {
-		this.writeHead(statusCode,message,{
-			"Content-Type": "text/plain"
-		});
-		this.write(message);
-		this.end();
-	}
+		return new Promise(async (resolve,reject)=>{
+			try {
+				this.writeHead(statusCode,null,{
+					"Content-Type": "text/plain"
+				});
+				await this.write(message);
+				await this.end();
 
+				resolve();
+			}
+			catch (ex) {
+				return reject(ex);
+			}
+		});
+	}
 }
 
 module.exports = AbstractResponse;

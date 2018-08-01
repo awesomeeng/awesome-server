@@ -9,9 +9,6 @@ const AbstractRequest = require("./AbstractRequest");
 const AbstractResponse = require("./AbstractResponse");
 const AbstractController = require("./AbstractController");
 
-const HTTPServer = require("./http/HTTPServer");
-const HTTPSServer = require("./https/HTTPSServer");
-
 const AbstractRouter = require("./AbstractRouter");
 const DefaultRouter = require("./routers/DefaultRouter");
 
@@ -100,12 +97,20 @@ class AwesomeServer {
 	}
 
 	addHTTPServer(config) {
+		const HTTPServer = require("./http/HTTPServer"); // this is here on purpose.
 		let server = new HTTPServer(config);
 		this.addServer(server);
 	}
 
 	addHTTPSServer(config) {
+		const HTTPSServer = require("./https/HTTPSServer"); // this is here on purpose.
 		let server = new HTTPSServer(config);
+		this.addServer(server);
+	}
+
+	addHTTP2Server(config) {
+		const HTTP2Server = require("./http2/HTTP2Server"); // this is here on purpose.
+		let server = new HTTP2Server(config);
 		this.addServer(server);
 	}
 

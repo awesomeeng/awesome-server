@@ -7,8 +7,8 @@ const QS = require("querystring");
 const AbstractResponse = require("../AbstractResponse");
 
 class HTTPResponse extends AbstractResponse {
-	constructor(original) {
-		super(original);
+	constructor(response) {
+		super(response);
 	}
 
 	get finished() {

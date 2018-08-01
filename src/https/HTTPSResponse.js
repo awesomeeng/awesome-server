@@ -5,8 +5,8 @@
 const HTTPResponse = require("../http/HTTPResponse");
 
 class HTTPSResponse extends HTTPResponse{
-	constructor(request) {
-		super(request);
+	constructor(response) {
+		super(response);
 	}
 }
 
