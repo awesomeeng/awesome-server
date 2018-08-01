@@ -47,11 +47,14 @@ class HTTP2Response extends HTTPSResponse {
 				Log.info("HTTP2Response","Pushed to client: "+path);
 
 				headers = headers || {};
-				headers[HTTP2.constants.HTTP2_HEADER_CONTENT_TYPE] = contentType;
-				headers[HTTP2.constants.HTTP2_HEADER_PATH] = this.resolve(path);
+				headers[HTTP2.constants.HTTP2_HEADER_STATUS] = headers[HTTP2.constants.HTTP2_HEADER_STATUS] || 200;
+				headers[HTTP2.constants.HTTP2_HEADER_CONTENT_TYPE] = headers[HTTP2.constants.HTTP2_HEADER_CONTENT_TYPE] || contentType;
+				headers[HTTP2.constants.HTTP2_HEADER_PATH] = headers[HTTP2.constants.HTTP2_HEADER_PATH] || this.resolve(path);
+				headers[HTTP2.constants.HTTP2_HEADER_METHOD] = headers[HTTP2.constants.HTTP2_HEADER_METHOD] || "GET";
+				headers[HTTP2.constants.HTTP2_HEADER_SCHEME] = headers[HTTP2.constants.HTTP2_HEADER_SCHEME] || "https";
 
 				let pusher = await PushResponse.create(this,headers);
-				// pusher.writeHead(statusCode);
+				pusher.writeHead(statusCode);
 				await pusher.write(content);
 				await pusher.end();
 
