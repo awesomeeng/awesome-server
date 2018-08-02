@@ -26,6 +26,16 @@ class HTTP2Response extends HTTPSResponse {
 		return this[$SERVER_ROOT];
 	}
 
+	/**
+	 * Returns true if this http2 response has not been downgraded to a http 1.1 response
+	 * and thus push() and push...() functions are supported.
+	 * 
+	 * @return {[type]} [description]
+	 */
+	get pushSupported() {
+		return this.original.createPushResponse;
+	}
+
 	resolve(path) {
 		return URL.resolve(this.serverRoot,path);
 	}

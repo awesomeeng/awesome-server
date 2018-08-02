@@ -29,6 +29,15 @@ class AbstractResponse {
 		throw new Error("To be implemented by subclass.");
 	}
 
+	/**
+	 * True if push() and push...() functions are supported by this response object.
+	 * 
+	 * @return {[type]} [description]
+	 */
+	get pushSupported() {
+		return false;
+	}
+
 	writeHead(/*statusCode,statusMessage,headers*/) {
 		throw new Error("To be implemented by subclass.");
 	}
