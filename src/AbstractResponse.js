@@ -2,6 +2,11 @@
 
 "use strict";
 
+const FS = require("fs");
+
+const AwesomeUtils = require("AwesomeUtils");
+const Log = require("AwesomeLog");
+
 const $ORIGINAL = Symbol("original");
 
 class AbstractResponse {
@@ -31,7 +36,7 @@ class AbstractResponse {
 
 	/**
 	 * True if push() and push...() functions are supported by this response object.
-	 * 
+	 *
 	 * @return {[type]} [description]
 	 */
 	get pushSupported() {
@@ -50,14 +55,25 @@ class AbstractResponse {
 		throw new Error("To be implemented by subclass.");
 	}
 
-	writeJSON(json) {
+	pipeFrom(/*readable*/) {
+		throw new Error("To be implemented by subclass.");
+	}
+
+	writeJSON(statusCode,content,headers=null) {
+		if (arguments.length===0) throw new Error("Missing content.");
+		if (arguments.length>0 && typeof statusCode!=="number") [statusCode,content,headers] = [200,...arguments];
+		if (content===undefined || content===null || content==="") throw new Error("Missing content.");
+
+		headers = headers || {};
+		headers["Content-Type"] = headers["Content-Type"] || "application/json";
+		statusCode = statusCode || 200;
+
 		return new Promise(async (resolve,reject)=>{
 			try {
-				this.writeHead(200,null,{
-					"Content-Type":"application/json"
-				});
-				if (typeof json!=="string") json = JSON.stringify(json);
-				await this.write(json);
+				if (typeof content!=="string") content = JSON.stringify(content);
+
+				this.writeHead(statusCode,headers);
+				await this.write(content);
 				await this.end();
 
 				resolve();
@@ -68,13 +84,19 @@ class AbstractResponse {
 		});
 	}
 
-	writeText(text) {
+	writeText(statusCode,content,headers=null) {
+		if (arguments.length===0) throw new Error("Missing content.");
+		if (arguments.length>0 && typeof statusCode!=="number") [statusCode,content,headers] = [200,...arguments];
+		if (content===undefined || content===null || content==="") throw new Error("Missing content.");
+
+		headers = headers || {};
+		headers["Content-Type"] = headers["Content-Type"] || "text/plain";
+		statusCode = statusCode || 200;
+
 		return new Promise(async (resolve,reject)=>{
 			try {
-				this.writeHead(200,null,{
-					"Content-Type":"text/plain"
-				});
-				await this.write(text);
+				this.writeHead(statusCode,headers);
+				await this.write(content);
 				await this.end();
 
 				resolve();
@@ -85,13 +107,21 @@ class AbstractResponse {
 		});
 	}
 
-	writeCSS(css) {
+	writeCSS(statusCode,content,headers=null) {
+		if (arguments.length===0) throw new Error("Missing content.");
+		if (arguments.length>0 && typeof statusCode!=="number") [statusCode,content,headers] = [200,...arguments];
+		if (content===undefined || content===null || content==="") throw new Error("Missing content.");
+
+		headers = headers || {};
+		headers["Content-Type"] = headers["Content-Type"] || "text/css";
+		statusCode = statusCode || 200;
+
 		return new Promise(async (resolve,reject)=>{
 			try {
-				this.writeHead(200,null,{
+				this.writeHead(200,{
 					"Content-Type":"text/css"
 				});
-				await this.write(css);
+				await this.write(content);
 				await this.end();
 
 				resolve();
@@ -102,13 +132,19 @@ class AbstractResponse {
 		});
 	}
 
-	writeHTML(html) {
+	writeHTML(statusCode,content,headers=null) {
+		if (arguments.length===0) throw new Error("Missing content.");
+		if (arguments.length>0 && typeof statusCode!=="number") [statusCode,content,headers] = [200,...arguments];
+		if (content===undefined || content===null || content==="") throw new Error("Missing content.");
+
+		headers = headers || {};
+		headers["Content-Type"] = headers["Content-Type"] || "text/html";
+		statusCode = statusCode || 200;
+
 		return new Promise(async (resolve,reject)=>{
 			try {
-				this.writeHead(200,null,{
-					"Content-Type":"text/html"
-				});
-				await this.write(html);
+				this.writeHead(statusCode,headers);
+				await this.write(content);
 				await this.end();
 
 				resolve();
@@ -119,16 +155,54 @@ class AbstractResponse {
 		});
 	}
 
-	writeError(statusCode,message) {
+	writeError(statusCode,content,headers=null) {
+		if (arguments.length===0) throw new Error("Missing content.");
+		if (arguments.length>0 && typeof statusCode!=="number") [statusCode,content,headers] = [200,...arguments];
+		if (content===undefined || content===null || content==="") throw new Error("Missing content.");
+
+		headers = headers || {};
+		headers["Content-Type"] = headers["Content-Type"] || "text/plain";
+		statusCode = statusCode || 200;
+
+		if (content instanceof Error && content.stack) content = content.message+"\n\n"+content.stack;
+		else if (content instanceof Error) content = content.message;
+
 		return new Promise(async (resolve,reject)=>{
 			try {
-				this.writeHead(statusCode,null,{
-					"Content-Type": "text/plain"
-				});
-				await this.write(message);
+				this.writeHead(statusCode,headers);
+				await this.write(content);
 				await this.end();
 
 				resolve();
+			}
+			catch (ex) {
+				return reject(ex);
+			}
+		});
+	}
+
+	serve(statusCode,contentType,filename,headers=null) {
+		if (arguments.length===0) throw new Error("Missing content.");
+		if (arguments.length>0 && typeof statusCode!=="number") [statusCode,contentType,filename,headers] = [200,...arguments];
+		if (contentType===undefined || contentType===null || contentType==="") throw new Error("Missing contentType.");
+		if (typeof contentType!=="string") throw new Error("Invalid contentType.");
+		if (filename===undefined || filename===null || filename==="") throw new Error("Missing filename.");
+		if (typeof filename!=="string") throw new Error("Invalid filename.");
+
+		headers = headers || {};
+		headers["Content-Type"] = headers["Content-Type"] || contentType;
+		statusCode = statusCode || 200;
+
+		return new Promise(async (resolve,reject)=>{
+			try {
+				if (!AwesomeUtils.FS.existsSync(filename)) throw new Error("File not found: "+filename);
+
+				Log.access("AbstractResponse","Serving "+filename);
+
+				this.writeHead(statusCode,headers);
+				let stream = FS.createReadStream(filename);
+				await this.pipeFrom(stream);
+				await this.end();
 			}
 			catch (ex) {
 				return reject(ex);

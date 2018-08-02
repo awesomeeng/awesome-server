@@ -3,6 +3,7 @@
 "use strict";
 
 const QS = require("querystring");
+const Readable = require("stream").Readable;
 
 const AbstractResponse = require("../AbstractResponse");
 
@@ -33,7 +34,8 @@ class HTTPResponse extends AbstractResponse {
 	}
 
 	writeHead(statusCode,statusMessage,headers) {
-		return this.original.writeHead(statusCode,statusMessage,headers);
+		if (statusMessage===undefined || statusMessage===null) return this.original.writeHead(statusCode,headers);
+		else return this.original.writeHead(statusCode,statusMessage,headers);
 	}
 
 	write(data,encoding) {
@@ -64,6 +66,25 @@ class HTTPResponse extends AbstractResponse {
 		});
 	}
 
+	pipeFrom(readable) {
+		if (!readable) throw new Error("Missing readable.");
+		if (!(readable instanceof Readable)) throw new Error("Invalid readable.");
+
+		return new Promise((resolve,reject)=>{
+			try {
+				readable.on("end",()=>{
+					this.end();
+					resolve();
+				});
+				readable.pipe(this.original,{
+					end:false
+				});
+			}
+			catch (ex) {
+				return reject(ex);
+			}
+		});
+	}
 }
 
 module.exports = HTTPResponse;

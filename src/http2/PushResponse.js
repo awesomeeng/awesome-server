@@ -2,6 +2,8 @@
 
 "use strict";
 
+const Readable = require("stream").Readable;
+
 const Log = require("AwesomeLog");
 
 const $PARENT = Symbol("parent");
@@ -54,7 +56,6 @@ class PushResponse {
 		if (arguments.length===2) [statusCode,statusMessage,headers] = [statusCode,null,headers];
 
 		headers = headers || {};
-		console.log("head",statusCode,statusMessage,headers);
 
 		return this.stream.writeHead(statusCode,statusMessage,headers);
 	}
@@ -63,7 +64,6 @@ class PushResponse {
 		return new Promise((resolve,reject)=>{
 			try {
 				this.stream.write(data,encoding,(err)=>{
-					console.log("write",err,data);
 					if (err) reject(err);
 					else resolve();
 				});
@@ -78,9 +78,28 @@ class PushResponse {
 		return new Promise((resolve,reject)=>{
 			try {
 				this.stream.end(data,encoding,(err)=>{
-					console.log("end",err);
 					if (err) reject(err);
 					else resolve();
+				});
+			}
+			catch (ex) {
+				return reject(ex);
+			}
+		});
+	}
+
+	pipeFrom(readable) {
+		if (!readable) throw new Error("Missing readable.");
+		if (!(readable instanceof Readable)) throw new Error("Invalid readable.");
+
+		return new Promise((resolve,reject)=>{
+			try {
+				readable.on("end",()=>{
+					this.end();
+					resolve();
+				});
+				readable.pipe(this.stream,{
+					end:false
 				});
 			}
 			catch (ex) {
