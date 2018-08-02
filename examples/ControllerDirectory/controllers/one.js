@@ -10,8 +10,8 @@ class ControllerOne extends AbstractController {
 		super();
 	}
 
-	get(path,request,response) {
-		response.writeText("Controller One says Hello!");
+	async get(path,request,response) {
+		await response.writeText("Controller One says Hello!");
 	}
 }
 

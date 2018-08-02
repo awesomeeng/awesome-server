@@ -94,11 +94,10 @@ class AbstractController {
 	 * @param  {[type]} response [description]
 	 * @return {[type]}          [description]
 	 */
-	handler(request,response) {
+	handler(path,request,response) {
 		return new Promise(async (resolve,reject)=>{
 			try {
 				let method = request.method.toLowerCase();
-				let path = request.path;
 
 				let prom;
 				let f = method && (this[method.toLowerCase()] || this[method.toUpperCase()] || this["handle"+method.slice(0,1).toUpperCase()+method.slice(1).toLowerCase()]) || null;

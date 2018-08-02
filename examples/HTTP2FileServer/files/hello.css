@@ -1,0 +1,23 @@
+body {
+	font-family: sans-serif;
+	margin: 0px;
+	background: black;
+	padding: 0px;
+}
+
+h1 {
+	display: block;
+	background: #444;
+	padding: 10px 50px;
+	margin: 0px;
+	font-size: 72px;
+	font-weight: bold;
+	color: white;
+}
+
+p {
+	font-size: 24px;
+	color: #CCC;
+	padding: 25px 50px;
+	margin: 0px;
+}

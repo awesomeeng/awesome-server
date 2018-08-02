@@ -72,8 +72,8 @@ class HTTPResponse extends AbstractResponse {
 
 		return new Promise((resolve,reject)=>{
 			try {
-				readable.on("end",()=>{
-					this.end();
+				readable.on("end",async ()=>{
+					await this.end();
 					resolve();
 				});
 				readable.pipe(this.original,{

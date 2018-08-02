@@ -15,6 +15,7 @@ class PushResponse {
 		return new Promise((resolve,reject)=>{
 			try {
 				parent.original.createPushResponse(headers||{},(err,stream,headers)=>{
+					if (err) return reject(err);
 					if (stream && stream.code && stream.code==="ERR_HTTP2_INVALID_STREAM") return reject("HTTP/2 Stream closed.");
 					resolve(new PushResponse(parent,stream,headers));
 				});
@@ -94,8 +95,8 @@ class PushResponse {
 
 		return new Promise((resolve,reject)=>{
 			try {
-				readable.on("end",()=>{
-					this.end();
+				readable.on("end",async ()=>{
+					await this.end();
 					resolve();
 				});
 				readable.pipe(this.stream,{

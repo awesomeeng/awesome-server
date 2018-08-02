@@ -128,11 +128,12 @@ class AwesomeServer {
 		if (!(response instanceof AbstractResponse)) throw new Error("Invalid response.");
 
 		let url = request.method+" "+(request.url && request.url.href || request.url && request.url.toString() || request.url.toString());
+		let path = request.path || "/";
 
 		Log.access("AwesomeServer","Request "+url+" from "+request.origin+".");
 
 		try {
-			if (this[$ROUTER] && this[$ROUTER].route) await this[$ROUTER].route(request,response);
+			if (this[$ROUTER] && this[$ROUTER].route) await this[$ROUTER].route(path,request,response);
 		}
 		catch (ex) {
 			Log.error("AwesomeServer","Error handling request "+url+".",ex);

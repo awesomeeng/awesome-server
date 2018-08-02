@@ -14,12 +14,12 @@ class MyController extends AbstractController {
 		super();
 	}
 
-	get(path,request,response) {
-		response.writeText("Controller "+path);
+	async get(path,request,response) {
+		await response.writeText("Controller "+path);
 	}
 
-	post(path,request,response) {
-		response.writeText("Glen is awesome.");
+	async post(path,request,response) {
+		await response.writeText("Controllers are awesome.");
 	}
 }
 

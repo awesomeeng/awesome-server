@@ -12,7 +12,9 @@
     "engines": {
         "node": ">=10.5.0"
     },
-    "dependencies": {},
+    "dependencies": {
+        "mime-types": "^2.1.19"
+    },
     "devDependencies": {
         "mocha": "*"
     },

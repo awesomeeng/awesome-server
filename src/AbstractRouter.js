@@ -6,7 +6,7 @@ class AbstractRouter {
 	constructor() {
 	}
 
-	route(/*request,response*/) {
+	route(/*path,request,response*/) {
 		// To be implemented
 	}
 }

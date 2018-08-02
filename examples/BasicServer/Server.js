@@ -13,7 +13,7 @@ server.addHTTPServer({
 	hostname: "localhost",
 	port: 7080
 });
-server.router.add("*","/hello",(request,response)=>{
-	response.writeText("Hello world.");
+server.router.add("*","/hello",async (path,request,response)=>{
+	await response.writeText("Hello world.");
 });
 server.start();

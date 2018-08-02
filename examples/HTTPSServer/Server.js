@@ -16,7 +16,7 @@ server.addHTTPSServer({
 	cert: AwesomeUtils.Module.resolve(module,"./certificate.pub"), // load our cert relative to this Server.js file.
 	key: AwesomeUtils.Module.resolve(module,"./certificate.key") // load our key relative to this Server.js file.
 });
-server.router.add("*","/hello",(request,response)=>{
-	response.writeText("Hello world.");
+server.router.add("*","/hello",async (path,request,response)=>{
+	await response.writeText("Hello world.");
 });
 server.start();
