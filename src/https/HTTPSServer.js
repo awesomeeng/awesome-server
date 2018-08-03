@@ -22,6 +22,9 @@ class HTTPSServer extends HTTPServer {
 			hostname: "localhost",
 			port: 7080
 		},config));
+
+		this[$SERVER] = null;
+		this[$RUNNING] = false;
 	}
 
 	get running() {
@@ -41,7 +44,6 @@ class HTTPSServer extends HTTPServer {
 		Log.info("HTTPSServer","Starting HTTPS Server on "+hostname+":"+port+"...");
 		return new Promise((resolve,reject)=>{
 			try {
-
 				this.config.cert = HTTPSServer.resolveCertConfig(this.config.cert,"cert");
 				this.config.key = HTTPSServer.resolveCertConfig(this.config.key,"key");
 				this.config.pfx = HTTPSServer.resolveCertConfig(this.config.pfx,"pfx");
@@ -65,11 +67,11 @@ class HTTPSServer extends HTTPServer {
 						Log.info("HTTPSServer","Started HTTPS Server on "+hostname+":"+port+"...");
 						this[$RUNNING] = true;
 						this[$SERVER] = server;
+
 						resolve();
 					}
 				});
 
-				resolve();
 			}
 			catch (ex) {
 				return reject(ex);

@@ -19,6 +19,9 @@ class HTTPServer extends AbstractServer {
 			hostname: "localhost",
 			port: 7080
 		},config));
+
+		this[$SERVER] = null;
+		this[$RUNNING] = false;
 	}
 
 	get running() {

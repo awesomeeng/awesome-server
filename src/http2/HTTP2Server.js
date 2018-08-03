@@ -20,6 +20,9 @@ class HTTP2Server extends HTTPSServer {
 			port: 7080,
 			allowHTTP1: true
 		},config));
+
+		this[$SERVER] = null;
+		this[$RUNNING] = false;
 	}
 
 	get running() {
@@ -66,8 +69,6 @@ class HTTP2Server extends HTTPSServer {
 						resolve();
 					}
 				});
-
-				resolve();
 			}
 			catch (ex) {
 				return reject(ex);
