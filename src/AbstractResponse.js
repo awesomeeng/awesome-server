@@ -90,7 +90,7 @@ class AbstractResponse {
 		if (content===undefined || content===null || content==="") throw new Error("Missing content.");
 
 		headers = headers || {};
-		headers["Content-Type"] = headers["Content-Type"] || "text/plain";
+		headers["Content-Type"] = headers["Content-Type"] || "text/plain; charset=utf-8";
 		statusCode = statusCode || 200;
 
 		return new Promise(async (resolve,reject)=>{
@@ -113,7 +113,7 @@ class AbstractResponse {
 		if (content===undefined || content===null || content==="") throw new Error("Missing content.");
 
 		headers = headers || {};
-		headers["Content-Type"] = headers["Content-Type"] || "text/css";
+		headers["Content-Type"] = headers["Content-Type"] || "text/css; charset=utf-8";
 		statusCode = statusCode || 200;
 
 		return new Promise(async (resolve,reject)=>{
@@ -138,7 +138,7 @@ class AbstractResponse {
 		if (content===undefined || content===null || content==="") throw new Error("Missing content.");
 
 		headers = headers || {};
-		headers["Content-Type"] = headers["Content-Type"] || "text/html";
+		headers["Content-Type"] = headers["Content-Type"] || "text/html; charset=utf-8";
 		statusCode = statusCode || 200;
 
 		return new Promise(async (resolve,reject)=>{
@@ -161,7 +161,7 @@ class AbstractResponse {
 		if (content===undefined || content===null || content==="") throw new Error("Missing content.");
 
 		headers = headers || {};
-		headers["Content-Type"] = headers["Content-Type"] || "text/plain";
+		headers["Content-Type"] = headers["Content-Type"] || "text/plain; charset=utf-8";
 		statusCode = statusCode || 200;
 
 		if (content instanceof Error && content.stack) content = content.message+"\n\n"+content.stack;

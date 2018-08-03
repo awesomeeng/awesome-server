@@ -4,6 +4,8 @@
 
 const $ORIGINAL = Symbol("original");
 
+const $CONTENT = Symbol("content");
+
 class AbstractRequest {
 	constructor(originalRequest) {
 		this[$ORIGINAL] = originalRequest;
@@ -14,10 +16,6 @@ class AbstractRequest {
 	}
 
 	get origin() {
-		throw new Error("To be implemented by subclass.");
-	}
-
-	get hostname() {
 		throw new Error("To be implemented by subclass.");
 	}
 
@@ -58,13 +56,43 @@ class AbstractRequest {
 	}
 
 	read() {
-		return this.content;
+		if (this[$CONTENT]) return Promise.resolve(this[$CONTENT]);
+
+		return new Promise((resolve,reject)=>{
+			try {
+				let buf = Buffer.alloc(0);
+				this.original.on("data",(chunk)=>{
+					if (!chunk) return;
+					buf = Buffer.concat([buf,chunk]);
+				});
+				this.original.on("end",()=>{
+					this[$CONTENT] = buf;
+					resolve(buf);
+				});
+				this.original.resume();
+			}
+			catch (ex) {
+				return reject(ex);
+			}
+		});
+	}
+
+	readText(encoding="utf-8") {
+		return new Promise(async (resolve,reject)=>{
+			try {
+				let content = await this.read();
+				resolve(content.toString(encoding));
+			}
+			catch (ex) {
+				return reject(ex);
+			}
+		});
 	}
 
 	readJSON() {
 		return new Promise(async (resolve,reject)=>{
 			try {
-				let content = await this.read;
+				let content = await this.read();
 				resolve(JSON.parse(content));
 			}
 			catch (ex) {

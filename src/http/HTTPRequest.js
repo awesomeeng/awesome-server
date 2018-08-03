@@ -16,10 +16,6 @@ class HTTPRequest extends AbstractRequest{
 		return this.original.socket && this.original.socket.remoteAddress && this.original.socket.remotePort && this.original.socket.remoteAddress+":"+this.original.socket.remotePort || this.headers.referer || this.headers.referrer || this.headers.origin || "";
 	}
 
-	get hostname() {
-		return this.original.socket && this.original.socket.localAddress || "";
-	}
-
 	get method() {
 		return this.original.method;
 	}

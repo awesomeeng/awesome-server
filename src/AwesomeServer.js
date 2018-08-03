@@ -133,6 +133,7 @@ class AwesomeServer {
 		if (!(server instanceof AbstractServer)) throw new Error("Invalid Server.");
 
 		this[$SERVERS].delete(server);
+		if (server.running) server.stop();
 	}
 
 	async handler(request,response) {

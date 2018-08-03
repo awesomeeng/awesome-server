@@ -25,17 +25,24 @@ class HTTPResponse extends AbstractResponse {
 	}
 
 	get contentType() {
-		return this.headers && this.headers["content-type"] && this.headers["content-type"].replace(/^((.*);.*$|^(.*)$)/,"$2") || "";
+		return (this.headers && this.headers["content-type"] || "").split(/;\s*/g)[0];
 	}
 
 	get contentEncoding() {
-		let parameters = this.headers && this.headers["content-type"] && this.headers["content-type"].replace(/^(.*;(.*)$|^.*$)/,"$2").trim() || "";
+		let parameters = (this.headers && this.headers["content-type"] || "").split(/;\s*/g).slice(1).join(";");
 		return parameters && QS.parse(parameters).charset || "utf-8";
 	}
 
 	writeHead(statusCode,statusMessage,headers) {
-		if (statusMessage===undefined || statusMessage===null) return this.original.writeHead(statusCode,headers);
-		else return this.original.writeHead(statusCode,statusMessage,headers);
+		if (arguments.length===2) [statusCode,statusMessage,headers] = [statusCode,null,statusMessage];
+
+		// we write our headers this way so they are programattically accessibly later.
+		Object.keys(headers||{}).forEach((key)=>{
+			this.original.setHeader(key,headers[key]);
+		});
+
+		if (statusMessage===undefined || statusMessage===null) return this.original.writeHead(statusCode);
+		else return this.original.writeHead(statusCode,statusMessage);
 	}
 
 	write(data,encoding) {
