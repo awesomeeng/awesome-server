@@ -28,5 +28,5 @@ server.addHTTPServer({
 	hostname: "localhost",
 	port: 7080
 });
-server.router.add("/hello",new MyController());
+server.router.addController("/hello",new MyController());
 server.start();

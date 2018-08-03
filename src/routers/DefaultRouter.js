@@ -38,6 +38,12 @@ class DefaultRouter extends AbstractRouter {
 		this[$PREFIX] = s;
 	}
 
+	get routes() {
+		return this[$ROUTES].map((route)=>{
+			return route.method.toUpperCase()+": "+route.path.toString();
+		});
+	}
+
 	fullPath(path) {
 		if (!path) return this.prefix;
 		if (path instanceof RegExp) return this.prefix+" "+path.toString();
@@ -94,20 +100,12 @@ class DefaultRouter extends AbstractRouter {
 	}
 
 	add(method,path,handler) {
-		if (method && path && !handler && typeof method==="string" && path instanceof AbstractController) return this.addController(method,path);
-		if (method && path && !handler && typeof method==="string" && typeof path==="string") return this.addControllerFile(method,path);
-		if (method && !path && !handler && typeof method==="string") return this.addControllerFile(method);
-
 		add.call(this,method,path,handler);
 
 		Log.info("DefaultRouter","Added route "+method+" "+this.fullPath(path));
 	}
 
 	remove(method,path,handler) {
-		if (method && path && !handler && typeof method==="string" && path instanceof AbstractController) return this.removeController(method,path);
-		if (method && path && !handler && typeof method==="string" && typeof path==="string") return this.removeControllerFile(method,path);
-		if (method && !path && !handler && typeof method==="string") return this.removeControllerFile(method);
-
 		let found = remove.call(this,method,path,handler);
 		if (found) Log.info("DefaultRouter","Removed route "+method+" "+this.fullPath(path));
 
@@ -343,14 +341,13 @@ const remove = function remove(method,path,handler) {
 		if (!route.handler) return false;
 		if (!(route.handler instanceof Function)) return false;
 		if (handler && route.handler!==handler) return false;
-		if (route.path instanceof RegExp && !(path instanceof RegExp)) return path.matches(route.path);
 		if (route.path instanceof RegExp && path instanceof RegExp) return route.path.toString()===path.toString();
 		return route.path===path;
 	});
 	if (matching.length<1) return false;
 
 	this[$ROUTES] = this[$ROUTES].filter((route)=>{
-		return !matching.indexOf(route);
+		return matching.indexOf(route)<0;
 	});
 	return true;
 };

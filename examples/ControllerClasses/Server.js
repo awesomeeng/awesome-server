@@ -15,6 +15,6 @@ server.addHTTPServer({
 	hostname: "localhost",
 	port: 7080
 });
-server.router.add("/one",AwesomeUtils.Module.resolve(module,"./ControllerOne"));
-server.router.add("/two",AwesomeUtils.Module.resolve(module,"./ControllerTwo"));
+server.router.addControllerFile("/one",AwesomeUtils.Module.resolve(module,"./ControllerOne"));
+server.router.addControllerFile("/two",AwesomeUtils.Module.resolve(module,"./ControllerTwo"));
 server.start();
