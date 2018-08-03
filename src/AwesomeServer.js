@@ -14,9 +14,11 @@ const DefaultRouter = require("./routers/DefaultRouter");
 
 const $SERVERS = Symbol("servers");
 const $ROUTER = Symbol("router");
+const $RUNNING = Symbol("running");
 
 class AwesomeServer {
 	constructor() {
+		this[$RUNNING] = false;
 		this[$SERVERS] = new Set();
 		this[$ROUTER] = new DefaultRouter();
 	}
@@ -46,11 +48,15 @@ class AwesomeServer {
 	}
 
 	get servers() {
-		return [].concat(this[$SERVERS]);
+		return [].concat([...this[$SERVERS]]);
 	}
 
 	get router() {
 		return this[$ROUTER];
+	}
+
+	get running() {
+		return this[$RUNNING];
 	}
 
 	set router(router) {
@@ -61,6 +67,8 @@ class AwesomeServer {
 	}
 
 	async start() {
+		if (this.running) return Promise.resolve();
+
 		Log.info("AwesomeServer","Starting...");
 
 		if (this[$SERVERS].size<1) {
@@ -74,10 +82,14 @@ class AwesomeServer {
 			}));
 		}
 
+		this[$RUNNING] = true;
+
 		Log.info("AwesomeServer","Started.");
 	}
 
 	async stop() {
+		if (!this.running) return Promise.resolve();
+
 		Log.info("AwesomeServer","Stopping...");
 
 		await Promise.all([...this[$SERVERS]].map((server)=>{
@@ -85,6 +97,8 @@ class AwesomeServer {
 			if (prom instanceof Promise) return prom;
 			return Promise.resolve();
 		}));
+
+		this[$RUNNING] = false;
 
 		Log.info("AwesomeServer","Stopped.");
 	}
