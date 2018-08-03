@@ -61,8 +61,8 @@ class HTTP2Server extends HTTPSServer {
 					}
 					else {
 						Log.info("HTTP2Server","Started HTTP/2 Server on "+hostname+":"+port+"...");
-						this[$RUNNING] = false;
-						this[$SERVER] = null;
+						this[$RUNNING] = true;
+						this[$SERVER] = server;
 						resolve();
 					}
 				});

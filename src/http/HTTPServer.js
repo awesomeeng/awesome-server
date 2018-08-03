@@ -55,8 +55,8 @@ class HTTPServer extends AbstractServer {
 					}
 					else {
 						Log.info("HTTPServer","Started HTTP Server on "+hostname+":"+port+"...");
-						this[$RUNNING] = false;
-						this[$SERVER] = null;
+						this[$RUNNING] = true;
+						this[$SERVER] = server;
 						resolve();
 					}
 				});

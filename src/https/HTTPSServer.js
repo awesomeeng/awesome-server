@@ -63,8 +63,8 @@ class HTTPSServer extends HTTPServer {
 					}
 					else {
 						Log.info("HTTPSServer","Started HTTPS Server on "+hostname+":"+port+"...");
-						this[$RUNNING] = false;
-						this[$SERVER] = null;
+						this[$RUNNING] = true;
+						this[$SERVER] = server;
 						resolve();
 					}
 				});
