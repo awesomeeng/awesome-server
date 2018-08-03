@@ -56,7 +56,7 @@ class DefaultRouter extends AbstractRouter {
 			if (!route.method) return false;
 			if (!(route.method===method || route.method==="*")) return false;
 			if (!route.handler) return false;
-			if (!(route.handler instanceof Function)) return false;
+			if (!(route.handler instanceof Function || route.handler instanceof AbstractController)) return false;
 			if (handler && route.handler!==handler) return false;
 			if (route.path instanceof RegExp) return path.match(route.path);
 			if (route.path.endsWith("*")) return path.startsWith(route.path.slice(0,-1));
@@ -81,7 +81,10 @@ class DefaultRouter extends AbstractRouter {
 							if (route.path.endsWith("*")) routepath = path.slice(route.path.length-1);
 							if (route.path.startsWith("*")) routepath = path.slice(0,-route.path.length-1);
 
-							let prom = route.handler(routepath,request,response);
+							let handler = route.handler;
+							if (handler instanceof AbstractController) handler = handler.handler.bind(handler);
+
+							let prom = handler(routepath,request,response);
 							if (prom instanceof Promise) await prom;
 							resolve();
 						}
@@ -117,7 +120,7 @@ class DefaultRouter extends AbstractRouter {
 		if (!controller) throw new Error("Missing controller.");
 		if (!(controller instanceof AbstractController)) throw new Error("Invalid controller.");
 
-		add.call(this,"*",path,controller.handlerRef);
+		add.call(this,"*",path,controller);
 
 		Log.info("DefaultRouter","Added controller "+this.fullPath(path));
 	}
@@ -126,7 +129,7 @@ class DefaultRouter extends AbstractRouter {
 		if (!path) throw new Error("Missing path.");
 		if (controller && !(controller instanceof AbstractController)) throw new Error("Invalid controller.");
 
-		remove.call(this,"*",path,controller && controller.handlerRef || null);
+		remove.call(this,"*",path,controller || null);
 
 		Log.info("DefaultRouter","Removed controller "+this.fullPath(path));
 	}
@@ -318,7 +321,7 @@ const add = function add(method,path,handler) {
 	if (!path) throw new Error("Missing path.");
 	if (!(typeof path==="string" || path instanceof RegExp)) throw new Error("Invalid path.");
 	if (!handler) throw new Error("Missing handler.");
-	if (!(handler instanceof Function)) throw new Error("Invalid handler.");
+	if (!(handler instanceof Function || handler instanceof AbstractController)) throw new Error("Invalid handler.");
 
 	this.remove(method,path,handler);
 
@@ -333,13 +336,13 @@ const remove = function remove(method,path,handler) {
 	if (!method) method = "*";
 	if (!path) throw new Error("Missing path.");
 	if (!(typeof path==="string" || path instanceof RegExp)) throw new Error("Invalid path.");
-	if (handler && !(handler instanceof Function)) throw new Error("Invalid handler.");
+	if (handler && !(handler instanceof Function || handler instanceof AbstractController)) throw new Error("Invalid handler.");
 
 	let matching = this[$ROUTES].filter((route)=>{
 		if (!route.method) return false;
 		if (!(route.method===method || route.method==="*")) return false;
 		if (!route.handler) return false;
-		if (!(route.handler instanceof Function)) return false;
+		if (!(route.handler instanceof Function || route.handler instanceof AbstractController)) return false;
 		if (handler && route.handler!==handler) return false;
 		if (route.path instanceof RegExp && path instanceof RegExp) return route.path.toString()===path.toString();
 		return route.path===path;

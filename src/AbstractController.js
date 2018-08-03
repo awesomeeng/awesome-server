@@ -2,20 +2,8 @@
 
 "use strict";
 
-const $HANDLER_REFERENCE = Symbol("handler_reference");
-
 class AbstractController {
 	constructor() {
-		this[$HANDLER_REFERENCE] = this.handler.bind(this);
-	}
-
-	/**
-	 * Returns the handler reference function, correctly bound to this.
-	 *
-	 * @return {[type]} [description]
-	 */
-	get handlerRef() {
-		return this[$HANDLER_REFERENCE];
 	}
 
 	/**
