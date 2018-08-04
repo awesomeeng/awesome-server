@@ -16,7 +16,9 @@
         "mime-types": "^2.1.19"
     },
     "devDependencies": {
-        "mocha": "*"
+        "mocha": "*",
+        "request": "^2.87.0",
+        "request-promise-native": "^1.0.5"
     },
     "optionalDependencies": {},
     "nodemonConfig": {
