@@ -109,6 +109,9 @@ class DefaultRouter extends AbstractRouter {
 	}
 
 	remove(method,path,handler) {
+		// alternate remove(path)
+		if(arguments.length===1 && typeof method==="string") [method,path,handler] = ["*",...arguments];
+
 		let found = remove.call(this,method,path,handler);
 		if (found) Log.info("DefaultRouter","Removed route "+method+" "+this.fullPath(path));
 
@@ -211,7 +214,6 @@ class DefaultRouter extends AbstractRouter {
 			if (!stats) return;
 
 			if (stats.isDirectory()) return this.addControllerDirectory(filepath,filename);
-
 			if (ext===".js" || ext===".node") this.addControllerFile(filepath,filename);
 		});
 	}
@@ -223,7 +225,7 @@ class DefaultRouter extends AbstractRouter {
 
 		FS.readdirSync(dir).forEach((filename)=>{
 			filename = Path.resolve(dir,filename);
-			let filepath = (path && path!=="/" && path!=="." && path!==".." ? path+"/" : "")+Path.basename(filename,Path.extname(filename));
+			let filepath = ((path && path!=="/" && path!=="." && path!==".." ? path+"/" : "/")+Path.basename(filename,Path.extname(filename))).replace(/\/\/+/g,"/");
 			let ext = Path.extname(filename);
 			let stats = null;
 			try {
@@ -235,7 +237,6 @@ class DefaultRouter extends AbstractRouter {
 			if (!stats) return;
 
 			if (stats.isDirectory()) return this.removeControllerDirectory(filepath,filename);
-
 			if (ext===".js" || ext===".node") this.removeControllerFile(filepath,filename);
 		});
 	}
@@ -312,6 +313,12 @@ class DefaultRouter extends AbstractRouter {
 		if (typeof toPath!=="string") throw new Error("Invalid toPath.");
 
 		this.addController(path,new RedirectController(toPath,temporary));
+	}
+
+	removeRedirect(path) {
+		if (!path) throw new Error("Missing path.");
+
+		this.removeController(path);		
 	}
 
 }
