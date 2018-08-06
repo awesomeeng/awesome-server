@@ -55,7 +55,7 @@ let server = new AwesomeServer();
 2). Add Servers...
 ```
 server.addHTTPServer({
-	hostname: "localhost",
+	host: "localhost",
 	port: 7080
 });
 ```

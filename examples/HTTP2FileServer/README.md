@@ -29,7 +29,7 @@ Require and Instantiates AwesomeServer.
 
 ```
 server.addHTTP2Server({
-	hostname: "localhost",
+	host: "localhost",
 	port: 7443,
 	cert: AwesomeServer.resolveRelativeToModule(module,"./certificate.pub"), // load our cert relative to this Server.js file.
 	key: AwesomeServer.resolveRelativeToModule(module,"./certificate.key") // load our key relative to this Server.js file.

@@ -16,8 +16,8 @@ const $RUNNING = Symbol("running");
 class HTTPServer extends AbstractServer {
 	constructor(config) {
 		super(Object.assign({
-			hostname: "localhost",
-			port: 7080
+			host: !config.path && "localhost" || null,
+			port: !config.path && 7080 || null
 		},config));
 
 		this[$SERVER] = null;
@@ -35,29 +35,29 @@ class HTTPServer extends AbstractServer {
 	start(handler) {
 		if (this[$SERVER]) return Promise.resolve();
 
-		let hostname = this.config.hostname || "127.0.0.1";
+		let host = this.config.host || "127.0.0.1";
 		let port = this.config.port || 0;
 
-		Log.info("HTTPServer","Starting HTTP Server on "+hostname+":"+port+"...");
+		Log.info("HTTPServer","Starting HTTP Server on "+host+":"+port+"...");
 		return new Promise((resolve,reject)=>{
 			try {
 				let server = HTTP.createServer(this.config);
 
 				server.on("error",(err)=>{
-					Log.error("HTTPServer","Error on HTTP Server on "+hostname+":"+port+":",err);
+					Log.error("HTTPServer","Error on HTTP Server on "+host+":"+port+":",err);
 				});
 
 				server.on("request",this.handleRequest.bind(this,handler));
 
-				server.listen(this.config.port,this.config.hostname,this.config.backlog,(err)=>{
+				server.listen(this.config.port,this.config.host,this.config.backlog,(err)=>{
 					if (err) {
-						Log.error("HTTPServer","Error starting server on "+hostname+":"+port+".",err);
+						Log.error("HTTPServer","Error starting server on "+host+":"+port+".",err);
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						reject(err);
 					}
 					else {
-						Log.info("HTTPServer","Started HTTP Server on "+hostname+":"+port+"...");
+						Log.info("HTTPServer","Started HTTP Server on "+host+":"+port+"...");
 						this[$RUNNING] = true;
 						this[$SERVER] = server;
 						resolve();
@@ -73,22 +73,22 @@ class HTTPServer extends AbstractServer {
 	stop() {
 		if (!this[$SERVER]) return Promise.resolve();
 
-		let hostname = this.config.hostname || "127.0.0.1";
+		let host = this.config.host || "127.0.0.1";
 		let port = this.config.port || 0;
 
-		Log.info("HTTPServer","Stopping HTTP Server on "+hostname+":"+port+"...");
+		Log.info("HTTPServer","Stopping HTTP Server on "+host+":"+port+"...");
 		return new Promise((resolve,reject)=>{
 			try {
 				let server = this[$SERVER];
 				server.close((err)=>{
 					if (err) {
-						Log.error("HTTPServer","Error stopping HTTP server on "+hostname+":"+port+".",err);
+						Log.error("HTTPServer","Error stopping HTTP server on "+host+":"+port+".",err);
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						reject(err);
 					}
 					else {
-						Log.info("HTTPServer","Stopped HTTP Server on "+hostname+":"+port+"...");
+						Log.info("HTTPServer","Stopped HTTP Server on "+host+":"+port+"...");
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						resolve();

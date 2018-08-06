@@ -19,7 +19,7 @@ const $RUNNING = Symbol("running");
 class HTTPSServer extends HTTPServer {
 	constructor(config) {
 		super(Object.assign({
-			hostname: "localhost",
+			host: "localhost",
 			port: 7080
 		},config));
 
@@ -38,10 +38,10 @@ class HTTPSServer extends HTTPServer {
 	start(handler) {
 		if (this[$SERVER]) return Promise.resolve();
 
-		let hostname = this.config.hostname || "127.0.0.1";
+		let host = this.config.host || "127.0.0.1";
 		let port = this.config.port || 0;
 
-		Log.info("HTTPSServer","Starting HTTPS Server on "+hostname+":"+port+"...");
+		Log.info("HTTPSServer","Starting HTTPS Server on "+host+":"+port+"...");
 		return new Promise((resolve,reject)=>{
 			try {
 				this.config.cert = HTTPSServer.resolveCertConfig(this.config.cert,"cert");
@@ -51,20 +51,20 @@ class HTTPSServer extends HTTPServer {
 				let server = HTTPS.createServer(this.config);
 
 				server.on("error",(err)=>{
-					Log.error("HTTPSServer","Error on HTTPS Server on "+hostname+":"+port+":",err);
+					Log.error("HTTPSServer","Error on HTTPS Server on "+host+":"+port+":",err);
 				});
 
 				server.on("request",this.handleRequest.bind(this,handler));
 
-				server.listen(this.config.port,this.config.hostname,this.config.backlog,(err)=>{
+				server.listen(this.config.port,this.config.host,this.config.backlog,(err)=>{
 					if (err) {
-						Log.error("HTTPSServer","Error starting server on "+hostname+":"+port+".",err);
+						Log.error("HTTPSServer","Error starting server on "+host+":"+port+".",err);
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						reject(err);
 					}
 					else {
-						Log.info("HTTPSServer","Started HTTPS Server on "+hostname+":"+port+"...");
+						Log.info("HTTPSServer","Started HTTPS Server on "+host+":"+port+"...");
 						this[$RUNNING] = true;
 						this[$SERVER] = server;
 
@@ -82,22 +82,22 @@ class HTTPSServer extends HTTPServer {
 	stop() {
 		if (!this[$SERVER]) return Promise.resolve();
 
-		let hostname = this.config.hostname || "127.0.0.1";
+		let host = this.config.host || "127.0.0.1";
 		let port = this.config.port || 0;
 
-		Log.info("HTTPSServer","Stopping HTTPS Server on "+hostname+":"+port+"...");
+		Log.info("HTTPSServer","Stopping HTTPS Server on "+host+":"+port+"...");
 		return new Promise((resolve,reject)=>{
 			try {
 				let server = this[$SERVER];
 				server.close((err)=>{
 					if (err) {
-						Log.error("HTTPSServer","Error stopping HTTPS server on "+hostname+":"+port+".",err);
+						Log.error("HTTPSServer","Error stopping HTTPS server on "+host+":"+port+".",err);
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						reject(err);
 					}
 					else {
-						Log.info("HTTPSServer","Stopped HTTPS Server on "+hostname+":"+port+"...");
+						Log.info("HTTPSServer","Stopped HTTPS Server on "+host+":"+port+"...");
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						resolve();

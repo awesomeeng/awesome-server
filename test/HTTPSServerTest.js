@@ -32,7 +32,7 @@ describe("HTTPSServer",function(){
 		url = "https://127.0.0.1:"+port;
 
 		server.addHTTPSServer({
-			hostname: "127.0.0.1",
+			host: "127.0.0.1",
 			port,
 			cert: AwesomeServer.resolveRelativeToModule(module,"./certificate.pub"), // load our cert relative to this Server.js file.
 			key: AwesomeServer.resolveRelativeToModule(module,"./certificate.key") // load our key relative to this Server.js file.

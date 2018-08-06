@@ -30,7 +30,7 @@ describe("HTTPServer",function(){
 		url = "http://127.0.0.1:"+port;
 
 		server.addHTTPServer({
-			hostname: "127.0.0.1",
+			host: "127.0.0.1",
 			port
 		});
 		await server.start();

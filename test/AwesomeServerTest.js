@@ -97,7 +97,7 @@ describe("AwesomeServer",function(){
 		assert.equal(server.servers.length,0);
 
 		server.addHTTPServer({
-			hostname: "127.0.0.1",
+			host: "127.0.0.1",
 			port: 1234
 		});
 
@@ -110,7 +110,7 @@ describe("AwesomeServer",function(){
 		assert.equal(server.servers.length,0);
 
 		server.addHTTPSServer({
-			hostname: "127.0.0.1",
+			host: "127.0.0.1",
 			port: 1234
 		});
 
@@ -123,7 +123,7 @@ describe("AwesomeServer",function(){
 		assert.equal(server.servers.length,0);
 
 		server.addHTTP2Server({
-			hostname: "127.0.0.1",
+			host: "127.0.0.1",
 			port: 1234
 		});
 
@@ -136,15 +136,15 @@ describe("AwesomeServer",function(){
 		assert.equal(server.servers.length,0);
 
 		server.addHTTPServer({
-			hostname: "127.0.0.1",
+			host: "127.0.0.1",
 			port: 1234
 		});
 		server.addHTTPSServer({
-			hostname: "127.0.0.1",
+			host: "127.0.0.1",
 			port: 1234
 		});
 		server.addHTTP2Server({
-			hostname: "127.0.0.1",
+			host: "127.0.0.1",
 			port: 1234
 		});
 
@@ -162,7 +162,7 @@ describe("AwesomeServer",function(){
 
 		let server = new AwesomeServer();
 		server.addHTTPServer({
-			hostname: "127.0.0.1",
+			host: "127.0.0.1",
 			port
 		});
 
@@ -177,7 +177,7 @@ describe("AwesomeServer",function(){
 
 		let server = new AwesomeServer();
 		server.addHTTPSServer({
-			hostname: "127.0.0.1",
+			host: "127.0.0.1",
 			port
 		});
 
@@ -192,7 +192,7 @@ describe("AwesomeServer",function(){
 
 		let server = new AwesomeServer();
 		server.addHTTP2Server({
-			hostname: "127.0.0.1",
+			host: "127.0.0.1",
 			port
 		});
 

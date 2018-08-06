@@ -51,7 +51,7 @@ Require and Instantiates AwesomeServer.
 
 ```
 server.addHTTPServer({
-	hostname: "localhost",
+	host: "localhost",
 	port: 7080
 });
 ```
