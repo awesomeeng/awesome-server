@@ -132,10 +132,10 @@ server.router.addControllerFile(path,filename);
 server.router.addControllerFile("/test","../controllers/MyController.js");
 ```
 
-It is important to note that the **filename** must be resolvable to the actual file.  Relative filenames will be resolve relative to the current working directory `process.cwd()`.  If you want the file resolved to a specific location in your source code relative to the place where you are calling `server.router.addControllerFile()` you need to resolve it against the module filename. As a shortcut, AwesomeServer provides the `server.router.resolveFilename(module,filename)` function to ease use.
+It is important to note that the **filename** must be resolvable to the actual file.  Relative filenames will be resolve relative to the current working directory `process.cwd()`.  If you want the file resolved to a specific location in your source code relative to the place where you are calling `server.router.addControllerFile()` you need to resolve it against the module filename. As a shortcut, AwesomeServer provides the `AwesomeServer.resolveRelativeToModule(module,filename)` function to ease use.
 
 ```
-server.router.addControllerFile("/test",server.router.resolveFilename(module,"../controllers/MyController.js"));
+server.router.addControllerFile("/test",AwesomeServer.resolveRelativeToModule(module,"../controllers/MyController.js"));
 ```
 
 ### Controller Directory Routing

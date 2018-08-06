@@ -1,11 +1,11 @@
-# AwesomeServer: Basic Server Example
+# AwesomeServer: Controller Classes Example
 
-A brief example of setting up a basic AwesomeServer server with a very simple route.
+This examples demonstrates how to write stand-alone controller classes and route to them.
 
 ## Key Concepts
 
- - Instiating AwesomeServer
- - Basic Routing of a method/path to a function.
+ - Basic configuration of an HTTPS Server.
+ - Basic routing.
 
 ## Code Breakdown
 
@@ -25,13 +25,15 @@ let server = new AwesomeServer();
 Require and Instantiates AwesomeServer.
 
 ```
-server.addHTTPServer({
+server.addHTTPSServer({
 	hostname: "localhost",
-	port: 7080
+	port: 7443,
+	cert: AwesomeServer.resolveRelativeToModule(module,"./certificate.pub"), // load our cert relative to this Server.js file.
+	key: AwesomeServer.resolveRelativeToModule(module,"./certificate.key") // load our key relative to this Server.js file.
 });
 ```
 
-Adds a basic HTTP Server to your AwesomeServer setup.
+Adds a basic HTTPS Server to your AwesomeServer setup including indiciating a public/private key pair.
 
 ```
 server.router.add("*","/hello",async (path,request,response)=>{

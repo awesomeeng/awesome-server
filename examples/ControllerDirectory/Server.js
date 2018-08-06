@@ -2,13 +2,11 @@
 
 "use strict";
 
-const AwesomeUtils = require("AwesomeUtils");
-
 const Log = require("AwesomeLog");
 Log.init();
 Log.start();
 
-const AwesomeServer = require("../../src/AwesomeServer");
+const AwesomeServer = require("AwesomeServer");
 
 let server = new AwesomeServer();
 server.addHTTPServer({
@@ -16,5 +14,5 @@ server.addHTTPServer({
 	port: 7080
 });
 server.router.prefix = "/api";
-server.router.addControllerDirectory(AwesomeUtils.Module.resolve(module,"./controllers"));
+server.router.addControllerDirectory(AwesomeServer.resolveRelativeToModule(module,"./controllers"));
 server.start();

@@ -34,8 +34,8 @@ describe("HTTP2Server",function(){
 		server.addHTTP2Server({
 			hostname: "127.0.0.1",
 			port,
-			cert: AwesomeUtils.Module.resolve(module,"./certificate.pub"), // load our cert relative to this Server.js file.
-			key: AwesomeUtils.Module.resolve(module,"./certificate.key") // load our key relative to this Server.js file.
+			cert: AwesomeServer.resolveRelativeToModule(module,"./certificate.pub"), // load our cert relative to this Server.js file.
+			key: AwesomeServer.resolveRelativeToModule(module,"./certificate.key") // load our key relative to this Server.js file.
 		});
 		await server.start();
 	});

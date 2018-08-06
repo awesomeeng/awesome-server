@@ -2,19 +2,18 @@
 
 "use strict";
 
-const AwesomeUtils = require("AwesomeUtils");
 const Log = require("AwesomeLog");
 Log.init();
 Log.start();
 
-const AwesomeServer = require("../../src/AwesomeServer");
+const AwesomeServer = require("AwesomeServer");
 
 let server = new AwesomeServer();
 server.addHTTPSServer({
 	hostname: "localhost",
 	port: 7443,
-	cert: AwesomeUtils.Module.resolve(module,"./certificate.pub"), // load our cert relative to this Server.js file.
-	key: AwesomeUtils.Module.resolve(module,"./certificate.key") // load our key relative to this Server.js file.
+	cert: AwesomeServer.resolveRelativeToModule(module,"./certificate.pub"), // load our cert relative to this Server.js file.
+	key: AwesomeServer.resolveRelativeToModule(module,"./certificate.key") // load our key relative to this Server.js file.
 });
 server.router.add("*","/hello",async (path,request,response)=>{
 	await response.writeText("Hello world.");

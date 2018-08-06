@@ -1,20 +1,41 @@
-// (c) 2018, The Awesome Engineering Company, https://awesomeneg.com
+# AwesomeServer: HTTP/2 Server Example
 
-"use strict";
+This examples demonstrates how to write stand-alone controller classes and route to them.
 
+## Key Concepts
+
+ - Basic Routing
+ - HTTP/2 Push responses
+
+## Code Breakdown
+
+```
 const Log = require("AwesomeLog");
 Log.init();
 Log.start();
+```
 
+Optional section for starting AwesomeLog.
+
+```
 const AwesomeServer = require("AwesomeServer");
-
 let server = new AwesomeServer();
+```
+
+Require and Instantiates AwesomeServer.
+
+```
 server.addHTTP2Server({
 	hostname: "localhost",
 	port: 7443,
 	cert: AwesomeServer.resolveRelativeToModule(module,"./certificate.pub"), // load our cert relative to this Server.js file.
 	key: AwesomeServer.resolveRelativeToModule(module,"./certificate.key") // load our key relative to this Server.js file.
 });
+```
+
+Adds a basic HTTP/2 Server to your AwesomeServer setup including indiciating a public/private key pair.
+
+```
 server.router.add("*","/hello",(path,request,response)=>{
 	return new Promise(async (resolve,reject)=>{
 		try {
@@ -33,4 +54,12 @@ server.router.add("*","/hello",(path,request,response)=>{
 	});
 
 });
+```
+
+Implement the most simple of routes that maps `/hello` to this response. In addition to responding to the request with a block of HTML, this also uses HTTP/2 Push to pre-load the `index.css` and `index2.css` files for the browser.
+
+```
 server.start();
+```
+
+Starts AwesomeServer, which in turn starts listening on localhost:7080.

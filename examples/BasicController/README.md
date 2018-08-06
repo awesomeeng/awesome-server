@@ -1,4 +1,4 @@
-# AwesomeServer: Basic Server Example
+# AwesomeServer: Basic Controller Example
 
 A brief example of setting up a basic AwesomeServer server with a very simple route.
 
@@ -18,6 +18,25 @@ Log.start();
 Optional section for starting AwesomeLog.
 
 ```
+const AbstractController = AwesomeServer.AbstractController;
+class MyController extends AbstractController {
+	constructor() {
+		super();
+	}
+
+	async get(path,request,response) {
+		await response.writeText("Controller "+path);
+	}
+
+	async post(path,request,response) {
+		await response.writeText("Controllers are awesome.");
+	}
+}
+```
+
+Require AbstractController and create a sub-class out of it.
+
+```
 const AwesomeServer = require("AwesomeServer");
 let server = new AwesomeServer();
 ```
@@ -34,12 +53,10 @@ server.addHTTPServer({
 Adds a basic HTTP Server to your AwesomeServer setup.
 
 ```
-server.router.add("*","/hello",async (path,request,response)=>{
-	await response.writeText("Hello world.");
-});
+server.router.addController("/hello",new MyController());;
 ```
 
-Implement the most simple of routes that maps `/hello` to this response.
+Create an instance of MyController and pass it to the router for `/hello`.
 
 ```
 server.start();

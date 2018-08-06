@@ -156,10 +156,10 @@ describe("DefaultRouter",function(){
 	it("addControllerFile",function(){
 		let router = new DefaultRouter();
 
-		router.addControllerFile("/one",AwesomeUtils.Module.resolve(module,"./controllers/one.js"));
-		router.addControllerFile("/two",AwesomeUtils.Module.resolve(module,"./controllers/two.js"));
-		router.addControllerFile("/three",AwesomeUtils.Module.resolve(module,"./controllers/three.js"));
-		router.addControllerFile("/three/one",AwesomeUtils.Module.resolve(module,"./controllers/three/one.js"));
+		router.addControllerFile("/one",AwesomeServer.resolveRelativeToModule(module,"./controllers/one.js"));
+		router.addControllerFile("/two",AwesomeServer.resolveRelativeToModule(module,"./controllers/two.js"));
+		router.addControllerFile("/three",AwesomeServer.resolveRelativeToModule(module,"./controllers/three.js"));
+		router.addControllerFile("/three/one",AwesomeServer.resolveRelativeToModule(module,"./controllers/three/one.js"));
 
 		assert.equal(router.routes.length,4);
 	});
@@ -167,53 +167,53 @@ describe("DefaultRouter",function(){
 	it("removeControllerFile",function(){
 		let router = new DefaultRouter();
 
-		router.addControllerFile("/one",AwesomeUtils.Module.resolve(module,"./controllers/one.js"));
-		router.addControllerFile("/two",AwesomeUtils.Module.resolve(module,"./controllers/two.js"));
-		router.addControllerFile("/three",AwesomeUtils.Module.resolve(module,"./controllers/three.js"));
-		router.addControllerFile("/three/one",AwesomeUtils.Module.resolve(module,"./controllers/three/one.js"));
+		router.addControllerFile("/one",AwesomeServer.resolveRelativeToModule(module,"./controllers/one.js"));
+		router.addControllerFile("/two",AwesomeServer.resolveRelativeToModule(module,"./controllers/two.js"));
+		router.addControllerFile("/three",AwesomeServer.resolveRelativeToModule(module,"./controllers/three.js"));
+		router.addControllerFile("/three/one",AwesomeServer.resolveRelativeToModule(module,"./controllers/three/one.js"));
 
 		assert.equal(router.routes.length,4);
 
-		router.removeControllerFile("/one",AwesomeUtils.Module.resolve(module,"./controllers/one.js"));
+		router.removeControllerFile("/one",AwesomeServer.resolveRelativeToModule(module,"./controllers/one.js"));
 		assert.equal(router.routes.length,3);
 
-		router.removeControllerFile("/two",AwesomeUtils.Module.resolve(module,"./controllers/two.js"));
+		router.removeControllerFile("/two",AwesomeServer.resolveRelativeToModule(module,"./controllers/two.js"));
 		assert.equal(router.routes.length,2);
 
-		router.removeControllerFile("/three",AwesomeUtils.Module.resolve(module,"./controllers/three.js"));
+		router.removeControllerFile("/three",AwesomeServer.resolveRelativeToModule(module,"./controllers/three.js"));
 		assert.equal(router.routes.length,1);
 	});
 
 	it("addControllerDirectory",function(){
 		let router = new DefaultRouter();
 
-		router.addControllerDirectory(AwesomeUtils.Module.resolve(module,"./controllers"));
+		router.addControllerDirectory(AwesomeServer.resolveRelativeToModule(module,"./controllers"));
 		assert.equal(router.routes.length,4);
 	});
 
 	it("removeControllerDirectory",function(){
 		let router = new DefaultRouter();
 
-		router.addControllerDirectory(AwesomeUtils.Module.resolve(module,"./controllers"));
+		router.addControllerDirectory(AwesomeServer.resolveRelativeToModule(module,"./controllers"));
 		assert.equal(router.routes.length,4);
 
-		router.removeControllerDirectory(AwesomeUtils.Module.resolve(module,"./controllers"));
+		router.removeControllerDirectory(AwesomeServer.resolveRelativeToModule(module,"./controllers"));
 		assert.equal(router.routes.length,0);
 	});
 
 	it("addServe",function(){
 		let router = new DefaultRouter();
 
-		router.addServe("/index.html",AwesomeUtils.Module.resolve(module,"./files/index.html"));
-		router.addServe("/index.css","test/css",AwesomeUtils.Module.resolve(module,"./files/index.css"));
+		router.addServe("/index.html",AwesomeServer.resolveRelativeToModule(module,"./files/index.html"));
+		router.addServe("/index.css","test/css",AwesomeServer.resolveRelativeToModule(module,"./files/index.css"));
 		assert.equal(router.routes.length,2);
 	});
 
 	it("removeServe",function(){
 		let router = new DefaultRouter();
 
-		router.addServe("/index.html",AwesomeUtils.Module.resolve(module,"./files/index.html"));
-		router.addServe("/index.css","test/css",AwesomeUtils.Module.resolve(module,"./files/index.css"));
+		router.addServe("/index.html",AwesomeServer.resolveRelativeToModule(module,"./files/index.html"));
+		router.addServe("/index.css","test/css",AwesomeServer.resolveRelativeToModule(module,"./files/index.css"));
 		assert.equal(router.routes.length,2);
 
 		router.removeServe("/index.css");
@@ -226,33 +226,33 @@ describe("DefaultRouter",function(){
 	it("addServeDirectory",function(){
 		let router = new DefaultRouter();
 
-		router.addServeDirectory("/test",AwesomeUtils.Module.resolve(module,"./files"));
+		router.addServeDirectory("/test",AwesomeServer.resolveRelativeToModule(module,"./files"));
 		assert.equal(router.routes.length,3); // add serve directory maps /path and /path/ and /path/*
 	});
 
 	it("removeServeDirectory",function(){
 		let router = new DefaultRouter();
 
-		router.addServeDirectory("/test",AwesomeUtils.Module.resolve(module,"./files"));
+		router.addServeDirectory("/test",AwesomeServer.resolveRelativeToModule(module,"./files"));
 		assert.equal(router.routes.length,3); // add serve directory maps /path and /path/ and /path/*
 
-		router.removeServeDirectory("/test",AwesomeUtils.Module.resolve(module,"./files"));
+		router.removeServeDirectory("/test",AwesomeServer.resolveRelativeToModule(module,"./files"));
 		assert.equal(router.routes.length,0);
 	});
 
 	it("addPushServe",function(){
 		let router = new DefaultRouter();
 
-		router.addPushServe("/index.html","/index.html",AwesomeUtils.Module.resolve(module,"./files/index.html"));
-		router.addPushServe("/index.css","/index.css","test/css",AwesomeUtils.Module.resolve(module,"./files/index.css"));
+		router.addPushServe("/index.html","/index.html",AwesomeServer.resolveRelativeToModule(module,"./files/index.html"));
+		router.addPushServe("/index.css","/index.css","test/css",AwesomeServer.resolveRelativeToModule(module,"./files/index.css"));
 		assert.equal(router.routes.length,2);
 	});
 
 	it("removePushServe",function(){
 		let router = new DefaultRouter();
 
-		router.addPushServe("/index.html","/index.html",AwesomeUtils.Module.resolve(module,"./files/index.html"));
-		router.addPushServe("/index.css","/index.css","test/css",AwesomeUtils.Module.resolve(module,"./files/index.css"));
+		router.addPushServe("/index.html","/index.html",AwesomeServer.resolveRelativeToModule(module,"./files/index.html"));
+		router.addPushServe("/index.css","/index.css","test/css",AwesomeServer.resolveRelativeToModule(module,"./files/index.css"));
 		assert.equal(router.routes.length,2);
 
 		router.removePushServe("/index.css");

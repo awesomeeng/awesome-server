@@ -6,7 +6,7 @@ const Log = require("AwesomeLog");
 Log.init();
 Log.start();
 
-const AwesomeServer = require("../../src/AwesomeServer");
+const AwesomeServer = require("AwesomeServer");
 
 let server = new AwesomeServer();
 server.addHTTPServer({
