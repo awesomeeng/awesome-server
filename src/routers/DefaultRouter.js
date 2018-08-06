@@ -50,10 +50,6 @@ class DefaultRouter extends AbstractRouter {
 		return (this.prefix+"/"+path.toString()).replace(/\/\/+/g,"/");
 	}
 
-	resolveFilename(module,filename) {
-		return AwesomeUtils.Module.resolve(module,filename);
-	}
-
 	matchRoutes(method,path,handler) {
 		path = this.prefix && this.prefix!=="/" && path.startsWith(this.prefix) && path.slice(this.prefix.length) || path;
 		return this[$ROUTES].filter((route)=>{
@@ -144,7 +140,7 @@ class DefaultRouter extends AbstractRouter {
 	addControllerFile(path,filename) {
 		if (path && !filename) [path,filename] = ["",path];
 
-		filename = AwesomeUtils.Module.resolve(module,filename);
+		filename = (module,filename);
 
 		if (!filename) throw new Error("Missing filename.");
 		if (!AwesomeUtils.FS.existsSync(filename)) return this.addControllerDirectory(path,filename);
@@ -190,7 +186,7 @@ class DefaultRouter extends AbstractRouter {
 	removeControllerFile(path,filename) {
 		if (path && !filename) [path,filename] = ["",path];
 
-		filename = AwesomeUtils.Module.resolve(module,filename);
+		filename = (module,filename);
 
 		if (!filename) throw new Error("Missing filename.");
 		if (!AwesomeUtils.FS.existsSync(filename)) return this.removeControllerDirectory(path,filename);
@@ -254,7 +250,7 @@ class DefaultRouter extends AbstractRouter {
 
 		if (!contentType) contentType = Mime.lookup(filename) || "application/octet-stream";
 
-		filename = AwesomeUtils.Module.resolve(module,filename);
+		filename = (module,filename);
 
 		this.addController(path,new FileServeController(contentType,filename));
 	}
@@ -300,7 +296,7 @@ class DefaultRouter extends AbstractRouter {
 
 		if (!contentType) contentType = Mime.lookup(filename) || "application/octet-stream";
 
-		filename = AwesomeUtils.Module.resolve(module,filename);
+		filename = (module,filename);
 
 		this.addController(path,new PushServeController(referencePath,contentType,filename));
 	}

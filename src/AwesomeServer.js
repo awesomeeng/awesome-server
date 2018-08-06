@@ -3,6 +3,7 @@
 "use strict";
 
 const Log = require("AwesomeLog");
+const AwesomeUtils = require("AwesomeUtils");
 
 const AbstractServer = require("./AbstractServer");
 const AbstractRequest = require("./AbstractRequest");
@@ -45,6 +46,10 @@ class AwesomeServer {
 
 	static get DefaultRouter() {
 		return DefaultRouter;
+	}
+
+	static resolveRelativeToModule(module,filename) {
+		return AwesomeUtils.Module.resolve(module,filename);
 	}
 
 	get servers() {
