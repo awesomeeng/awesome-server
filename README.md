@@ -23,6 +23,17 @@ AwesomeServer provides...
 
 AwesomeServer is similar to Express, or Fastly, Hapi, etc. and those are all good products.  AwesomeServer just provides a different apporach to API Server code; one we think is cleaner and more understandable. If you want to use Express/Fastly/Hapi/whatever, that's perfectly fine by us. But if you want to try something a little cleaner, with less clutter, consider AwesomeServer.
 
+## Contents
+ - [Installation](#installation)
+ - [Setup](#setup)
+ - [Routing](#routing)
+ - [Paths](#paths)
+ - [Advanced Techniques](#advanced-techniques)
+ - [Examples](#examples)
+ - [Awesome Engineering](#the-awesome-engineering-company)
+ - [Support and Help](#support-and-help)
+ - [License](#license)
+
 ## Installation
 
 Couldn't be easier.
@@ -64,13 +75,13 @@ server.start();
 ## Routing
 
 There are several approaches to defining routes out of the box with AwesomeServer:
- - You can define [routes as functions](#support-and-help) (much like how you do it in express but without the nasty `next()` callbacks);
- - You can define a Controller class for handling similar endpoints;
- - You can define a Controller class as a file which AwesomeServer will read and instantiate;
- - You can define a directory of Controller files which AwesomeServer will read, map to paths, and instantiate;
- - You can define a specific file to serve for a specific route;
- - You can define a directory to serve any file that matches a related route;
- - You can define a specific resource to push as part of an HTTP/2 connection.
+ - You can define [routes as functions](#function-routing) (much like how you do it in express but without the nasty `next()` callbacks);
+ - You can define a [Controller class](#controller-class-routing) for handling similar endpoints;
+ - You can define a [Controller as a file](#controller-file-routing) which AwesomeServer will read and instantiate;
+ - You can define a [directory of Controller files](#controller-directory-routing) which AwesomeServer will read, map to paths, and instantiate;
+ - You can define a [specific file to serve](#serve-file-routing) for a specific route;
+ - You can define a [directory to serve](#serve-directory-routing) any file that matches a related route;
+ - You can define a [specific resource to push](#push-serve-routing) as part of an HTTP/2 connection.
 
 ### Function Routing
 
@@ -80,7 +91,7 @@ With Function Routing you define a specific function to execute when AwesomeServ
 server.router.add(method,path,handlerFunction)
 ```
 
-The function called when the route is a match has the signature f(path,request,response).
+The function called when the route is a match has the signature `f(path,request,response)`.
 
 ```
 server.router.add("GET","/test",(path,request,response)=>{
@@ -98,7 +109,7 @@ With Controller Class routing you provide a specific controller that will be cal
 server.router.addController(path,controller);
 ```
 
-See the seciton below on Controllers for more details on how they work.
+See the seciton below on [Controllers](#controllers) for more details on how they work.
 
 ```
 server.router.addController("/test",myController);
@@ -110,7 +121,7 @@ server.router.addController("/test",myController);
 AwesomeServer tries to make your life a little easier, and thus Controller File Routing tries to take some of the burden of instantiating controllers off your plate.  You provide a *path* and a resolved filename to a valid class definition that implements `AwesomeServer.AbstractController`. If the file meets the following conditions, AwesomeServer will instantiate the Controller and then map it to the given *path* route.
 
  - Must be a valid nodejs javascript file;
- - Must compile and run;
+ - Must compile and not contain any syntax errors;
  - Must export a Class that extends `AwesomeServer.AbstractController`.
 
 ```
@@ -219,8 +230,8 @@ For more details on HTTP/2 and Push responses, see our Advanced Topic on the sub
 Most of the routing stuff above allows you to specify the *path* you want to match against.  The value of path may be one of four possible approaches...
 
  - A basic path string;
- - A starts with path string;
- - An ends with path string;
+ - A "starts with" path string;
+ - An "ends with" path string;
  - or a Regular Expression.
 
 ### Basic Paths
@@ -235,7 +246,7 @@ In this case "/test" must match completely for the route to be executed.
 
 ### Starts With Paths
 
-A starts with *path* would match against any request where the given path matches against the beginning of the request path.
+A starts with *path* would match against any request where the given *path* matches against the beginning of the request *path*.
 
 ```
 server.router.add("GET","/test*",someHandler);
@@ -245,13 +256,13 @@ In this case, any request path that began with "/test" would match the route.
 
 ### Ends with Paths
 
-A ends with *path* would match against any request where the given path matches against the end of the request path.
+A ends with *path* would match against any request where the given *path* matches against the end of the request *path*.
 
 ```
 server.router.add("GET","*/test",someHandler);
 ```
 
-In this case, any request path that ended with "/test" would match the route.
+In this case, any request *path* that ended with "/test" would match the route.
 
 ### Regular Expression Paths
 
@@ -314,6 +325,24 @@ In the event the controller does not have a matching *HTTP Method* function, the
  - Custom Routers
 
 ## Examples
+
+AwesomeServer ships with a set of examples for your reference.
+
+ - [BasicServer](../blob/master/examples/BasicServer/README.md): An example of doing a basic HTTP server.
+
+ - [HTTPSServer](../blob/master/examples/HTTPSServer/README.md): An example of doing a basic HTTPS server including adding a public certificate and a private key.
+
+ - [HTTP2Server](../blob/master/examples/HTTP2Server/README.md): An example of doing a basic hTTP/2 server including how to push multiple responses for a single request.
+
+ - [BasicController](../blob/master/examples/BasicController/README.md): An example of implementing a basic controller and routing to it.
+
+ - [ControllerClasses](../blob/master/examples/ControllerClasses/README.md): An example of implementing multiple controllers and routing with Controller File Routing.
+
+ - [ControllerDirectory](../blob/master/examples/ControllerDirectory/README.md): An example of using Controller Directory Routing with multiple controllers and sub-directories.
+
+ - [FileServer](../blob/master/examples/FileServer/README.md): How to build a basic File Server using Server Directory Routing.
+
+ - [HTTP2FileServer](../blob/master/examples/HTTP2FileServer/README.md): An example of doing a slightly more complicated HTTP/2 server using Push Serve Routing and File Serve Routing fallback.
 
 ## The Awesome Engineering Company
 
