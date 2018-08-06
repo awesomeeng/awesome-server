@@ -64,7 +64,7 @@ server.start();
 ## Routing
 
 There are several approaches to defining routes out of the box with AwesomeServer:
- - You can define [routes as functions](#license) (much like how you do it in express but without the nasty `next()` callbacks);
+ - You can define [routes as functions](#support-and-help) (much like how you do it in express but without the nasty `next()` callbacks);
  - You can define a Controller class for handling similar endpoints;
  - You can define a Controller class as a file which AwesomeServer will read and instantiate;
  - You can define a directory of Controller files which AwesomeServer will read, map to paths, and instantiate;
@@ -323,6 +323,6 @@ To learn more about The Awesome Engineering Company and our suite of products, v
 
 ## Support and Help
 
-## License
+# License
 
 AwesomeServer is released under the MIT License. Please read the  [LICENSE](https://raw.githubusercontent.com/awesomeeng/AwesomeServer/master/LICENSE?token=ABA2_wogpYds4a1qC_4aeUZd8C1in6Qcks5bUiQFwA%3D%3D) file for details.
