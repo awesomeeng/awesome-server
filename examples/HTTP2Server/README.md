@@ -9,6 +9,8 @@ This examples demonstrates how to write stand-alone controller classes and route
 
 ## Code Breakdown
 
+### Server.js
+
 ```
 const Log = require("AwesomeLog");
 Log.init();

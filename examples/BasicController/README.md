@@ -9,6 +9,8 @@ A brief example of setting up a basic AwesomeServer server with a very simple ro
 
 ## Code Breakdown
 
+### Server.js
+
 ```
 const Log = require("AwesomeLog");
 Log.init();

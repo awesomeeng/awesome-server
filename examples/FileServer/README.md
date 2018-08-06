@@ -8,6 +8,8 @@ This examples demonstrates how to write a very bssic HTTP Server using Serve Fil
 
 ## Code Breakdown
 
+### Server.js
+
 ```
 const Log = require("AwesomeLog");
 Log.init();

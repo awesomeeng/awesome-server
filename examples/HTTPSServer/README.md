@@ -1,4 +1,4 @@
-# AwesomeServer: Controller Classes Example
+# AwesomeServer: HTTPS Server Example
 
 This examples demonstrates how to write stand-alone controller classes and route to them.
 
@@ -8,6 +8,8 @@ This examples demonstrates how to write stand-alone controller classes and route
  - Basic routing.
 
 ## Code Breakdown
+
+### Server.js
 
 ```
 const Log = require("AwesomeLog");

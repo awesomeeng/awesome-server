@@ -10,6 +10,8 @@ This examples demonstrates how to use Controller Directory Routing to work with 
 
 ## Code Breakdown
 
+### Server.js
+
 ```
 const Log = require("AwesomeLog");
 Log.init();
