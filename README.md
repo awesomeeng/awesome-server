@@ -19,7 +19,7 @@ AwesomeServer provides...
  - Integrated with AwesomeLog for easy logging if you want it.
  - Extensible with custom Servers or Routers.
 
-## Why Another API Server solution?
+## Why another API Server solution?
 
 AwesomeServer is similar to Express, or Fastly, Hapi, etc. and those are all good products.  AwesomeServer just provides a different apporach to API Server code; one we think is cleaner and more understandable. If you want to use Express/Fastly/Hapi/whatever, that's perfectly fine by us. But if you want to try something a little cleaner, with less clutter, consider AwesomeServer.
 
