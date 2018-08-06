@@ -50,6 +50,10 @@ class DefaultRouter extends AbstractRouter {
 		return (this.prefix+"/"+path.toString()).replace(/\/\/+/g,"/");
 	}
 
+	resolveFilename(module,filename) {
+		return AwesomeUtils.Module.resolve(module,filename);
+	}
+
 	matchRoutes(method,path,handler) {
 		path = this.prefix && this.prefix!=="/" && path.startsWith(this.prefix) && path.slice(this.prefix.length) || path;
 		return this[$ROUTES].filter((route)=>{
@@ -318,7 +322,7 @@ class DefaultRouter extends AbstractRouter {
 	removeRedirect(path) {
 		if (!path) throw new Error("Missing path.");
 
-		this.removeController(path);		
+		this.removeController(path);
 	}
 
 }
