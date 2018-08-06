@@ -16,6 +16,8 @@
 
  - [Paths](../README.md#paths)
 
+ - [Controllers](../README.md#controllers)
+
 ## Advanced Topics
 
  - [HTTP Setup and Configuration](./Advanced_HTTPSetup.md)

@@ -357,6 +357,6 @@ To learn more about The Awesome Engineering Company and our suite of products, v
 
 ## Support and Help
 
-# License
+## License
 
 AwesomeServer is released under the MIT License. Please read the  [LICENSE](https://raw.githubusercontent.com/awesomeeng/AwesomeServer/master/LICENSE?token=ABA2_wogpYds4a1qC_4aeUZd8C1in6Qcks5bUiQFwA%3D%3D) file for details.
