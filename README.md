@@ -72,6 +72,11 @@ server.router.add("GET","/test",(path,request,response)=>{
 server.start();
 ```
 
+## Documentation
+
+ - [Detailed Documentation](./docs/README.md)
+ - [API Documentation](./docs/API.md)
+
 ## Routing
 
 There are several approaches to defining routes out of the box with AwesomeServer:
