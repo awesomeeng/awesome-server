@@ -328,21 +328,21 @@ In the event the controller does not have a matching *HTTP Method* function, the
 
 AwesomeServer ships with a set of examples for your reference.
 
- - [BasicServer](../blob/master/examples/BasicServer/README.md): An example of doing a basic HTTP server.
+ - [BasicServer](./master/examples/BasicServer/README.md): An example of doing a basic HTTP server.
 
- - [HTTPSServer](../blob/master/examples/HTTPSServer/README.md): An example of doing a basic HTTPS server including adding a public certificate and a private key.
+ - [HTTPSServer](./master/examples/HTTPSServer/README.md): An example of doing a basic HTTPS server including adding a public certificate and a private key.
 
- - [HTTP2Server](../blob/master/examples/HTTP2Server/README.md): An example of doing a basic hTTP/2 server including how to push multiple responses for a single request.
+ - [HTTP2Server](./master/examples/HTTP2Server/README.md): An example of doing a basic hTTP/2 server including how to push multiple responses for a single request.
 
- - [BasicController](../blob/master/examples/BasicController/README.md): An example of implementing a basic controller and routing to it.
+ - [BasicController](./master/examples/BasicController/README.md): An example of implementing a basic controller and routing to it.
 
- - [ControllerClasses](../blob/master/examples/ControllerClasses/README.md): An example of implementing multiple controllers and routing with Controller File Routing.
+ - [ControllerClasses](./master/examples/ControllerClasses/README.md): An example of implementing multiple controllers and routing with Controller File Routing.
 
- - [ControllerDirectory](../blob/master/examples/ControllerDirectory/README.md): An example of using Controller Directory Routing with multiple controllers and sub-directories.
+ - [ControllerDirectory](./master/examples/ControllerDirectory/README.md): An example of using Controller Directory Routing with multiple controllers and sub-directories.
 
- - [FileServer](../blob/master/examples/FileServer/README.md): How to build a basic File Server using Server Directory Routing.
+ - [FileServer](./master/examples/FileServer/README.md): How to build a basic File Server using Server Directory Routing.
 
- - [HTTP2FileServer](../blob/master/examples/HTTP2FileServer/README.md): An example of doing a slightly more complicated HTTP/2 server using Push Serve Routing and File Serve Routing fallback.
+ - [HTTP2FileServer](./master/examples/HTTP2FileServer/README.md): An example of doing a slightly more complicated HTTP/2 server using Push Serve Routing and File Serve Routing fallback.
 
 ## The Awesome Engineering Company
 
