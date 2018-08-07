@@ -41,7 +41,7 @@ server.start();
 Starts AwesomeServer, which in turn starts listening on localhost:7080.
 
 ```
-server.router.addServeDirectory("/hello",AwesomeServer.resolveRelativeToModule(module,"./files"));
+server.router.addServeDirectory("/hello",server.resolve("./files"));
 ```
 
 Routes `/hello` or `/hello/` or `/hello/*` to files in the `./files` directory. Its worth nothing that for `/hello` and `/hello/` will also add the default `index.html`.

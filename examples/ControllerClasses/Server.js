@@ -13,6 +13,6 @@ server.addHTTPServer({
 	host: "localhost",
 	port: 7080
 });
-server.router.addControllerFile("/one",AwesomeServer.resolveRelativeToModule(module,"./ControllerOne"));
-server.router.addControllerFile("/two",AwesomeServer.resolveRelativeToModule(module,"./ControllerTwo"));
+server.route("*","/one","./ControllerOne");
+server.route("*","/two","./ControllerTwo");
 server.start();

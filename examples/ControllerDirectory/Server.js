@@ -13,6 +13,5 @@ server.addHTTPServer({
 	host: "localhost",
 	port: 7080
 });
-server.router.prefix = "/api";
-server.router.addControllerDirectory(AwesomeServer.resolveRelativeToModule(module,"./controllers"));
+server.route("*","/api","./controllers");
 server.start();

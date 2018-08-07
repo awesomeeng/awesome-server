@@ -2,6 +2,8 @@
 
 "use strict";
 
+const Mime = require("mime-types");
+
 const AbstractController = require("../AbstractController");
 
 const $FILENAME = Symbol("filename");
@@ -9,12 +11,12 @@ const $CONTENTTYPE = Symbol("contentType");
 
 class FileServeController extends AbstractController {
 	constructor(contentType,filename) {
-		if (!contentType) throw new Error("Missing contentType.");
-		if (typeof contentType!=="string") throw new Error("Invalid contentType.");
 		if (!filename) throw new Error("Missing filename.");
 		if (typeof filename!=="string") throw new Error("Invalid filename.");
 
 		super();
+
+		if (!contentType) contentType = Mime.lookup(filename) || "application/octet-stream";
 
 		this[$FILENAME] = filename;
 		this[$CONTENTTYPE] = contentType;

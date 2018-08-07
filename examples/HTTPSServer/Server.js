@@ -12,10 +12,10 @@ let server = new AwesomeServer();
 server.addHTTPSServer({
 	host: "localhost",
 	port: 7443,
-	cert: AwesomeServer.resolveRelativeToModule(module,"./certificate.pub"), // load our cert relative to this Server.js file.
-	key: AwesomeServer.resolveRelativeToModule(module,"./certificate.key") // load our key relative to this Server.js file.
+	cert: server.resolve("./certificate.pub"), // load our cert relative to this Server.js file.
+	key: server.resolve("./certificate.key") // load our key relative to this Server.js file.
 });
-server.router.add("*","/hello",async (path,request,response)=>{
+server.route("*","/hello",async (path,request,response)=>{
 	await response.writeText("Hello world.");
 });
 server.start();

@@ -16,7 +16,6 @@ const AwesomeServer = require("../src/AwesomeServer");
 const AbstractController = require("../src/AbstractController");
 const AbstractRequest = require("../src/AbstractRequest");
 const AbstractResponse = require("../src/AbstractResponse");
-const AbstractRouter = require("../src/AbstractRouter");
 const AbstractServer = require("../src/AbstractServer");
 
 describe("AwesomeServer",function(){
@@ -24,7 +23,6 @@ describe("AwesomeServer",function(){
 		assert.equal(AwesomeServer.AbstractController,AbstractController);
 		assert.equal(AwesomeServer.AbstractRequest,AbstractRequest);
 		assert.equal(AwesomeServer.AbstractResponse,AbstractResponse);
-		assert.equal(AwesomeServer.AbstractRouter,AbstractRouter);
 		assert.equal(AwesomeServer.AbstractServer,AbstractServer);
 	});
 
@@ -33,7 +31,6 @@ describe("AwesomeServer",function(){
 
 		assert(server);
 		assert(server.servers);
-		assert(server.router);
 		assert(!server.running);
 		assert(server.start && server.start instanceof Function);
 		assert(server.stop && server.stop instanceof Function);
@@ -43,10 +40,15 @@ describe("AwesomeServer",function(){
 		assert(server.addHTTP2Server && server.addHTTP2Server instanceof Function);
 		assert(server.removeServer && server.removeServer instanceof Function);
 		assert(server.handler && server.handler instanceof Function);
+		assert(server.route && server.route instanceof Function);
+		assert(server.unroute && server.unroute instanceof Function);
+		assert(server.redirect && server.redirect instanceof Function);
+		assert(server.serve && server.serve instanceof Function);
+		assert(server.push && server.push instanceof Function);
+		assert(server.handler && server.handler instanceof Function);
 
 		assert.deepStrictEqual(server.servers,[]);
-
-		assert(server.router instanceof AbstractRouter);
+		assert.deepStrictEqual(server.routes,[]);
 	});
 
 	it("handler",function(){

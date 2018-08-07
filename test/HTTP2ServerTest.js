@@ -34,8 +34,8 @@ describe("HTTP2Server",function(){
 		server.addHTTP2Server({
 			host: "127.0.0.1",
 			port,
-			cert: AwesomeServer.resolveRelativeToModule(module,"./certificate.pub"), // load our cert relative to this Server.js file.
-			key: AwesomeServer.resolveRelativeToModule(module,"./certificate.key") // load our key relative to this Server.js file.
+			cert: server.resolve("./certificate.pub"), // load our cert relative to this Server.js file.
+			key: server.resolve("./certificate.key") // load our key relative to this Server.js file.
 		});
 		await server.start();
 	});
@@ -55,7 +55,7 @@ describe("HTTP2Server",function(){
 
 	it("Request",async function(){
 		let req;
-		server.router.add("*","/test",async (path,request,response)=>{
+		server.route("*","/test",async (path,request,response)=>{
 			req = request;
 			await response.writeText("the quick brown fox jumped over the lazy dog.");
 		});
@@ -71,7 +71,7 @@ describe("HTTP2Server",function(){
 
 	it("Response",async function(){
 		let resp;
-		server.router.add("*","/test",async (path,request,response)=>{
+		server.route("*","/test",async (path,request,response)=>{
 			resp = response;
 			await response.writeText("the quick brown fox jumped over the lazy dog.");
 		});
@@ -85,7 +85,7 @@ describe("HTTP2Server",function(){
 
 	it("get request",async function(){
 		let req,resp;
-		server.router.add("*","/test",async (path,request,response)=>{
+		server.route("*","/test",async (path,request,response)=>{
 			req = request;
 			resp = response;
 			await response.writeText("the quick brown fox jumped over the lazy dog.");
@@ -109,7 +109,7 @@ describe("HTTP2Server",function(){
 
 	it("post request",async function(){
 		let req,resp;
-		server.router.add("*","/test",async (path,request,response)=>{
+		server.route("*","/test",async (path,request,response)=>{
 			req = request;
 			resp = response;
 			let body = await request.readText();

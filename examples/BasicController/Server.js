@@ -15,7 +15,7 @@ class MyController extends AbstractController {
 	}
 
 	async get(path,request,response) {
-		await response.writeText("Controller "+path);
+		await response.writeText("Controller "+request.url.href);
 	}
 
 	async post(path,request,response) {
@@ -28,5 +28,5 @@ server.addHTTPServer({
 	host: "localhost",
 	port: 7080
 });
-server.router.addController("/hello",new MyController());
+server.route("/hello",new MyController());
 server.start();

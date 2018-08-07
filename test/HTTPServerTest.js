@@ -51,7 +51,7 @@ describe("HTTPServer",function(){
 
 	it("Request",async function(){
 		let req;
-		server.router.add("*","/test",async (path,request,response)=>{
+		server.route("*","/test",async (path,request,response)=>{
 			req = request;
 			await response.writeText("the quick brown fox jumped over the lazy dog.");
 		});
@@ -65,7 +65,7 @@ describe("HTTPServer",function(){
 
 	it("Response",async function(){
 		let resp;
-		server.router.add("*","/test",async (path,request,response)=>{
+		server.route("*","/test",async (path,request,response)=>{
 			resp = response;
 			await response.writeText("the quick brown fox jumped over the lazy dog.");
 		});
@@ -79,7 +79,7 @@ describe("HTTPServer",function(){
 
 	it("get request",async function(){
 		let req,resp;
-		server.router.add("*","/test",async (path,request,response)=>{
+		server.route("*","/test",async (path,request,response)=>{
 			req = request;
 			resp = response;
 			await response.writeText("the quick brown fox jumped over the lazy dog.");
@@ -103,7 +103,7 @@ describe("HTTPServer",function(){
 
 	it("post request",async function(){
 		let req,resp;
-		server.router.add("*","/test",async (path,request,response)=>{
+		server.route("*","/test",async (path,request,response)=>{
 			req = request;
 			resp = response;
 			let body = await request.readText();

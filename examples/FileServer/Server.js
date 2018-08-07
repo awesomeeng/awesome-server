@@ -17,4 +17,4 @@ server.addHTTPServer({
 server.start();
 
 // Serve a directory of files
-server.router.addServeDirectory("/hello",AwesomeServer.resolveRelativeToModule(module,"./files"));
+server.serve("/hello","./files");

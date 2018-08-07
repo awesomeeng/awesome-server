@@ -12,8 +12,8 @@ let server = new AwesomeServer();
 server.addHTTP2Server({
 	host: "localhost",
 	port: 7443,
-	cert: AwesomeServer.resolveRelativeToModule(module,"./certificate.pub"), // load our cert relative to this Server.js file.
-	key: AwesomeServer.resolveRelativeToModule(module,"./certificate.key") // load our key relative to this Server.js file.
+	cert: server.resolve("./certificate.pub"), // load our cert relative to this Server.js file.
+	key: server.resolve("./certificate.key") // load our key relative to this Server.js file.
 });
 server.start();
 
@@ -22,11 +22,11 @@ server.start();
  */
 
 // Fallback and serve the CSS straight up if the http2 stuff doesnt work for some reason.
-server.router.addServe("/hello/hello.css",AwesomeServer.resolveRelativeToModule(module,"./files/hello.css"));
+server.serve("/hello/hello.css",server.resolve("./files/hello.css"));
 
 // Push our CSS to any page that matches /hello or /hello/*
-server.router.addPushServe("/hello/*","/hello/hello.css",AwesomeServer.resolveRelativeToModule(module,"./files/hello.css"));
-server.router.addPushServe("/hello","/hello/hello.css",AwesomeServer.resolveRelativeToModule(module,"./files/hello.css"));
+server.push("/hello/*","/hello/hello.css",server.resolve("./files/hello.css"));
+server.push("/hello","/hello/hello.css",server.resolve("./files/hello.css"));
 
 // Serve our basic html page at /hello. Because of the prior push rules, this will also include the pushed css file.
-server.router.addServe("/hello",AwesomeServer.resolveRelativeToModule(module,"./files/index.html"));
+server.serve("/hello",server.resolve("./files/index.html"));

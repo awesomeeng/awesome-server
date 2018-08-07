@@ -43,7 +43,7 @@ server.router.prefix = "/api";
 Changes the default top-level prefix for the router, so all requests will be required to start with "/api".
 
 ```
-server.router.addControllerDirectory(AwesomeServer.resolveRelativeToModule(module,"./controllers"));
+server.router.addControllerDirectory(server.resolve("./controllers"));
 ```
 
 Maps all of the controllers found in `./controllers` to the `/api` path. So `./controllers/one.js` will be mapped to `/api/one` and so on.  Sub-directories are also recursed and mapped so `./controllers/three/one.js` ends up mapped to ``/api/three/one`.

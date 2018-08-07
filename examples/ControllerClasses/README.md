@@ -59,8 +59,8 @@ server.addHTTPServer({
 Adds a basic HTTP Server to your AwesomeServer setup.
 
 ```
-server.router.addControllerFile("/one",AwesomeServer.resolveRelativeToModule(module,"./ControllerOne"));
-server.router.addControllerFile("/two",AwesomeServer.resolveRelativeToModule(module,"./ControllerTwo"));
+server.router.addControllerFile("/one",server.resolve("./ControllerOne"));
+server.router.addControllerFile("/two",server.resolve("./ControllerTwo"));
 ```
 Route `/one` to ControllerOne.js and `/two` to ControllerTwo.js.
 

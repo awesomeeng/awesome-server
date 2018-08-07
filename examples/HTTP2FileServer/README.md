@@ -31,8 +31,8 @@ Require and Instantiates AwesomeServer.
 server.addHTTP2Server({
 	host: "localhost",
 	port: 7443,
-	cert: AwesomeServer.resolveRelativeToModule(module,"./certificate.pub"), // load our cert relative to this Server.js file.
-	key: AwesomeServer.resolveRelativeToModule(module,"./certificate.key") // load our key relative to this Server.js file.
+	cert: server.resolve("./certificate.pub"), // load our cert relative to this Server.js file.
+	key: server.resolve("./certificate.key") // load our key relative to this Server.js file.
 });
 server.start();
 ```
@@ -40,20 +40,20 @@ server.start();
 Adds a basic HTTP/2 Server to your AwesomeServer setup including indiciating a public/private key pair and starts it.
 
 ```
-server.router.addServe("/hello/hello.css",AwesomeServer.resolveRelativeToModule(module,"./files/hello.css"));
+server.router.addServe("/hello/hello.css",server.resolve("./files/hello.css"));
 ```
 
 Provides a fallback for obtaining the `/hello/hello.css` file in the event HTTP/2 doesn't accept the push.
 
 ```
-server.router.addPushServe("/hello/*","/hello/hello.css",AwesomeServer.resolveRelativeToModule(module,"./files/hello.css"));
-server.router.addPushServe("/hello","/hello/hello.css",AwesomeServer.resolveRelativeToModule(module,"./files/hello.css"));
+server.router.addPushServe("/hello/*","/hello/hello.css",server.resolve("./files/hello.css"));
+server.router.addPushServe("/hello","/hello/hello.css",server.resolve("./files/hello.css"));
 ```
 
 Tells the router to automatically push `/hello/hello.css` for *any* request that matches `/hello` or `/hello/*`.
 
 // Serve our basic html page at /hello. Because of the prior push rules, this will also include the pushed css file.
-server.router.addServe("/hello",AwesomeServer.resolveRelativeToModule(module,"./files/index.html"));
+server.router.addServe("/hello",server.resolve("./files/index.html"));
 
 
 

@@ -2,24 +2,26 @@
 
 "use strict";
 
+const Mime = require("mime-types");
+
 const AbstractController = require("../AbstractController");
 
 const $FILENAME = Symbol("filename");
 const $CONTENTTYPE = Symbol("contentType");
-const $RESOURCEPATH = Symbol("resourcePath");
+const REFERENCEPATH = Symbol("referencePath");
 
 class PushServeController extends AbstractController {
-	constructor(resourcePath,contentType,filename) {
-		if (!contentType) throw new Error("Missing contentType.");
-		if (typeof contentType!=="string") throw new Error("Invalid contentType.");
+	constructor(referencePath,contentType,filename) {
 		if (!filename) throw new Error("Missing filename.");
 		if (typeof filename!=="string") throw new Error("Invalid filename.");
 
 		super();
 
+		if (!contentType) contentType = Mime.lookup(filename) || "application/octet-stream";
+
 		this[$FILENAME] = filename;
 		this[$CONTENTTYPE] = contentType;
-		this[$RESOURCEPATH] = resourcePath;
+		this[REFERENCEPATH] = referencePath;
 	}
 
 	get filename() {
@@ -30,14 +32,14 @@ class PushServeController extends AbstractController {
 		return this[$CONTENTTYPE];
 	}
 
-	get resourcePath() {
-		return this[$RESOURCEPATH];
+	get referencePath() {
+		return this[REFERENCEPATH];
 	}
 
 	get(path,request,response) {
 		return new Promise(async (resolve,reject)=>{
 			try {
-				if (response.pushSupported) await response.pushServe(200,this.resourcePath,this.contentType,this.filename);
+				if (response.pushSupported) await response.pushServe(200,this.referencePath,this.contentType,this.filename);
 				await response.serve(200,this.contentType,this.filename);
 				await response.end();
 

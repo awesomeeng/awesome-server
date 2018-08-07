@@ -30,8 +30,8 @@ Require and Instantiates AwesomeServer.
 server.addHTTPSServer({
 	host: "localhost",
 	port: 7443,
-	cert: AwesomeServer.resolveRelativeToModule(module,"./certificate.pub"), // load our cert relative to this Server.js file.
-	key: AwesomeServer.resolveRelativeToModule(module,"./certificate.key") // load our key relative to this Server.js file.
+	cert: server.resolve("./certificate.pub"), // load our cert relative to this Server.js file.
+	key: server.resolve("./certificate.key") // load our key relative to this Server.js file.
 });
 ```
 
