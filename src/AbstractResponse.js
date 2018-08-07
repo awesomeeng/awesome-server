@@ -35,9 +35,11 @@ class AbstractResponse {
 	}
 
 	/**
-	 * True if push() and push...() functions are supported by this response object.
+	 * True if push() and push...() functions are supported by this response
+	 * object. This is generally only true when the request supports bi-directional
+	 * flow, such as HTTP/2.
 	 *
-	 * @return {[type]} [description]
+	 * @return {boolean} true if push() and push...() functions are supported.
 	 */
 	get pushSupported() {
 		return false;

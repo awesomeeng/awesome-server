@@ -17,6 +17,7 @@
     },
     "devDependencies": {
         "mocha": "*",
+        "jsdoc": "*",
         "request": "^2.87.0",
         "request-promise-native": "^1.0.5"
     },
@@ -24,5 +25,8 @@
     "nodemonConfig": {
         "spawn": true,
         "verbose": true
-    }
+    },
+	"scripts": {
+		"docs": "jsdoc src -r -d docs/api"
+	}
 }

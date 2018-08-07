@@ -2,6 +2,10 @@
 
 "use strict";
 
+
+/**
+ * Defines an AbstractController.
+ */
 class AbstractController {
 	constructor() {
 	}
@@ -10,10 +14,8 @@ class AbstractController {
 	 * Executed before each individual request is handled. This will execute ONLY IF the
 	 * request method is implemented in the controller.
 	 *
-	 * May return a promise or nothing. If a promise is returned, the promise is awaited
+	 * @return {Promise|void} May return a promise or nothing. If a promise is returned, the promise is awaited
 	 * before moving the the handler function.
-	 *
-	 * @return {[type]} [description]
 	 */
 	before(/*path,request,response*/) {
 		// to be implemented by extending classes if needed.
@@ -23,10 +25,8 @@ class AbstractController {
 	 * Executed after each individual request is handled. This will execute ONLY IF the
 	 * request method is implemented in the controller.
 	 *
-	 * May return a promise or nothing. If a promise is returned, the promise is awaited
+	 * @return {Promise|void} May return a promise or nothing. If a promise is returned, the promise is awaited
 	 * before the final resolve.
-	 *
-	 * @return {[type]} [description]
 	 */
 	after(/*path,request,response*/) {
 		// to be implemented by extending classes if needed.
@@ -36,10 +36,8 @@ class AbstractController {
 	 * Executed only if a request method is not implemented in the controller. Can be used
 	 * as a kind of catch-all for requests.
 	 *
-	 * May return a promise or nothing. If a promise is returned, the promise is awaited
+	 * @return {Promise|void} May return a promise or nothing. If a promise is returned, the promise is awaited
 	 * before the final resolve.
-	 *
-	 * @return {[type]} [description]
 	 */
 	any(/*path,request,response*/) {
 		// to be implemented by extending classes if needed.
@@ -78,9 +76,11 @@ class AbstractController {
 	 * Generally speaking, it is probably best not to overload this function but
 	 * to use before(), after(), any(), or the specific request method handler.
 	 *
-	 * @param  {[type]} request  [description]
-	 * @param  {[type]} response [description]
-	 * @return {[type]}          [description]
+	 * @param  {string}           path     The remaining path string, after the matching route portion is removed.
+	 * @param  {AbstractRequest}  request  The request object.
+	 * @param  {AbstractResponse} response The response object.
+	 *
+	 * @return {Promise} Returns a Promise that resolves when the request has been handled.
 	 */
 	handler(path,request,response) {
 		return new Promise(async (resolve,reject)=>{
