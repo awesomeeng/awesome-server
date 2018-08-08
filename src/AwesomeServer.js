@@ -13,11 +13,12 @@ const AbstractRequest = require("./AbstractRequest");
 const AbstractResponse = require("./AbstractResponse");
 const AbstractController = require("./AbstractController");
 
+const AbstractPathMatcher = require("./AbstractPathMatcher");
+
 const FileServeController = require("./controllers/FileServeController");
 const DirectoryServeController = require("./controllers/DirectoryServeController");
 const PushServeController = require("./controllers/PushServeController");
 const RedirectController = require("./controllers/RedirectController");
-
 
 const $SERVERS = Symbol("servers");
 const $ROUTES = Symbol("routes");
@@ -215,12 +216,7 @@ class AwesomeServer {
 		Log.access("AwesomeServer","Request "+url+" from "+request.origin+".");
 
 		let matching = this[$ROUTES].filter((route)=>{
-			return (route.method==="*" || route.method===method) && (
-				(route.path instanceof RegExp && path.match(route.path)) ||
-				(typeof route.path==="string" && route.path.endsWith("*") && path.startsWith(route.path.slice(0,-1))) ||
-				(typeof route.path==="string" && route.path.startsWith("*") && path.endsWith(route.path.slice(1))) ||
-				(typeof route.path==="string" && route.path===path)
-			) && route.routes && route.routes.length>0;
+			return (route.method==="*" || route.method===method) && route.matcher.match(path) && route.routes && route.routes.length>0;
 		});
 
 		let proms = matching.reduce((proms,route)=>{
@@ -278,7 +274,8 @@ const _route = function route(method,path,handler,parent=null) {
 		method,
 		path,
 		handler,
-		routes: null
+		routes: null,
+		matcher: AbstractPathMatcher.getMatcher(path)
 	};
 
 	if (handler instanceof AbstractController) {

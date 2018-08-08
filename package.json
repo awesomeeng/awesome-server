@@ -26,7 +26,7 @@
         "spawn": true,
         "verbose": true
     },
-	"scripts": {
-		"docs": "jsdoc src -r -d docs/api"
-	}
+    "scripts": {
+        "docs": "jsdoc src -r -d docs/api"
+    }
 }
