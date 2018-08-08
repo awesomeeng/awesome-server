@@ -24,43 +24,100 @@ const $SERVERS = Symbol("servers");
 const $ROUTES = Symbol("routes");
 const $RUNNING = Symbol("running");
 
+/**
+ * AwesomeServer is a customizable API Server framework for Enterprise Ready nodejs
+ * applications. It is an easy to setup HTTP or HTTPS or HTTP/2 server allowing you to
+ * provide flexible routing and controllers for responding to incoming requests in a
+ * consistent, repeatable fashion.
+ *
+ * Please see the documentation at @link https://github.com/awesomeeng/AwesomeServer.
+ */
 class AwesomeServer {
+	/**
+	 * Creates a new AwesomeServer instance.
+	 *
+	 * You may create multiple AwesomeServer instances and do different things with them.
+	 *
+	 * @constructor
+	 *
+	 */
 	constructor() {
 		this[$RUNNING] = false;
 		this[$SERVERS] = new Set();
 		this[$ROUTES] = [];
 	}
 
+	/**
+	 * Returns a reference to the AbstractServer class for custom extensions.
+	 *
+	 * @return Class
+	 */
 	static get AbstractServer() {
 		return AbstractServer;
 	}
 
+	/**
+	 * Returns a reference to the AbstractRequest class for custom extensions.
+	 *
+	 * @return Class
+	 */
 	static get AbstractRequest() {
 		return AbstractRequest;
 	}
 
+	/**
+	 * Returns a reference to the AbstractResponse class for custom extensions.
+	 *
+	 * @return Class
+	 */
 	static get AbstractResponse() {
 		return AbstractResponse;
 	}
 
+	/**
+	 * Returns a reference to the AbstractController class for custom extensions.
+	 *
+	 * @return Class
+	 */
 	static get AbstractController() {
 		return AbstractController;
 	}
 
+	/**
+	 * Returns the array of servers associated with this AwesomeServer instance.
+	 *
+	 * @return {Array<AbstractServer>}
+	 */
 	get servers() {
 		return [].concat([...this[$SERVERS]]);
 	}
 
+	/**
+	 * Returns the array of routes as strings associated with this AwesomeServer instance.
+	 *
+	 * @return {Array<string>}
+	 */
 	get routes() {
 		return this[$ROUTES].map((route)=>{
 			return route.method.toUpperCase()+": "+route.path.toString();
 		});
 	}
 
+	/**
+	 * Returns true if this AwesomeServer is running (start() has been executed).
+	 *
+	 * @return {boolean}
+	 */
 	get running() {
 		return this[$RUNNING];
 	}
 
+	/**
+	 * Starts the AwesomeServer instance, if not already running. This in turn will
+	 * start each added server and begin to route incoming requests.
+	 *
+	 * @return {Promise} [description]
+	 */
 	async start() {
 		if (this.running) return Promise.resolve();
 
@@ -82,6 +139,12 @@ class AwesomeServer {
 		Log.info("AwesomeServer","Started.");
 	}
 
+	/**
+	 * Stops the AwesomeServer instance, if running. This in turn will
+	 * stop each added server and stop routing incoming requests.
+	 *
+	 * @return {Promise} [description]
+	 */
 	async stop() {
 		if (!this.running) return Promise.resolve();
 
@@ -98,6 +161,18 @@ class AwesomeServer {
 		Log.info("AwesomeServer","Stopped.");
 	}
 
+	/**
+	 * Adds a new server instance to the AwesomeServer. You may add multiple servers
+	 * to  single AwesomeServer and each server will be handled for incoming requests
+	 * and routed the same way.
+	 *
+	 * Primarily this method is for adding custom servers. If you are using the default
+	 * HTTP, HTTPS, or HTTP/2 servers, use the addHTTPServer(), addHTTPSServer() or
+	 * addHTTP2Server() functions instead.
+	 *
+	 * @param {AbstractServer} server The server instance to add. Must be an extension
+	 * of AbstractServer.
+	 */
 	addServer(server) {
 		if (!server) throw new Error("Missing server.");
 		if (!(server instanceof AbstractServer)) throw new Error("Invalid Server.");
@@ -105,6 +180,7 @@ class AwesomeServer {
 		this[$SERVERS].add(server);
 	}
 
+	
 	addHTTPServer(config) {
 		const HTTPServer = require("./http/HTTPServer"); // this is here on purpose.
 		let server = new HTTPServer(config);
