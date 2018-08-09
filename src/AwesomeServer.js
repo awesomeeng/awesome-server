@@ -84,6 +84,46 @@ class AwesomeServer {
 	}
 
 	/**
+	 * Returns a reference to the AbstractPathMatcher class for custom extensions.
+	 */
+	static get AbstractPathMatcher() {
+		return AbstractPathMatcher;
+	}
+
+	/**
+	 * Returns references to HTTPServer, HTTPRequest, and HTTPResponse for custom extensions.
+	 */
+	static get http() {
+		return {
+			HTTPServer: require("./http/HTTPServer"),
+			HTTPRequest: require("./http/HTTPRequest"),
+			HTTPResponse: require("./http/HTTPResponse")
+		};
+	}
+
+	/**
+	 * Returns references to HTTPSServer, HTTPSRequest, and HTTPSResponse for custom extensions.
+	 */
+	static get https() {
+		return {
+			HTTPSServer: require("./https/HTTPSServer"),
+			HTTPSRequest: require("./https/HTTPSRequest"),
+			HTTPSResponse: require("./https/HTTPSResponse")
+		};
+	}
+
+	/**
+	 * Returns references to HTTP2Server, HTTP2Request, and HTTP2Response for custom extensions.
+	 */
+	static get http2() {
+		return {
+			HTTP2Server: require("./http2/HTTP2Server"),
+			HTTP2Request: require("./http2/HTTP2Request"),
+			HTTP2Response: require("./http2/HTTP2Response")
+		};
+	}
+
+	/**
 	 * Returns the array of servers associated with this AwesomeServer instance.
 	 *
 	 * @return {Array<AbstractServer>}
@@ -604,7 +644,7 @@ const _route = function route(method,path,handler,parent=null) {
 		parent.children.push(route);
 	}
 
-	Log.info("AwesomeServer","Added route "+method+" "+path.toString());
+	Log.info("AwesomeServer","Added route "+method+" "+route.matcher.toString());
 
 	return route;
 };
