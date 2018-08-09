@@ -172,39 +172,166 @@ class AwesomeServer {
 	 *
 	 * @param {AbstractServer} server The server instance to add. Must be an extension
 	 * of AbstractServer.
+	 *
+	 * @return {AbstractServer}        the server added.
 	 */
 	addServer(server) {
 		if (!server) throw new Error("Missing server.");
 		if (!(server instanceof AbstractServer)) throw new Error("Invalid Server.");
 
 		this[$SERVERS].add(server);
+
+		return server;
 	}
 
-	
+	/**
+	 * Adds a new HTTP Server to the AwesomeServer instance. The HTTP Server is
+	 * a wrapped version of nodejs's *http* module and thus behaves as that
+	 * module behaves, with some slight differences.  Each request that comes
+	 * through will have its request and response objects wrapped in AwesomeServer's
+	 * custom HTTPRequest and HTTPResponse objects. The provide a simplified but
+	 * cleaner access layer to the underlying request or response. See AbstractRequest
+	 * and AbstractResponse for more details.
+	 *
+	 * Takes a *config* object as an argument that is passed to the underlying HTTP
+	 * module.  The basic structure of this config is below with the default values shown:
+	 *
+	 * ```
+	 * const config = {
+	 *   host: "localhost"
+	 *   port: 7080
+	 * };
+	 * ```
+	 * For more details about config values, please see [nodejs' http module]()
+	 *
+	 * **An important note about config**: The default *host* setting for AwesomeServer
+	 * is `localhost`. This is different than the default for the underlying
+	 * nodejs http module of `0.0.0.0`.
+	 *
+	 * @param {(AwesomeConfig|Object)} config An AwesomeConfig or plain Object.
+	 *
+	 * @return {AbstractServer}        the server added.
+	 */
 	addHTTPServer(config) {
 		const HTTPServer = require("./http/HTTPServer"); // this is here on purpose.
 		let server = new HTTPServer(config);
 		this.addServer(server);
+
+		return server;
 	}
 
+	/**
+	 * Adds a new HTTPS Server to the AwesomeServer instance. The HTTPS Server is
+	 * a wrapped version of nodejs's *https* module and thus behaves as that
+	 * module behaves, with some slight differences.  Each request that comes
+	 * through will have its request and response objects wrapped in AwesomeServer's
+	 * custom HTTPRequest and HTTPResponse objects. The provide a simplified but
+	 * cleaner access layer to the underlying request or response. See AbstractRequest
+	 * and AbstractResponse for more details.
+	 *
+	 * Takes a *config* object as an argument that is passed to the underlying HTTPS
+	 * module.  The basic structure of this config is below with the default values shown:
+	 *
+	 * ```
+	 * const config = {
+	 *   host: "localhost"
+	 *   port: 7080,
+	 *   key: null,
+	 *   cert: null,
+	 *   pfx: null
+	 * };
+	 * ```
+	 *
+	 * *key*, *cert*, and *pfx* are handled specially in AwesomeServer. You may supply
+	 * a string representing the certificate or a string representing a valid path
+	 * to a file containing the certificate. AwesomeServer will attempt to load
+	 * the file and if successful use that as the value.
+	 *
+	 * For more details about config values, please see [nodejs' *https* module]()
+	 *
+	 * **An important note about config**: The default *host* setting for AwesomeServer
+	 * is `localhost`. This is different than the default for the underlying
+	 * nodejs *https* module of `0.0.0.0`.
+	 *
+	 * @param {(AwesomeConfig|Object)} config An AwesomeConfig or plain Object.
+	 *
+	 * @return {AbstractServer}        the server added.
+	 */
 	addHTTPSServer(config) {
 		const HTTPSServer = require("./https/HTTPSServer"); // this is here on purpose.
 		let server = new HTTPSServer(config);
 		this.addServer(server);
+
+		return server;
 	}
 
+	/**
+	 * Adds a new HTTP/2 Server to the AwesomeServer instance. The HTTP/2 Server is
+	 * a wrapped version of nodejs's *http2* module and thus behaves as that
+	 * module behaves, with some slight differences.  Each request that comes
+	 * through will have its request and response objects wrapped in AwesomeServer's
+	 * custom HTTPRequest and HTTPResponse objects. The provide a simplified but
+	 * cleaner access layer to the underlying request or response. See AbstractRequest
+	 * and AbstractResponse for more details.
+	 *
+	 * Takes a *config* object as an argument that is passed to the underlying HTTP/2
+	 * module.  The basic structure of this config is below with the default values shown:
+	 *
+	 * ```
+	 * const config = {
+	 *   host: "localhost"
+	 *   port: 7080,
+	 *   key: null,
+	 *   cert: null,
+	 *   pfx: null
+	 * };
+	 * ```
+	 *
+	 * *key*, *cert*, and *pfx* are handled specially in AwesomeServer. You may supply
+	 * a string representing the certificate or a string representing a valid path
+	 * to a file containing the certificate. AwesomeServer will attempt to load
+	 * the file and if successful use that as the value.
+	 *
+	 * For more details about config values, please see [nodejs' *http2* module]()
+	 *
+	 * **An important note about config**: The default *host* setting for AwesomeServer
+	 * is `localhost`. This is different than the default for the underlying
+	 * nodejs *http2* module of `0.0.0.0`.
+	 *
+	 * @param {(AwesomeConfig|Object)} config An AwesomeConfig or plain Object.
+	 *
+	 * @return {AbstractServer}        the server added.
+	 */
 	addHTTP2Server(config) {
 		const HTTP2Server = require("./http2/HTTP2Server"); // this is here on purpose.
 		let server = new HTTP2Server(config);
 		this.addServer(server);
+
+		return server;
 	}
 
+	/**
+	 * Removes a given server from thise AwesomeServer instance. You obtain the server value
+	 * as a return value from `addServer()` or `addHTTPServer()` or `addHTTPSServer()` or
+	 * `addHTTP2Server()` or from the `servers` getter.
+	 *
+	 * If the removed server is currently running, it will automatically be stopped as
+	 * part of its removal.
+	 *
+	 * @param  {AbstractServer} server The server to remove.
+	 *
+	 * @return {boolean}        true if the server was removed.
+	 */
 	removeServer(server) {
 		if (!server) throw new Error("Missing server.");
 		if (!(server instanceof AbstractServer)) throw new Error("Invalid Server.");
 
-		this[$SERVERS].delete(server);
-		if (server.running) server.stop();
+		if (this[$SERVERS].has(server)) {
+			this[$SERVERS].delete(server);
+			if (server.running) server.stop();
+			return true;
+		}
+		return false;
 	}
 
 	route(method,path,handler) {
