@@ -458,28 +458,145 @@ class AwesomeServer {
 	 * request method and path matches.  Controllers are a great way to strcuture your API
 	 * endpoints around url resources. For more information on controllers go here:
 	 *
-	 * @param  {string} method  [description]
-	 * @param  {(string|RegExp|AbstractPathMatcher)} path    [description]
-	 * @param  {(Function|AbstractController)} handler [description]
+	 * filename: A filename to a valid controller class JS file.  Using filenames has some
+	 * special intricacies to be aware of.
+	 *
+	 * 		resolving: The filename may be a resolved absolute path, or a relative path. In
+	 * 		the case of relative paths, AwesomeServer will try to resolve the filename
+	 * 		relative to itself, then relative to the module that called AwesomeServer,
+	 * 		and finally relative to process.cwd().  The first resolved filename that
+	 * 		exists is used.
+	 *
+	 * 		directories: If the filename resolves to a directory, AwesomeServer will
+	 * 		attempt to use all .JS files in that directory or any sub-directory and
+	 * 		route them to paths based ont their name and try structure.  For example,
+	 * 		consider the directory tree:
+	 *
+	 * 			./files
+	 * 				One.js
+	 * 				Two.js
+	 * 				Three.js
+	 * 				Three
+	 * 					One.js
+	 *
+	 * 		IF the call `route("*","/api","./files")` is made, this would end up routing
+	 * 		the following:
+	 *
+	 * 			`route("*","/api/One","./files/One.js")`
+	 * 			`route("*","/api/Two","./files/Two.js")`
+	 * 			`route("*","/api/Three","./files/Three.js")`
+	 * 			`route("*","/api/Three/One","./files/Three/One.js")`
+	 *
+	 * 		requirements: For a filename to be routed it must...
+	 *
+	 *          - exist.
+	 *          - be a file or directory, no FIFO or pipes.
+	 * 			- Be a valid .js or .node file.
+	 * 			- Not contain any syntax errors.
+	 * 			- export a class that extends AbstractController or exports an instance of a class that extends AbstractController.
+	 *
+	 * Routes may be added whether or not AwesomeServer has been started.
+	 *
+	 * @param  {string} method 								 see above.
+	 * @param  {(string|RegExp|AbstractPathMatcher)} path    see above.
+	 * @param  {(Function|AbstractController)} handler 		 see above.
 	 */
 	route(method,path,handler) {
 		// we are just wrapping the internal function here so we dont expose what the internal functions returns.
 		_route.call(this,method,path,handler);
 	}
 
+	/**
+	 * Removes a route. In order to remove a route you must pass the exact same parameters you used
+	 * to create the route.
+	 *
+	 * Routes may be removed whether or not AwesomeServer has been started.
+	 *
+	 * @param  {string} method 								 see above.
+	 * @param  {(string|RegExp|AbstractPathMatcher)} path    see above.
+	 * @param  {(Function|AbstractController)} handler 		 see above.
+	 *
+	 * @return {boolean}  returns true if something was removed, false otherwise.
+	 */
 	unroute(method,path,handler) {
 		// we are just wrapping the internal function here so we dont expose what the internal functions returns.
 		return _unroute.call(this,method,path,handler);
 	}
 
-	redirect(path,toPath,temporary=false) {
+	/**
+	 * A shortcut method for routing HTTP redirects.
+	 *
+	 * @param  {string}  method                             The method to match.
+	 * @param  {(string|RegExp|AbstractPathMatcher)}  path  The path to match.
+	 * @param  {string}  toPath            					The redirect target.
+	 * @param  {Boolean} [temporary=false] 					True if you want this to be a temporary redirect as defined in the HTTP Status Codes.
+	 */
+	redirect(method,path,toPath,temporary=false) {
+		if (!method) throw new Error("Missing method.");
+		if (typeof method!=="string") throw new Error("Invalid method.");
 		if (!path) throw new Error("Missing path.");
 		if (!toPath) throw new Error("Missing toPath.");
 		if (typeof toPath!=="string") throw new Error("Invalid toPath.");
 
-		this.route("*",path,new RedirectController(toPath,temporary));
+		this.route(method,path,new RedirectController(toPath,temporary));
 	}
 
+	/**
+	 * A shortcut method for routing a specific file or set of files as a response. All
+	 * serve routes are GET only.
+	 *
+	 * This method has two possilbe usages:
+	 *
+	 * 		serve(path,contentType,filename);
+	 * 		serve(path,filename);
+	 *
+	 * path: Standard path argument from `route()`.
+	 *
+	 * contentType: The content-type to send when responding with the given file. if
+	 * contentType is null, AwesomeServer will attempt to guess the contentType based
+	 * on the filename. If it cannot guess, it will fallback to application-octet-stream.
+	 * contentType is ignored if filename is a directory, see below.
+	 *
+	 * filename: A filename. Using filenames has some special intricacies to be aware of.
+	 *
+	 * 		resolving: The filename may be a resolved absolute path, or a relative path. In
+	 * 		the case of relative paths, AwesomeServer will try to resolve the filename
+	 * 		relative to itself, then relative to the module that called AwesomeServer,
+	 * 		and finally relative to process.cwd().  The first resolved filename that
+	 * 		exists is used.
+	 *
+	 * 		directories: If the filename resolves to a directory, AwesomeServer will
+	 * 		route all the files in that directory and sub-directory based on name.
+	 * 		For example, consider the directory tree:
+	 *
+	 * 			./files
+	 * 				index.html
+	 * 				hello.css
+	 * 				resources
+	 * 					image.gif
+	 *
+	 * 		IF the call `serve("*","/hello","./files")` is made, this would end up routing
+	 * 		the following:
+	 *
+	 * 			`serve("/hello/index.html","./files/index.html")`
+	 * 			`serve("/hello/hello.css","./files/hello.css")`
+	 * 			`serve("/hello/resources/image.gif","./files/resources/image.gif")`
+	 *
+	 * 		The directory version of serve will also attempt to match the root name
+	 * 		("/hello" in our example) to the root name plus "index.html"
+	 * 		(/hello/index.html in our example).
+	 *
+	 * 		requirements: For a filename to be routed it must...
+	 *
+	 *          - exist.
+	 *
+	 * Please note that AwesomeServer will only serve files that exist when the serve function
+	 * is called.  Adding files after the fact is not supported.
+	 *
+	 * @param  {(string|RegExp|AbstractPathMatcher)}  path        The path to match.
+	 * @param  {(string|null)}                        contentType Optional contentType to use when serving.
+	 * @param  {string}                               filename    Filename or directory to serve.
+	 */
 	serve(path,contentType,filename) {
 		if (arguments.length===2) [path,contentType,filename] = [path,null,contentType];
 
@@ -507,6 +624,18 @@ class AwesomeServer {
 		}
 	}
 
+	/**
+ 	 * A shortcut method for routing a specific file as a push portion of an http/2 request.
+ 	 *
+ 	 * HTTP/2 allows for multiple response to be sent for a single incoming request. This
+ 	 * route approach lets you indicate certain files that should be pushed as part
+ 	 * of a HTTP/2 response; instead of having to create a custom route every time.
+	 *
+	 * @param  {(string|RegExp|AbstractPathMatcher)}  path           The path to match.
+	 * @param  {[type]}                               referencePath  the path the push is served as, used by http/2 in its resolve.
+	 * @param  {(string|null)}                        contentType    Optional contentType to use when serving.
+	 * @param  {string}                               filename       Filename or directory to serve.
+	 */
 	push(path,referencePath,contentType,filename) {
 		if (arguments.length===3) [path,referencePath,contentType,filename] = [path,referencePath,null,contentType];
 
@@ -529,11 +658,39 @@ class AwesomeServer {
 		}
 	}
 
+	/**
+	 * Given some file path, attempt to locate an existing version of that file path
+	 * based on the following rules:
+	 *
+	 * 		- absolute path;
+	 * 		- relative to AwesomeServer;
+	 * 		- relative to the module which created AwesomeServer;
+	 * 		- relative to process.cwd().
+	 *
+	 * The first of these that exists in the order outlined above, wins.  Of none
+	 * of these exists, returns null.
+	 *
+	 * This function is useful for resolving against you developed code. It is also
+	 * used by the AwesomeServe wherever a filename is used.
+	 *
+	 * @param  {string} filename   filename to find
+	 * @return {(string|null)      fully resolved filename
+	 */
 	resolve(filename) {
 		let resolved = _resolve(filename);
 		return resolved && resolved.filename || null;
 	}
 
+	/**
+	 * AwesomeServer's primary handler for incoming request.  Each server is given
+	 * this method to process incoming request against.
+	 *
+	 * It is exposed here to be overloaded as needed.
+	 *
+	 * @param  {AbstractRequest}   request  The incoming request request object.
+	 * @param  {AbstractResponse}  response THe incoming request response object.
+	 * @return {Promise} A promise that resolves when the request handling is complete.
+	 */
 	async handler(request,response) {
 		if (!request) throw new Error("Missing request.");
 		if (!(request instanceof AbstractRequest)) throw new Error("Invalid request.");
@@ -590,6 +747,10 @@ class AwesomeServer {
 	}
 }
 
+/**
+ * Internal route function.
+ * @private
+ */
 const _route = function route(method,path,handler,parent=null) {
 	if (typeof method==="string" && path instanceof AbstractController) [method,path,handler,parent] = ["*",...arguments];
 	if (typeof method==="string" && AbstractController.isPrototypeOf(path)) [method,path,handler,parent] = ["*",...arguments];
@@ -649,6 +810,10 @@ const _route = function route(method,path,handler,parent=null) {
 	return route;
 };
 
+/**
+ * Internal route function specifically for function cases.
+ * @private
+ */
 const _routeFunction = function routeContoller(route,handler) {
 	route.routes = [function router(path,request,response) {
 		return new Promise(async (resolve,reject)=>{
@@ -668,11 +833,19 @@ const _routeFunction = function routeContoller(route,handler) {
 	return route;
 };
 
+/**
+ * Internal route function specifically for controller cases.
+ * @private
+ */
 const _routeController = function routeController(route,controller) {
 	_routeFunction.call(this,route,controller.handler.bind(controller));
 	return route;
 };
 
+/**
+ * Internal route function specifically for file cases.
+ * @private
+ */
 const _routeFile = function routeControllerFile(route,filename) {
 	let clazz;
 	try {
@@ -716,6 +889,10 @@ const _routeFile = function routeControllerFile(route,filename) {
 	return route;
 };
 
+/**
+ * Internal route function specifically for directory cases.
+ * @private
+ */
 const _routeDirectory = function routeDirectory(parent,dir,path="/") {
 	parent.routes = [];
 
@@ -738,6 +915,10 @@ const _routeDirectory = function routeDirectory(parent,dir,path="/") {
 	});
 };
 
+/**
+ * Internal unroute function.
+ * @private
+ */
 const _unroute = function _unroute(method,path,handler) {
 	if (typeof method==="string" && path instanceof AbstractController) [method,path,handler] = ["*",...arguments];
 	if (typeof method==="string" && AbstractController.isPrototypeOf(path)) [method,path,handler] = ["*",...arguments];
@@ -777,15 +958,7 @@ const _unroute = function _unroute(method,path,handler) {
 };
 
 /**
- * Attempts to locate a given filename. The filename is tried itself, then tried relative
- * to the module.parent (the calling module), or finally relative to process.cwd(). If
- * it is found in one of these, that is returned along with the stat object for that
- * filename. If none of these approaches works, null is returned.
- *
- * @param  {string} filename The filename to try and locate.
- *
- * @return {Object} The filename and FS.stat result for the found file.
- *
+ * Internal _resolve function.
  * @private
  */
 const _resolve = function resolve(filename) {
@@ -830,6 +1003,5 @@ const _resolve = function resolve(filename) {
 	// fail
 	return null;
 };
-
 
 module.exports = AwesomeServer;

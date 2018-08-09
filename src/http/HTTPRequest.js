@@ -7,6 +7,8 @@ const URL = require("url");
 
 const AbstractRequest = require("../AbstractRequest");
 
+const $CONTENT = Symbol("content");
+
 class HTTPRequest extends AbstractRequest{
 	constructor(request) {
 		super(request);
@@ -53,40 +55,27 @@ class HTTPRequest extends AbstractRequest{
 		return this.headers["user-agent"] || "";
 	}
 
-	get content() {
+	read() {
+		if (this[$CONTENT]) return Promise.resolve(this[$CONTENT]);
+
 		return new Promise((resolve,reject)=>{
-			let data = null;
-
 			try {
-				this.original.once("end",()=>{
-					resolve(data);
-				});
-
+				let buf = Buffer.alloc(0);
 				this.original.on("data",(chunk)=>{
-					if (chunk===undefined || chunk===null) return;
-					if (data===null) {
-						data = chunk;
-					}
-					else if (typeof chunk==="string" && data instanceof Buffer) {
-						data = Buffer.concat([data,Buffer.from(chunk,this.contentEncoding)]);
-					}
-					else if (typeof chunk==="string" && typeof data==="string") {
-						data += chunk;
-					}
-					else if (chunk instanceof Buffer && data instanceof Buffer) {
-						data = Buffer.concat([data,chunk]);
-					}
-					else if (chunk instanceof Buffer && typeof data==="string") {
-						data += chunk.toString(this.contentEncoding);
-					}
+					if (!chunk) return;
+					buf = Buffer.concat([buf,chunk]);
 				});
+				this.original.on("end",()=>{
+					this[$CONTENT] = buf;
+					resolve(buf);
+				});
+				this.original.resume();
 			}
 			catch (ex) {
 				return reject(ex);
 			}
 		});
 	}
-
 }
 
 module.exports = HTTPRequest;

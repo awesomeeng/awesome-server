@@ -4,9 +4,14 @@
 
 
 /**
- * Defines an AbstractController.
+ * Defines an AbstractController. For more information on controllers, please
+ * see our Controller documentation:
  */
 class AbstractController {
+	/**
+	 * Constructor.
+	 * @constructor
+	 */
 	constructor() {
 	}
 
