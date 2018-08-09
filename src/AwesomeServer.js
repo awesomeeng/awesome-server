@@ -334,6 +334,94 @@ class AwesomeServer {
 		return false;
 	}
 
+	/**
+	 * Add a route for incoming requests. A route is defined as some handler that responds to
+	 * an incoming request. Routing is the backbone of AwesomeServer which takes an incoming
+	 * request from a server, matches zero or more routes against the request, and then
+	 * executes each matching route.
+	 *
+	 * Routing is decribed in much more detail in our routing documentation:
+	 *
+	 * route() has four different invocations that have slightly different meanings, depending on
+	 * the arguments passed into it.
+	 *
+	 * 	 route(method,path,handler) - The most basic form of routing, this will execute the given
+	 * 	 handler Function if the method and path match for an incoming request. (see method and see
+	 * 	 path below.)
+	 *
+	 *   route(method,path,controller) - This will execute the given controller (see
+	 *   controllers below) if the method and path match for an incoming request. (see method and
+	 *   see path below).
+	 *
+	 *   route(method,controller) - A synonym for calling route("*",path,controller).
+	 *
+	 *   route(string,path,filename) - A synonym for calling route(method,path,controller)
+	 *   except the given filename is loaded an instantiated as a controller first. This lets you
+	 *   reference external controllers by filename easily.
+	 *
+	 * method: The method argument is a string that identifies one of the well known HTTP Methods
+	 * or a wildcard character "*" to match all methods.  The HTTP Methods supported are GET, POST,
+	 * PUT, DELETE, HEAD, OPTIONS, CONNECT, TRACE, and PATCH.
+	 *
+	 * path: The path argument may be either a string, a Regular Expression, or an instance of
+	 * AbstractPathMatcher. A path matches the path portion of the url; not including the
+	 * search/query or hash portions.
+	 *
+	 *   string: Five different types of string paths can be defined:
+	 *
+	 * 		exact: A string that matches exactly the url path from the request. Exact path
+	 * 		strings look like this: "/test" and do not contain any wildcard "*" or or "|"
+	 * 		characters.
+	 *
+	 * 		startsWith: A string that matches the beginning portion of the url path from the
+	 * 		request.  startsWith strings look like this: "/test*" and must end with a
+	 * 		wildcard character "*" and may not contain an or "|" character.
+	 *
+	 * 		endsWith: A string that matches the ending portion of the url path from the
+	 * 		request. endsWith strings look like this: "*test" and must begin with a
+	 * 		wildcard character "*" and may not contain an or "|" character.
+	 *
+	 * 		contains: A string that matches if contained within some portion (including the
+	 * 		beginning and ending) of the url path from the request.  contains strings look like
+	 * 		this: "*test*" and must both begin with and end with the wildcard "*" character and
+	 * 		may not contain an or "|" character.
+	 *
+	 * 		or: two or more path strings (from the above options) separated by an or "|"
+	 * 		character where at least one of the or segments matches the url path from the
+	 * 		request.  Or strings look like this: "/test|/test/*".
+	 *
+	 *   RegExp: a regular expression that matches the url path from the request. RegExp
+	 *   paths look like this: /^\/test$/
+	 *
+	 *   AbstractPathMatcher: You may provide your own implementation of AbstractPathMatcher
+	 *   to be used to determine if the url path of the request is a match. AbstractPathMatcher
+	 *   would need to be extended and the match(path), subtract(path) and toString() methods
+	 *   would need to be implemented.
+	 *
+	 * handler: A handler function that will be executed when the incoming request method
+	 * and path matches.  The handler function has the following signature:
+	 *
+	 * 		handler(path,request,response)
+	 *
+	 * 			path: is the modified path of the incoming request. It has been modified, but
+	 * 			removing the matching path out of it.  For example, if the incoming path is
+	 * 			"/api/xyz" and the route path argument is "/api/*" this path argument would
+	 * 			have "xyz" as its value; the "/api/" was removed out.
+	 *
+	 * 			request: An instance of AbstractRequest which wraps the underlying request
+	 * 			object from the server. See AbstractRequest for more details.
+	 *
+	 * 			response: An instance of AbstractResponse which wraps the underlying response
+	 * 			obect from the server. See AbstractResponse for more details.
+	 *
+	 * controller: An instance of AbstractController that will be executed when the incoming
+	 * request method and path matches.  Controllers are a great way to strcuture your API
+	 * endpoints around url resources. For more information on controllers go here:
+	 *
+	 * @param  {string} method  [description]
+	 * @param  {(string|RegExp|AbstractPathMatcher)} path    [description]
+	 * @param  {(Function|AbstractController)} handler [description]
+	 */
 	route(method,path,handler) {
 		// we are just wrapping the internal function here so we dont expose what the internal functions returns.
 		_route.call(this,method,path,handler);
