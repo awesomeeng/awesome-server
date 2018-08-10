@@ -15,7 +15,7 @@ const $RUNNING = Symbol("running");
 
 /**
  * HTTP implementation of AbstractServer, which is used by AwesomeServer
- * when AwesomeSErver.addHTTPServer() is used. This is basically a
+ * when AwesomeServer.addHTTPServer() is used. This is basically a
  * wrapper around nodejs' http module.
  *
  * @extends AbstractServer

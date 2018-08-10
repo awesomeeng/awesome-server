@@ -10,7 +10,28 @@ const $PARENT = Symbol("parent");
 const $STREAM = Symbol("stream");
 const $HEADERS = Symbol("headers");
 
+/**
+ * Class for wrapping HTTP/2 push response streams.
+ *
+ * Given some HTTP2 response, it is possible to push additional assets as part of
+ * the outgoing stream. To do so, we create a PushResponse for each additional
+ * asset.
+ *
+ * A PushResponse is created by calling PushResponse.create() instead of
+ * by using its constructor.
+ *
+ * Once created the PushResponse can be used to write or stream data as need. Calling
+ * end() of a PushResponse closes just that PushResponse, and not the parent HTTP/2
+ * response.
+ */
 class PushResponse {
+	/**
+	 * Factory function. Use this instead of the constructor.
+	 *
+	 * @param  {[type]} parent  [description]
+	 * @param  {[type]} headers [description]
+	 * @return {[type]}         [description]
+	 */
 	static create(parent,headers) {
 		return new Promise((resolve,reject)=>{
 			try {
@@ -26,6 +47,14 @@ class PushResponse {
 		});
 	}
 
+	/**
+	 * Constructor, but should not be used. use PushResponse.create() instead.
+	 *
+	 * @constructor
+	 * @param {[type]} parent       [description]
+	 * @param {[type]} stream       [description]
+	 * @param {Object} [headers={}] [description]
+	 */
 	constructor(parent,stream,headers={}) {
 		if (!parent) throw new Error("Missing parent.");
 		if (!stream) throw new Error("Missing stream.");
@@ -40,18 +69,46 @@ class PushResponse {
 		});
 	}
 
+	/**
+	 * Returns the parent HTTP2 or PushResponse object.
+	 *
+	 * @return {(HTTP2Response|PushResponse)} [description]
+	 */
 	get parent() {
 		return this[$PARENT];
 	}
 
+	/**
+	 * Returns the underlying HTTP/2 stream.
+	 *
+	 * @return {[type]} [description]
+	 */
 	get stream() {
 		return this[$STREAM];
 	}
 
+	/**
+	 * Returns the headers object set by writeHead().
+	 * @return {[type]} [description]
+	 */
 	get headers() {
 		return this[$HEADERS];
 	}
 
+	/**
+	 * Sets the status code and headers for the push response. This may only be
+	 * called once per push response and cannot be called after a write() or
+	 * and end() for this push response has been called.
+	 *
+	 * Unlike write() and end() this does not return a Promise and does
+	 * not need to be preceeded by an await.
+	 *
+	 * THe headers parameter should have the header keys as lower case.
+	 *
+	 * @param statusCode {number}
+	 * @param statusMessage {(string|null)} optional.
+	 * @param headers {Object} optional.
+	 */
 	writeHead(statusCode,statusMessage,headers) {
 		if (arguments.length===1) [statusCode,statusMessage,headers] = [statusCode,null,null];
 		if (arguments.length===2) [statusCode,statusMessage,headers] = [statusCode,null,headers];
@@ -61,6 +118,17 @@ class PushResponse {
 		return this.stream.writeHead(statusCode,statusMessage,headers);
 	}
 
+	/**
+	 * Writes a chunk of data to the push response with the given encoding.
+	 *
+	 * Returns a Promise that will resolve when the write is complete.
+	 * It is always good practice to await a write().
+	 *
+	 * @param data {(Buffer|string)}
+	 * @param encoding {string} optional. Defaults to utf-8.
+	 *
+	 * @return {Promise}
+	 */
 	write(data,encoding) {
 		return new Promise((resolve,reject)=>{
 			try {
@@ -75,6 +143,18 @@ class PushResponse {
 		});
 	}
 
+	/**
+	 * Writes the passed in data to the push response with the given encoding
+	 * and then marks the push response finished.
+	 *
+	 * Returns a Promise that will resolve when the end is complete.
+	 * It is always good practice to await an end().
+	 *
+	 * @param data {(Buffer|string)}
+	 * @param encoding {string} optional. Defaults to utf-8.
+	 *
+	 * @return {Promise}
+	 */
 	end(data,encoding) {
 		return new Promise((resolve,reject)=>{
 			try {
@@ -89,6 +169,23 @@ class PushResponse {
 		});
 	}
 
+	/**
+	 * Pipes the given Readable stream into the push response object. writeHead()
+	 * should be called prior to this.
+	 *
+	 * When the pipeFrom() is complete, end() is called and the push response
+	 * is marked finished.
+	 *
+	 * It is worth noting that pipeFrom() is different from nodejs Stream
+	 * pipe() method in that pipe() takes as an argument the writable stream.
+	 * pipeFrom() flips that and takes as an argument the readable stream.
+	 *
+	 * Returns a Promise that will resolve when the end of the stream has
+	 * been sent and end() has been called. It is always good practice to
+	 * await pipeFrom().
+	 *
+	 * @return {Promise}
+	 */
 	pipeFrom(readable) {
 		if (!readable) throw new Error("Missing readable.");
 		if (!(readable instanceof Readable)) throw new Error("Invalid readable.");
