@@ -6,6 +6,11 @@ const AbstractPathMatcher = require("../AbstractPathMatcher");
 
 const $PATH = Symbol("path");
 
+/**
+ * Matches the beginning of a string against a given path.
+ *
+ * @extends AbstractPathMatcher
+ */
 class StringStartsWithMatcher extends AbstractPathMatcher {
 	constructor(path) {
 		super();

@@ -4,7 +4,19 @@
 
 const HTTPSRequest = require("../https/HTTPSRequest");
 
+/**
+ * HTTP/2 Request wrapper class. Extends from HTTPSRequest which in
+ * turn extends from HTTPRequest and AbstractRequest.  Most of the
+ * details is in HTTPRequest.
+ *
+ * @extends HTTPSRequest
+ */
 class HTTP2Request extends HTTPSRequest{
+	/**
+	 * @constructor
+	 * @param {IncomingMessage} request
+	 * @param {ServerResponse} response
+	 */
 	constructor(request/*,response*/) {
 		super(request);
 	}

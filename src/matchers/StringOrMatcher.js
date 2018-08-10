@@ -6,6 +6,11 @@ const AbstractPathMatcher = require("../AbstractPathMatcher");
 
 const $MATCHERS = Symbol("matchers");
 
+/**
+ * Matches the given path against at least 1 string PathMatcher expression.
+ *
+ * @extends AbstractPathMatcher
+ */
 class StringOrMatcher extends AbstractPathMatcher {
 	constructor(path) {
 		super();

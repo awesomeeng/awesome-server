@@ -13,7 +13,19 @@ const AbstractController = require("../AbstractController");
 
 const $DIR = Symbol("dir");
 
+/**
+ * A specialized controller for serving a directory of content as incoming requests
+ * come in. This controller is used from AwesomeServer.serve() when passed a directory.
+ *
+ * @extends AbstractController
+ */
 class DirectoryServeController extends AbstractController {
+	/**
+	 * Instantiate the controller.
+	 *
+	 * @param {string} dir fully resolved directory.
+	 * @constructor
+	 */
 	constructor(dir) {
 		if (!dir) throw new Error("Missing dir.");
 		if (typeof dir!=="string") throw new Error("Invalid dir.");
@@ -23,10 +35,25 @@ class DirectoryServeController extends AbstractController {
 		this[$DIR] = dir;
 	}
 
+	/**
+	 * Returns the directory being served.
+	 *
+	 * @return {[type]}
+	 */
 	get dir() {
 		return this[$DIR];
 	}
 
+	/**
+	 * get handler. Returns a Promise that resolves when the response
+	 * is completed.  If a request does not match a file in the
+	 * directory, a 404 error is returned.
+	 *
+	 * @param  {string}             path
+	 * @param  {AbstractRequest}    request
+	 * @param  {AbstractResponse}   response
+	 * @return {Promise}
+	 */
 	get(path,request,response) {
 		return new Promise(async (resolve,reject)=>{
 			try {

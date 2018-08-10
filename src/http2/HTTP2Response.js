@@ -14,6 +14,13 @@ const PushResponse = require("./PushResponse");
 
 const $SERVER_ROOT = Symbol("serverRoot");
 
+/**
+ * HTTP/2 Request wrapper class. Extends from HTTPSRequest which in
+ * turn extends for HTTPRequest and AbstractRequest.  A lot of the
+ * details is in HTTPRequest.
+ *
+ * @extends HTTPSRequest
+ */
 class HTTP2Response extends HTTPSResponse {
 	constructor(request,response) {
 		super(response);
@@ -124,7 +131,6 @@ class HTTP2Response extends HTTPSResponse {
 				return reject(ex);
 			}
 		});
-
 	}
 }
 

@@ -6,6 +6,11 @@ const AbstractPathMatcher = require("../AbstractPathMatcher");
 
 const $PATH = Symbol("path");
 
+/**
+ * Matches the entire string against a given path.
+ *
+ * @extends AbstractPathMatcher
+ */
 class StringExactMatcher extends AbstractPathMatcher {
 	constructor(path) {
 		super();

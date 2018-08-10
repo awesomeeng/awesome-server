@@ -6,6 +6,11 @@ const AbstractPathMatcher = require("../AbstractPathMatcher");
 
 const $PATH = Symbol("path");
 
+/**
+ * Matches a Regular Expression against a given path.
+ *
+ * @extends AbstractPathMatcher
+ */
 class RegExpMatcher extends AbstractPathMatcher {
 	constructor(path) {
 		if (!path) throw new Error("Missing path.");

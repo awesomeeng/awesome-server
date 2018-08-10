@@ -10,7 +10,30 @@ const $FILENAME = Symbol("filename");
 const $CONTENTTYPE = Symbol("contentType");
 const REFERENCEPATH = Symbol("referencePath");
 
+/**
+ * A specialized controller for doing HTTP/2 push responses. This
+ * controller is used from AwesomeServer.push().
+ *
+ * @extends AbstractController
+ */
 class PushServeController extends AbstractController {
+	/**
+	 * Instantiate the controller to push the given filename resource with the
+	 * given contentType and referencePath.
+	 *
+	 * THe filename should be fully resvoled and must exist.
+	 *
+	 * THe referencePath is the filename which the push request is labeled with
+	 * and used by the client side of HTTP/2 resolving.
+	 *
+	 * If contentType is null the controller will attempt to guess the contentType
+	 * from the filename. If it cannot do that it will fallback to
+	 * "application/octet-stream".
+	 *
+	 * @param {string} referencePath [description]
+	 * @param {(string|null)} contentType   [description]
+	 * @param {string} filename      [description]
+	 */
 	constructor(referencePath,contentType,filename) {
 		if (!filename) throw new Error("Missing filename.");
 		if (typeof filename!=="string") throw new Error("Invalid filename.");
@@ -24,18 +47,42 @@ class PushServeController extends AbstractController {
 		this[REFERENCEPATH] = referencePath;
 	}
 
+	/**
+	 * Returns the filename passed to the constructor.
+	 *
+	 * @return {[type]} [description]
+	 */
 	get filename() {
 		return this[$FILENAME];
 	}
 
+	/**
+	 * Returns the contentType. If the contentType passed to the constructor was
+	 * null, this will return the guessed contentType or "application/octet-stream".
+	 *
+	 * @return {[type]} [description]
+	 */
 	get contentType() {
 		return this[$CONTENTTYPE];
 	}
 
+	/**
+	 * Returns the referencePath passed into the constructor.
+	 *
+	 * @return {[type]} [description]
+	 */
 	get referencePath() {
 		return this[REFERENCEPATH];
 	}
 
+	/**
+	 * get handler.
+	 *
+	 * @param  {string}             path
+	 * @param  {AbstractRequest}    request
+	 * @param  {AbstractResponse}   response
+	 * @return {Promise}
+	 */
 	get(path,request,response) {
 		return new Promise(async (resolve,reject)=>{
 			try {
