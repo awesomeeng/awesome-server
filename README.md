@@ -8,16 +8,16 @@ AwesomeServer provides...
  - An easy to use API Server framework.
  - HTTP support.
  - HTTPS support.
- - HTTP/2 support including push routes for preloading.
+ - HTTP/2 support including push routing for preloading.
  - Or mix and match all three types of servers.
  - Basic routing to channel HTTP Method X along path Y into predefined functions.
- - Advanced routing using Controller that take your routing to the next level.
+ - Advanced routing using Controllers that take your routing to the next level.
  - Controllers from Classes, Files, or whole Directory trees.
  - Support for serving static files (or whole directories) to specific routes.
  - Easy built-in redirects.
  - Built around native promises and ready for async/await.
  - Integrated with AwesomeLog for easy logging if you want it.
- - Extensible with custom Servers or Routers.
+ - Extensible with custom Servers.
 
 ## Why another API Server solution?
 
@@ -26,8 +26,11 @@ AwesomeServer is similar to Express, or Fastly, Hapi, etc. and those are all goo
 ## Contents
  - [Installation](#installation)
  - [Setup](#setup)
+ - [Documentation](#documentation)
+ - [Servers](#servers)
  - [Routing](#routing)
  - [Paths](#paths)
+ - [Controllers](#controllers)
  - [Advanced Techniques](#advanced-techniques)
  - [Examples](#examples)
  - [Awesome Engineering](#the-awesome-engineering-company)
@@ -62,7 +65,7 @@ server.addHTTPServer({
 
 3). Add Routes...
 ```
-server.router.add("GET","/test",(path,request,response)=>{
+server.route("GET","/test",(path,request,response)=>{
 	return response.writeHTML("Hello world!");
 });
 ```
@@ -77,158 +80,118 @@ server.start();
  - [Detailed Documentation](./docs/README.md)
  - [API Documentation](./docs/API.md)
 
-## Routing
+## Servers
 
-There are several approaches to defining routes out of the box with AwesomeServer:
- - You can define [routes as functions](#function-routing) (much like how you do it in express but without the nasty `next()` callbacks);
- - You can define a [Controller class](#controller-class-routing) for handling similar endpoints;
- - You can define a [Controller as a file](#controller-file-routing) which AwesomeServer will read and instantiate;
- - You can define a [directory of Controller files](#controller-directory-routing) which AwesomeServer will read, map to paths, and instantiate;
- - You can define a [specific file to serve](#serve-file-routing) for a specific route;
- - You can define a [directory to serve](#serve-directory-routing) any file that matches a related route;
- - You can define a [specific resource to push](#push-serve-routing) as part of an HTTP/2 connection.
+To use AwesomeServer you first have to add one (or more) servers to receive incoming request.
+You can choose from HTTP, HTTPS or HTTP/2 servers, by default, or add your own custom server entirely.
 
-### Function Routing
+### HTTP Server
 
-With Function Routing you define a specific function to execute when AwesomeServer receives a specific *HTTP Method* and a specific *path*.
+You create a HTTP Server instance with the `addHTTPServer(config)` method, as shown here:
 
 ```
-server.router.add(method,path,handlerFunction)
-```
-
-The function called when the route is a match has the signature `f(path,request,response)`.
-
-```
-server.router.add("GET","/test",(path,request,response)=>{
- 	... do something here ...
+let server = new AwesomeServer();
+server.addHTTPServer({
+	host: "localhost",
+	port: 7080
 });
 ```
 
-**You must return a promise from your function.**
+HTTP Server functionally wraps the nodejs http module.
 
-### Controller Class Routing
+For more information on using HTTP Server with AwesomeServer, read our docs here:
 
-With Controller Class routing you provide a specific controller that will be called for **any** *HTTP method* for a given *path*.  The controller is an instance of `AwesomeServer.AbstractController` and provides a means for handling each type of *HTTP method* you need to support.
+### HTTPS Server
 
-```
-server.router.addController(path,controller);
-```
-
-See the seciton below on [Controllers](#controllers) for more details on how they work.
+You create a HTTPS Server instance with the `addHTTPSServer(config)` method, as shown here:
 
 ```
-server.router.addController("/test",myController);
+let server = new AwesomeServer();
+server.addHTTPSServer({
+	host: "localhost",
+	port: 7080,
+	cert: "./publickey.pem",
+	key: "./privatekey.pem"
+});
 ```
 
+HTTPS Server functionally wraps the nodejs https module.
 
-### Controller File Routing
+For more information on using HTTPS Server with AwesomeServer, read our docs here:
 
-AwesomeServer tries to make your life a little easier, and thus Controller File Routing tries to take some of the burden of instantiating controllers off your plate.  You provide a *path* and a resolved filename to a valid class definition that implements `AwesomeServer.AbstractController`. If the file meets the following conditions, AwesomeServer will instantiate the Controller and then map it to the given *path* route.
+### HTTP/2 Server
 
- - Must be a valid nodejs javascript file;
- - Must compile and not contain any syntax errors;
- - Must export a Class that extends `AwesomeServer.AbstractController`.
-
-```
-server.router.addControllerFile(path,filename);
-```
+You create a HTTP/2 Server instance with the `addHTTP2Server(config)` method, as shown here:
 
 ```
-server.router.addControllerFile("/test","../controllers/MyController.js");
+let server = new AwesomeServer();
+server.addHTTP2Server({
+	host: "localhost",
+	port: 7080,
+	cert: "./publickey.pem",
+	key: "./privatekey.pem"
+});
 ```
 
-It is important to note that the **filename** must be resolvable to the actual file.  Relative filenames will be resolve relative to the current working directory `process.cwd()`.  If you want the file resolved to a specific location in your source code relative to the place where you are calling `server.router.addControllerFile()` you need to resolve it against the module filename. As a shortcut, AwesomeServer provides the `server.resolve(filename)` function to ease use.
+HTTP/2 Server functionally wraps the nodejs https module.
+
+For more information on using HTTP/2 Server with AwesomeServer, read our docs here:
+
+## Routing
+
+Routing is the process of taking incoming requests from the servers and sending them to various handling functions or controllers based on their method and path. Routing is primarily done by calling the `server.route(method,path,handler)` function, shown below...
 
 ```
-server.router.addControllerFile("/test",server.resolve("../controllers/MyController.js"));
+server.route("GET","/test",someGetHandler);
+server.route("POST","/test",somePostHandler);
+server.route("*","*",catchAllHandler);
 ```
 
-### Controller Directory Routing
+Each call to route take three arguments:
 
-To ease development one step further, AwesomeServer provides Controller Directory Routing.  You supply the resolved path to a given directory, and AwesomeServer will map each JS file in that directory which matches the conditions outlined in Controller File Routing, to a path matching its name.  This is a recursive walk, so sub-directories get mapped using their sub-directory name and the filename, for expanded paths.
+	*method*: Is a valid HTTP Method or the wildcard "*" character.
 
-Consider the following tree:
+	*path*: Describes how to match against the path portion of the incoming request.  There are different types of way to match the path and you can read all about the options in the [Paths](#paths) section below.
 
-```
-controllers
-  -- One.js
-  -- Two.js
-  -- Three
-    -- Four.js
-```
+	*handler*: May be one of several different things used to describe how to handle the
+	incoming request that has matched the method and path conditions. The handler is only called
+	if the method and path are matches.  Also, its important to note that it is possible to
+	have multiple routes match a single request and their effects to build upon one another.
+	However, when the incoming requests' response object is "finished", AwesomeServer stop
+	executing handlers.
 
-If we used the `addControllerDirectory(filename)` method...
+### Handler Types
 
-```
-server.addControllerDirectory("../controllers");
-```
+Handlers can be one of several different ways of describing how to handle a request:
 
-The following controllers would be mapped as shown...
+	*function*: The most basic form of handling a route, a function passed in as a handler will be
+	executed when the route matches.  The function is executed with the signature
+	(path,request,response).
 
- - /One - One.js
- - /Two - Two.js
- - /Three/Four - Three/Four.js
+	*controller*: You can pass a controller or controller class in as a handler.  The controller
+	will then be executed when the route matches.  If a controller class is passed in, an instance of the controller is instantiated and used. Learn more about the aawesomeness that is controllers here: [Controllers](#controllers).
 
-The resolved directory you pass to `addControllerDirectory()` must be resolved as described in Controller File Routing.
+	*filename*: If you pass the filename to a valid, existing .js file that exports a Controller instance or Controller class, AwesomeServer will require the Controller file, create an instance of that controller, if needed, and then use that as the handler.
 
-### Serve File Routing
 
-For conveinence, AwesomeServer provides a means to route serving a specific file for a specific path.
 
-```
-server.router.addServe(path,contentType,filename);
-```
 
-Each time AwesomeServer gets a GET request that matches the path, the given filename will be served as the response.
 
-If the *contentType* argument is null AwesomeServer will try and guess the content-type and use that value. In the event it cannot guess, it will use `application/octet-stream`.
 
-```
-server.addServe("/test","text/html","../files/test.html");
-server.addServe("/test/test.css","text/css","../files/test.css");
-server.addServe("/test/data",null,"../files/test.blah");
-```
 
-### Serve Directory Routing
 
-Often you may need to serve more than one file via AwesomeServer, so we have provided an easy way to do that.
 
-```
-server.router.addServeDirectory(path,directory);
-```
 
-When AwesomeServer gets any GET request that matches the given *path* or starts with the given *path* it will attempt to find and serve the matching file in the given *directory*.  The `content-type` of the file will be guessed or `application/octet-stream`.
 
-```
-server.router.addServeDirectory("/test","../files");
-```
 
-A GET request that matches the path exactly will have `index.html` appended as needed.
 
-Note that the directory specified must resolve as describe din Controller File Routing.
 
-### Push Serve Routing
 
-The last type of pre-built routing is Push Serve Routing. This allows you to specify certain files to be pushed for http2 requests that allow push responses.
 
-```
-server.router.addPushServe(path,contentType,filename);
-```
-This is similar to `server.router.addServe()` except the served content is pushed as part of a mutli-stream HTTP/2 response.
 
-```
-// Fallback and serve the CSS straight up if the http2 stuff doesnt work for some reason.
-server.router.addServe("/test/test.css","./files/test.css");
 
-// Push our CSS to any page that matches /test or /test/*
-server.router.addPushServe("/test/*","/test/test.css","./files/test.css");
-server.router.addPushServe("/test","/test/test.css","./files/test.css");
 
-// Serve our basic html page at /test. Because of the prior push rules, this will also include the pushed css file.
-server.router.addServe("/test","./files/index.html");
-```
-
-For more details on HTTP/2 and Push responses, see our Advanced Topic on the subject.
+	
 
 ## Paths
 
@@ -244,7 +207,7 @@ Most of the routing stuff above allows you to specify the *path* you want to mat
 A basic *path* is simply a string that would match in it entirety.
 
 ```
-server.router.add("GET","/test",someHandler);
+server.route("GET","/test",someHandler);
 ```
 
 In this case "/test" must match completely for the route to be executed.
@@ -254,7 +217,7 @@ In this case "/test" must match completely for the route to be executed.
 A starts with *path* would match against any request where the given *path* matches against the beginning of the request *path*.
 
 ```
-server.router.add("GET","/test*",someHandler);
+server.route("GET","/test*",someHandler);
 ```
 
 In this case, any request path that began with "/test" would match the route.
@@ -264,7 +227,17 @@ In this case, any request path that began with "/test" would match the route.
 A ends with *path* would match against any request where the given *path* matches against the end of the request *path*.
 
 ```
-server.router.add("GET","*/test",someHandler);
+server.route("GET","*/test",someHandler);
+```
+
+In this case, any request *path* that ended with "/test" would match the route.
+
+### Contains Paths
+
+A contains *path* would match against any request where the given *path* matches against any part of the request *path*.
+
+```
+server.route("GET","*/test/*",someHandler);
 ```
 
 In this case, any request *path* that ended with "/test" would match the route.
@@ -274,7 +247,7 @@ In this case, any request *path* that ended with "/test" would match the route.
 Finally, a *path* route can be specified as a Regular Expression.
 
 ```
-server.router.add("GET",/^\/test^/,someHandler);
+server.route("GET",/^\/test^/,someHandler);
 ```
 
 Regular Expressions offer you the most flexibility for advanced *path* handling.
