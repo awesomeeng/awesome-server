@@ -22,27 +22,70 @@ const $SERVER_ROOT = Symbol("serverRoot");
  * @extends HTTPSRequest
  */
 class HTTP2Response extends HTTPSResponse {
+	/**
+	 * @constructor
+	 * @param {IncomingMessage} request
+	 * @param {ServerResponse} response
+	 */
 	constructor(request,response) {
 		super(response);
 		this[$SERVER_ROOT] = request.headers[HTTP2.constants.HTTP2_HEADER_PATH];
 	}
 
+	/**
+	 * Returns the underlying HTTP/2 stream for this response.
+	 *
+	 * @return {Http2Stream}
+	 */
 	get stream() {
 		return this.original.stream;
 	}
 
+	/**
+	 * Returns the relative server root for this incoming request. This allows
+	 * the response to send back relative responses.
+	 *
+	 * @return {string}
+	 */
 	get serverRoot() {
 		return this[$SERVER_ROOT];
 	}
 
+	/**
+	 * Resolve a given path against the incoming request server root.
+	 *
+	 * @param  {string} path
+	 *
+	 * @return {string}
+	 */
 	resolve(path) {
 		return URL.resolve(this.serverRoot,path);
 	}
 
+	/**
+	 * Returns true if http/2 push is supported.
+	 *
+	 * @return {boolean}
+	 */
 	get pushSupported() {
 		return this.original.createPushResponse;
 	}
 
+	/**
+	 * Creates a new push stream as part of this response and pushes some
+	 * content to it. The path for the push should be resolved using the
+	 * resolve() function if it is relative.
+	 *
+	 * Returns a Promise that will resolve when the push is complete.
+	 *
+	 * @param  {number} statusCode
+	 * @param  {string} path
+	 * @param  {string} contentType
+	 * @param  {(Buffer|string)} content
+	 * @param  {Object} [headers={}]
+	 *
+	 * @return {Promise}
+	 */
 	push(statusCode,path,contentType,content,headers={}) {
 		if (!this.pushSupported) return Promise.reject("Push not supported.");
 		if (!this.original.stream) return Promise.reject("Not http2 request, probably downgraded to http1.");
@@ -80,18 +123,92 @@ class HTTP2Response extends HTTPSResponse {
 		});
 	}
 
+	/**
+	 * A push shortcut for text/plain content.
+	 *
+	 * Returns a Promise that will resolve when the push is complete.
+	 *
+	 * @param  {number} statusCode
+	 * @param  {string} path
+	 * @param  {*}      content
+	 * @param  {Object} headers
+	 *
+	 * @return {Promise}
+	 */
 	pushText(statusCode,path,content,headers) {
 		return this.push(statusCode,path,"text/plain",content,headers);
 	}
 
+	/**
+	 * A push shortcut for text/css content.
+	 *
+	 * Returns a Promise that will resolve when the push is complete.
+	 *
+	 * @param  {number} statusCode
+	 * @param  {string} path
+	 * @param  {*}      content
+	 * @param  {Object} headers
+	 *
+	 * @return {Promise}
+	 */
+	pushCSS(statusCode,path,content,headers) {
+		return this.push(statusCode,path,"text/css",content,headers);
+	}
+
+	/**
+	 * A push shortcut for text/html content.
+	 *
+	 * Returns a Promise that will resolve when the push is complete.
+	 *
+	 * @param  {number} statusCode
+	 * @param  {string} path
+	 * @param  {*}      content
+	 * @param  {Object} headers
+	 *
+	 * @return {Promise}
+	 */
 	pushHTML(statusCode,path,content,headers) {
 		return this.push(statusCode,path,"text/html",content,headers);
 	}
 
+	/**
+	 * A push shortcut for application/json content.
+	 *
+	 * If content is a string, it is assumed to be JSON already. If it is not
+	 * a string, it is converted to json by way of JSON.stringify().
+	 *
+	 * Returns a Promise that will resolve when the push is complete.
+	 *
+	 * @param  {number} statusCode
+	 * @param  {string} path
+	 * @param  {*}      content
+	 * @param  {Object} headers
+	 *
+	 * @return {Promise}
+	 */
 	pushJSON(statusCode,path,content,headers) {
+		if (typeof content!=="string") content = JSON.stringify(content);
 		return this.push(statusCode,path,"application/json",content,headers);
 	}
 
+	/**
+ 	 * Creates a new push stream as part of this response and pushes the
+	 * content from the given filename to it. The path for the push should be
+	 * resolved using the resolve() function if it is relative.
+	 *
+	 * The filename should be resolved using AwesomeServer.resolve() prior
+	 * to calling this function.
+	 *
+	 * Returns a Promise that will resolve when the push is complete.
+	 *
+	 * @param  {number} statusCode  [description]
+	 * @param  {string} path        [description]
+	 * @param  {string} contentType [description]
+	 * @param  {string} filename    [description]
+	 * @param  {Object} headers     [description]
+	 *
+	 * @return {Promise}             [description]
+	 */
 	pushServe(statusCode,path,contentType,filename,headers) {
 		if (!this.pushSupported) return Promise.reject("Push not supported.");
 		if (!this.original.stream) return Promise.reject("Not http2 request, probably downgraded to http1.");
