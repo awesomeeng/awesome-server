@@ -158,9 +158,9 @@ describe("AwesomeServer.Routing",function(){
 	it("route redirect",function(){
 		let server = new AwesomeServer();
 
-		server.redirect("/blah1","/test1");
-		server.redirect("/blah2","/test2",true);
-		server.redirect("/blah3","/test3",false);
+		server.redirect("*","/blah1","/test1");
+		server.redirect("GET","/blah2","/test2",true);
+		server.redirect("HEAD","/blah3","/test3",false);
 
 		assert.equal(server.routes.length,3);
 	});
@@ -168,9 +168,9 @@ describe("AwesomeServer.Routing",function(){
 	it("unroute redirect",function(){
 		let server = new AwesomeServer();
 
-		server.redirect("/blah1","/test1");
-		server.redirect("/blah2","/test2",true);
-		server.redirect("/blah3","/test3",false);
+		server.redirect("*","/blah1","/test1");
+		server.redirect("GET","/blah2","/test2",true);
+		server.redirect("HEAD","/blah3","/test3",false);
 
 		assert.equal(server.routes.length,3);
 
@@ -178,7 +178,7 @@ describe("AwesomeServer.Routing",function(){
 		assert.equal(server.routes.length,2);
 
 		server.unroute("*","/blah3");
-		assert.equal(server.routes.length,1);
+		assert.equal(server.routes.length,2);
 	});
 
 	it("route serve file",function(){
