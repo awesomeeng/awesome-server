@@ -82,7 +82,7 @@ server.start();
 
 ## Servers
 
-To use AwesomeServer you first have to add one (or more) servers to receive incoming request.
+To use AwesomeServer you first have to add one (or more) servers to receive incoming requests.
 You can choose from HTTP, HTTPS or HTTP/2 servers, by default, or add your own custom server entirely.
 
 ### HTTP Server
@@ -99,7 +99,7 @@ server.addHTTPServer({
 
 HTTP Server functionally wraps the nodejs http module.
 
-For more information on using HTTP Server with AwesomeServer, read our docs here:
+For more information on using HTTP Server with AwesomeServer, read [the HTTP documentation](./docs/Advanced_HTTP.md).
 
 ### HTTPS Server
 
@@ -117,7 +117,7 @@ server.addHTTPSServer({
 
 HTTPS Server functionally wraps the nodejs https module.
 
-For more information on using HTTPS Server with AwesomeServer, read our docs here:
+For more information on using HTTPS Server with AwesomeServer, read [the HTTPS documentation](./docs/Advanced_HTTPS.md).
 
 ### HTTP/2 Server
 
@@ -135,11 +135,11 @@ server.addHTTP2Server({
 
 HTTP/2 Server functionally wraps the nodejs https module.
 
-For more information on using HTTP/2 Server with AwesomeServer, read our docs here:
+For more information on using HTTP/2 Server with AwesomeServer, read [the HTTP/2 documentation](./docs/Advanced_HTTP2.md).
 
 ## Routing
 
-Routing is the process of taking incoming requests from the servers and sending them to various handling functions or controllers based on their method and path. Routing is primarily done by calling the `server.route(method,path,handler)` function, shown below...
+Routing is the process of taking incoming requests from the servers and sending them to various handling functions or [Controllers](#controllers) based on their method and path. Routing is primarily done by calling the `server.route(method,path,handler)` function, shown below...
 
 ```
 server.route("GET","/test",someGetHandler);
@@ -149,112 +149,81 @@ server.route("*","*",catchAllHandler);
 
 Each call to route take three arguments:
 
-	*method*: Is a valid HTTP Method or the wildcard "*" character.
+> **method**: Is a valid HTTP Method or the wildcard "*" character.
 
-	*path*: Describes how to match against the path portion of the incoming request.  There are different types of way to match the path and you can read all about the options in the [Paths](#paths) section below.
+> **path**: Describes how to match against the path portion of the incoming request.  There are different types of way to match the path and you can read all about the options in the [Paths](#paths) section below.
 
-	*handler*: May be one of several different things used to describe how to handle the
-	incoming request that has matched the method and path conditions. The handler is only called
-	if the method and path are matches.  Also, its important to note that it is possible to
-	have multiple routes match a single request and their effects to build upon one another.
-	However, when the incoming requests' response object is "finished", AwesomeServer stop
-	executing handlers.
+> **handler**: May be one of several different things used to describe how to handle the
+incoming request that has matched the method and path conditions. The handler is only called
+if the method and path are matches.  Also, its important to note that it is possible to
+have multiple routes match a single request and their effects to build upon one another.
+However, when the incoming requests' response object is "finished", AwesomeServer stop
+executing handlers. See [Routing documentation(./docs/Advanced_Routing.md)] for more details.
 
 ### Handler Types
 
-Handlers can be one of several different ways of describing how to handle a request:
+Handlers can be one of several different means of describing how to handle a request:
 
-	*function*: The most basic form of handling a route, a function passed in as a handler will be
+> **function**: The most basic form of handling a route, a function passed in as a handler will be
 	executed when the route matches.  The function is executed with the signature
 	(path,request,response).
 
-	*controller*: You can pass a controller or controller class in as a handler.  The controller
-	will then be executed when the route matches.  If a controller class is passed in, an instance of the controller is instantiated and used. Learn more about the aawesomeness that is controllers here: [Controllers](#controllers).
+> **controller**: You can pass a controller or controller class in as a handler.  The controller
+	will then be executed when the route matches.  If a controller class is passed in, an instance of the controller is instantiated and used. Learn more about the awesomeness that is controllers here: [Controllers](#controllers).
 
-	*filename*: If you pass the filename to a valid, existing .js file that exports a Controller instance or Controller class, AwesomeServer will require the Controller file, create an instance of that controller, if needed, and then use that as the handler.
+> **filename**: If you pass a filename to a valid existing `.js` file that exports a Controller instance or Controller class, AwesomeServer will require the Controller file, create an instance of that controller, if needed, and then use that as the handler as described above. This enables working with Controllers in a much easier way.
 
+> **directory**: If you pass a filename to a valid existing directory, AwesomeServer will recursively walk the directory mapping any valid `.js` file that exports a Controller instance or Controller class. The mapping is based on the route passed in, the location of the controller file relative to the root directory name provided, and the filename itself.  So if you had the following structure...
 
+```
+files/
+  one.js
+  two.js
+  three.js
+  three/
+    four.js
+```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+and routed `server.route("*","api","./files");` the resulting routes would be `/api/one`, `/api/two`, `/api/three`, and `/api/three/four`. One route for each matching `.js` file
 
 ## Paths
 
-Most of the routing stuff above allows you to specify the *path* you want to match against.  The value of path may be one of four possible approaches...
+Most of the routing stuff above allows you to specify the *path* you want to match against.  The value of path may be one of following...
 
- - A basic path string;
- - A "starts with" path string;
- - An "ends with" path string;
- - or a Regular Expression.
-
-### Basic Paths
-
-A basic *path* is simply a string that would match in it entirety.
-
+ - A **Exact** path string:
 ```
-server.route("GET","/test",someHandler);
+/path
 ```
-
-In this case "/test" must match completely for the route to be executed.
-
-### Starts With Paths
-
-A starts with *path* would match against any request where the given *path* matches against the beginning of the request *path*.
-
+ - A **Starts With** path string:
 ```
-server.route("GET","/test*",someHandler);
+/path*
 ```
-
-In this case, any request path that began with "/test" would match the route.
-
-### Ends with Paths
-
-A ends with *path* would match against any request where the given *path* matches against the end of the request *path*.
-
+ - An **Ends With** path string:
 ```
-server.route("GET","*/test",someHandler);
+*/path
+```
+ - A **Contains** path string:
+```
+*path*
+```
+ - An **Or** path expression string:
+```
+/path|/path*|*/path
+```
+ -  a **Regular Expression**:
+```
+^/path/
+```
+ -  or a **custom implementation** of our AbstractPathMatcher class:
+```
+new AbstractPathMatcher() { ... }
 ```
 
-In this case, any request *path* that ended with "/test" would match the route.
-
-### Contains Paths
-
-A contains *path* would match against any request where the given *path* matches against any part of the request *path*.
-
-```
-server.route("GET","*/test/*",someHandler);
-```
-
-In this case, any request *path* that ended with "/test" would match the route.
-
-### Regular Expression Paths
-
-Finally, a *path* route can be specified as a Regular Expression.
-
-```
-server.route("GET",/^\/test^/,someHandler);
-```
-
-Regular Expressions offer you the most flexibility for advanced *path* handling.
+To learn more about the details of Paths and Path Matching, check out our dedicated [Paths Documentation](./docs/Advanced_Paths.md).
 
 ## Controllers
 
-A controller is a special type of routing that allows you to keep logical API behaviour together in a unified class.  Controllers respond to any HTTP method for a given path; so you can write a GET handler and a POST handler together. Controllers are roguhly based on Grails and other frameworks, but with a little more JS magic.
+A controller is a special type of routing that allows you to keep logical API behaviour together in a unified class.  Controllers respond to any HTTP method for a given path; so you can write a GET handler and a POST handler together in a single class focus around a given endpoint route. Controllers are roughly based on Grails and other frameworks, but with a little more JS magic.
 
 A controller is always a Class (or instance of) that extends from `AwesomeServer.AbstractContoller`. AbstractController provides the handling of the incoming request and executing the appropriate method for the request based on the *HTTP method*.
 
@@ -278,32 +247,22 @@ class MyController extends AbstractController {
 
 If the controller does not contain a corresponding method for the *HTTP Method* the controller will execute the `any()` function (see below).
 
-### `before()`
-
-Additionally, a controller may implement the `before(path,request,response)` function which will be executed before the corresponding *HTTP Method* function.
-
-### `after()`
-
-Additionally, a controller may implement the `after(path,request,response)` function which will be executed after the corresponding *HTTP Method* function.
-
-### `any()`
-
-In the event the controller does not have a matching *HTTP Method* function, the `any()` function will be called instead. The sub-class of the controller can implement this as a kind of catch-all for request, as desired.  However, not that if the controller doesn't implement it, nothing would occur, which is okay.
+You can read lots more about Controllers in our dedicated [Controller Documentation](./docs/Advanced_Controllers).
 
 ## Documentation
 
- - [API Documentation](./docs/API.md)
+ - [HTTP Setup and Configuration](./docs/Advanced_HTTP.md)
+ - [HTTPS Setup and Configuration](./docs/Advacned_HTTPS.md)
+ - [HTTP/2 Setup and Configuration](./docs/Advanced_HTTP2.md)
+ - [Route ordering and multiple handlers](./docs/Advanced_Routing.md)
+ - [Advanced Paths](./docs/Advanced_Paths.md)
+ - [Advanced Controllers](./docs/Advanced_Controllers.md)
+ - [HTTP/2 Techniques](./docs/Advanced_HTTP2Techniques.md)
+ - [Requests](./docs/Advanced_Requests.md)
+ - [Responses](./docs/Advanced_Responses.md)
+ - [Custom Servers](./docs/Advanced_CustomServers.md)
 
- - Advanced Techniques:
-   - [HTTP Setup and Configuration](./docs/Advanced_HTTP.md)
-   - [HTTPS Setup and Configuration](./docs/Advacned_HTTPS.md)
-   - [HTTP/2 Setup and Configuration](./docs/Advanced_HTTP2.md)
-   - [Route ordering and multiple handlers](./docs/Advanced_Routing.md)
-   - [Advanced Controllers](./docs/Advanced_Controllers.md)
-   - [HTTP/2 Techniques](./docs/Advanced_HTTP2Techniques.md)
-   - [Requests](./docs/Advanced_Requests.md)
-   - [Responses](./docs/Advanced_Responses.md)
-   - [Custom Servers](./docs/Advanced_CustomServers.md)
+ - [API Documentation](./docs/API.md)
 
 ## Examples
 
