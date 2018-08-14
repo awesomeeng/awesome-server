@@ -85,7 +85,7 @@ server.start();
 To use AwesomeServer you first have to add one (or more) servers to receive incoming requests.
 You can choose from HTTP, HTTPS or HTTP/2 servers, by default, or add your own custom server entirely.
 
-### HTTP Server
+#### HTTP Server
 
 You create a HTTP Server instance with the `addHTTPServer(config)` method, as shown here:
 
@@ -101,7 +101,7 @@ HTTP Server functionally wraps the nodejs http module.
 
 For more information on using HTTP Server with AwesomeServer, read [the HTTP documentation](./docs/Advanced_HTTP.md).
 
-### HTTPS Server
+#### HTTPS Server
 
 You create a HTTPS Server instance with the `addHTTPSServer(config)` method, as shown here:
 
@@ -119,7 +119,7 @@ HTTPS Server functionally wraps the nodejs https module.
 
 For more information on using HTTPS Server with AwesomeServer, read [the HTTPS documentation](./docs/Advanced_HTTPS.md).
 
-### HTTP/2 Server
+#### HTTP/2 Server
 
 You create a HTTP/2 Server instance with the `addHTTP2Server(config)` method, as shown here:
 
@@ -160,7 +160,7 @@ have multiple routes match a single request and their effects to build upon one 
 However, when the incoming requests' response object is "finished", AwesomeServer stop
 executing handlers. See [Routing documentation(./docs/Advanced_Routing.md)] for more details.
 
-### Handler Types
+#### Handler Types
 
 Handlers can be one of several different means of describing how to handle a request:
 

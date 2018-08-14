@@ -23,15 +23,15 @@ This document describes Controllers, how and why to use them, and some of the re
 
 ## Before, After, and Any
 
-### `before()`
+#### `before()`
 
 Additionally, a controller may implement the `before(path,request,response)` function which will be executed before the corresponding *HTTP Method* function.
 
-### `after()`
+#### `after()`
 
 Additionally, a controller may implement the `after(path,request,response)` function which will be executed after the corresponding *HTTP Method* function.
 
-### `any()`
+#### `any()`
 
 In the event the controller does not have a matching *HTTP Method* function, the `any()` function will be called instead. The sub-class of the controller can implement this as a kind of catch-all for request, as desired.  However, not that if the controller doesn't implement it, nothing would occur, which is okay.
 

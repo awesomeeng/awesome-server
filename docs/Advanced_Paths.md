@@ -9,9 +9,9 @@ This document details the various types of Paths you can provide for routing wit
 
 ## Basic Paths
 
-Basic paths are string expressions that may include wildcard hints to where in the path portion of the incoming request URL, the matching should occur.  AwesomeServer has five types of basic paths: [Exact](#exact_paths), [Starts With](#starts_with_paths), [Ends With](#ends_with_paths), [Contains](#contains_paths), or [Or](#or_paths).
+Basic paths are string expressions that may include wildcard hints to where in the path portion of the incoming request URL, the matching should occur.  AwesomeServer has five types of basic paths: **Exact**, **Starts With**, **Ends With**, **Contains**, or **Or**.
 
-### Exact Paths
+#### Exact Paths
 
 An exact *path* is a string that would match the path portion of the request url exactly.
 
@@ -21,7 +21,7 @@ server.route("GET","/test",someHandler);
 
 In this case "/test" must match completely for the route to be executed.
 
-### Starts With Paths
+#### Starts With Paths
 
 A starts with *path* is a string that would match the beginning of the path portion of the request url.
 
@@ -31,7 +31,7 @@ server.route("GET","/test*",someHandler);
 
 In this case, any request path that began with "/test" would match the route.
 
-### Ends with Paths
+#### Ends with Paths
 
 An ends with *path* is a string that would match the ending of the path portion of the request url.
 
@@ -41,7 +41,7 @@ server.route("GET","*/test",someHandler);
 
 In this case, any request *path* that ended with "/test" would match the route.
 
-### Contains Paths
+#### Contains Paths
 
 A contains *path* is a string that would match any part of the path portion of the request url, including the beginning or ending.
 
@@ -51,7 +51,7 @@ server.route("GET","*/test/*",someHandler);
 
 In this case, any request *path* that contained "/test/" would match the route.
 
-### Or Paths
+#### Or Paths
 
 An Or *path* is a special version of string paths. It allows you to combine any of the above string paths together with the Or "|" character, and returns true for a match wherein any one of the Or portions is a match.
 
