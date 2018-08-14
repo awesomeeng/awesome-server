@@ -174,7 +174,6 @@ Handlers can be one of several different means of describing how to handle a req
 > **filename**: If you pass a filename to a valid existing `.js` file that exports a Controller instance or Controller class, AwesomeServer will require the Controller file, create an instance of that controller, if needed, and then use that as the handler as described above. This enables working with Controllers in a much easier way.
 
 > **directory**: If you pass a filename to a valid existing directory, AwesomeServer will recursively walk the directory mapping any valid `.js` file that exports a Controller instance or Controller class. The mapping is based on the route passed in, the location of the controller file relative to the root directory name provided, and the filename itself.  So if you had the following structure...
-
 ```
 files/
   one.js
@@ -183,7 +182,6 @@ files/
   three/
     four.js
 ```
-
 and routed `server.route("*","api","./files");` the resulting routes would be `/api/one`, `/api/two`, `/api/three`, and `/api/three/four`. One route for each matching `.js` file
 
 ## Paths
