@@ -1,22 +1,22 @@
 # AwesomeServer
 
-AwesomeServer is a customizable API Server framework for Enterprise Ready nodejs applications. It is an easy to setup HTTP or HTTPS or HTTP/2 server allowing you to provide flexible routing and controllers for responding to incoming requests in a consistent, repeatable fashion.
+AwesomeServer is a customizable API Server framework for Enterprise Ready nodejs applications. It is an easy to setup HTTP or HTTPS or HTTP/2 server allowing you to provide flexible routing and controllers for responding to incoming requests in a consistent, repeatable, performant fashion.
 
 ## Features
 
 AwesomeServer provides...
- - An easy to use API Server framework.
+ - Easy to use.
  - HTTP support.
  - HTTPS support.
  - HTTP/2 support including push routing for preloading.
  - Or mix and match all three types of servers.
  - Basic routing to channel HTTP Method X along path Y into predefined functions.
- - Advanced routing using Controllers that take your routing to the next level.
+ - Advanced routing using Controllers that takes your routing to the next level.
  - Controllers from Classes, Files, or whole Directory trees.
  - Support for serving static files (or whole directories) to specific routes.
  - Easy built-in redirects.
  - Built around native promises and ready for async/await.
- - Integrated with AwesomeLog for easy logging if you want it.
+ - Integrated with [AwesomeLog](https://github.com/awesomeeng/AwesomeLog) for easy logging if you want it.
  - Extensible with custom Servers.
 
 ## Why another API Server solution?
@@ -26,12 +26,11 @@ AwesomeServer is similar to Express, or Fastly, Hapi, etc. and those are all goo
 ## Contents
  - [Installation](#installation)
  - [Setup](#setup)
- - [Documentation](#documentation)
  - [Servers](#servers)
  - [Routing](#routing)
  - [Paths](#paths)
  - [Controllers](#controllers)
- - [Advanced Techniques](#advanced-techniques)
+ - [Documentation](#documentation)
  - [Examples](#examples)
  - [Awesome Engineering](#the-awesome-engineering-company)
  - [Support and Help](#support-and-help)
@@ -48,14 +47,20 @@ npm install --save @awesomeeng/AwesomeServer
 
 AwesomeServer is structured to allow you to create your servers, define your routes, and go.
 
-Setup has four steps:
+Setup has five steps:
 
-1). Instantiate AwesomeServer...
+1). Require AwesomeServer...
+
+```
+const AwesomeServer = require("AwesomeServer");
+```
+
+2). Instantiate AwesomeServer...
 ```
 let server = new AwesomeServer();
 ```
 
-2). Add Servers...
+3). Add Servers...
 ```
 server.addHTTPServer({
 	host: "localhost",
@@ -63,22 +68,17 @@ server.addHTTPServer({
 });
 ```
 
-3). Add Routes...
+4). Add Routes...
 ```
 server.route("GET","/test",(path,request,response)=>{
 	return response.writeHTML("Hello world!");
 });
 ```
 
-4). Go!
+5). Go!
 ```
 server.start();
 ```
-
-## Documentation
-
- - [Detailed Documentation](./docs/README.md)
- - [API Documentation](./docs/API.md)
 
 ## Servers
 
@@ -191,7 +191,7 @@ Handlers can be one of several different ways of describing how to handle a requ
 
 
 
-	
+
 
 ## Paths
 
@@ -290,37 +290,40 @@ Additionally, a controller may implement the `after(path,request,response)` func
 
 In the event the controller does not have a matching *HTTP Method* function, the `any()` function will be called instead. The sub-class of the controller can implement this as a kind of catch-all for request, as desired.  However, not that if the controller doesn't implement it, nothing would occur, which is okay.
 
-## Advanced Techniques
+## Documentation
 
- - HTTP Setup and Configuration
- - HTTPS Setup and Configuration
- - HTTP/2 Setup and Configuration
- - Route ordering and multiple handlers
- - Advanced Controllers
- - HTTP/2 Techniques
- - Servers, Requests, and Responses
- - Custom Servers
- - Custom Routers
+ - [API Documentation](./docs/API.md)
+
+ - Advanced Techniques:
+   - [HTTP Setup and Configuration](./docs/Advanced_HTTP.md)
+   - [HTTPS Setup and Configuration](./docs/Advacned_HTTPS.md)
+   - [HTTP/2 Setup and Configuration](./docs/Advanced_HTTP2.md)
+   - [Route ordering and multiple handlers](./docs/Advanced_Routing.md)
+   - [Advanced Controllers](./docs/Advanced_Controllers.md)
+   - [HTTP/2 Techniques](./docs/Advanced_HTTP2Techniques.md)
+   - [Requests](./docs/Advanced_Requests.md)
+   - [Responses](./docs/Advanced_Responses.md)
+   - [Custom Servers](./docs/Advanced_CustomServers.md)
 
 ## Examples
 
 AwesomeServer ships with a set of examples for your reference.
 
- - [BasicServer](./examples/BasicServer/README.md): An example of doing a basic HTTP server.
+ - [BasicServer](./examples/BasicServer): An example of doing a basic HTTP server.
 
- - [HTTPSServer](./examples/HTTPSServer/README.md): An example of doing a basic HTTPS server including adding a public certificate and a private key.
+ - [HTTPSServer](./examples/HTTPSServer): An example of doing a basic HTTPS server including adding a public certificate and a private key.
 
- - [HTTP2Server](./examples/HTTP2Server/README.md): An example of doing a basic hTTP/2 server including how to push multiple responses for a single request.
+ - [HTTP2Server](./examples/HTTP2Server): An example of doing a basic hTTP/2 server including how to push multiple responses for a single request.
 
- - [BasicController](./examples/BasicController/README.md): An example of implementing a basic controller and routing to it.
+ - [BasicController](./examples/BasicController): An example of implementing a basic controller and routing to it.
 
- - [ControllerClasses](./examples/ControllerClasses/README.md): An example of implementing multiple controllers and routing with Controller File Routing.
+ - [ControllerClasses](./examples/ControllerClasses): An example of implementing multiple controllers and routing with Controller File Routing.
 
- - [ControllerDirectory](./examples/ControllerDirectory/README.md): An example of using Controller Directory Routing with multiple controllers and sub-directories.
+ - [ControllerDirectory](./examples/ControllerDirectory): An example of using Controller Directory Routing with multiple controllers and sub-directories.
 
- - [FileServer](./examples/FileServer/README.md): How to build a basic File Server using Server Directory Routing.
+ - [FileServer](./examples/FileServer): How to build a basic File Server using Server Directory Routing.
 
- - [HTTP2FileServer](./examples/HTTP2FileServer/README.md): An example of doing a slightly more complicated HTTP/2 server using Push Serve Routing and File Serve Routing fallback.
+ - [HTTP2FileServer](./examples/HTTP2FileServer): An example of doing a slightly more complicated HTTP/2 server using Push Serve Routing and File Serve Routing fallback.
 
 ## The Awesome Engineering Company
 
