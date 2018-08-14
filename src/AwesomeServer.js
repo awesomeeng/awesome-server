@@ -707,42 +707,43 @@ class AwesomeServer {
 			return (route.method==="*" || route.method===method) && route.matcher.match(path) && route.routes && route.routes.length>0;
 		});
 
-		let proms = matching.reduce((proms,route)=>{
-			if (proms instanceof Error) return proms;
-
-			let mypath = path;
-			if (typeof route.path==="string") {
-				if (route.path.endsWith("*")) mypath = mypath.slice(route.path.length-1);
-				else if (route.path.startsWith("*")) mypath = mypath.slice(0,-(route.path.length-1));
-				else mypath = mypath.slice(route.path.length);
-			}
-
+		let routes = matching.reduce((routes,route)=>{
+			let mypath = route.matcher.subtract(path);
 			route.routes.forEach((r)=>{
-				if (proms instanceof Error) return;
-
-				try {
-					proms.push(r.call(this,mypath,request,response));
-				}
-				catch (ex) {
-					proms = ex && ex instanceof Error || new Error("Unknown error handling request.");
-					return;
-				}
+				routes.push({
+					fullpath: path,
+					path: mypath,
+					router: r
+				});
 			});
-
-			return proms;
+			return routes;
 		},[]);
 
-		if (proms instanceof Error) {
-			Log.error("AwesomeServer","Error handling request "+url+".",proms);
-			response.writeError(500,"Error handling request "+url+".");
-			return;
-		}
-		else {
-			await Promise.all(proms);
-			if (!response.finished) {
-				Log.error("AwesomeServer","404 Not found "+url+".");
-				response.writeError(404,"404 Not found "+url+".");
+		// This executes the routes serially, instead of in parallel.
+		await new Promise((resolve)=>{
+			try {
+				const nextRouter = async function nextRouter() {
+					if (response.finished) return resolve();
+					if (routes.length<1) return resolve();
+
+					let route = routes.shift();
+					let p = route.router.call(this,route.path,request,response);
+					if (p instanceof Promise) await p;
+
+					setImmediate(nextRouter);
+				};
+
+				nextRouter();
 			}
+			catch (ex) {
+				Log.error("AwesomeServer","Error handling request "+url+".",ex);
+				response.writeError(500,"Error handling request "+url+".");
+			}
+		});
+
+		if (!response.finished) {
+			Log.error("AwesomeServer","404 Not found "+url+".");
+			response.writeError(404,"404 Not found "+url+".");
 		}
 	}
 }

@@ -86,10 +86,9 @@ class PushServeController extends AbstractController {
 	get(path,request,response) {
 		return new Promise(async (resolve,reject)=>{
 			try {
-				if (response.pushSupported) await response.pushServe(200,this.referencePath,this.contentType,this.filename);
-				await response.serve(200,this.contentType,this.filename);
-				await response.end();
-
+				if (response.pushSupported) {
+					await response.pushServe(200,this.referencePath,this.contentType,this.filename);
+				}
 				resolve();
 			}
 			catch (ex) {

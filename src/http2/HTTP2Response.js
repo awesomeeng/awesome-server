@@ -228,19 +228,30 @@ class HTTP2Response extends HTTPSResponse {
 
 				Log.info("HTTP2Response","Pushed to client "+path+" from "+filename);
 
+				// we actually want two sets of headers, one for creating
+				// the pushResponse, and one for sending to writeHead. The
+				// diff between the two is the latter cannot have http2 headers
+				// in it.
 				headers = headers || {};
 				headers[HTTP2.constants.HTTP2_HEADER_STATUS] = headers[HTTP2.constants.HTTP2_HEADER_STATUS] || 200;
-				headers[HTTP2.constants.HTTP2_HEADER_CONTENT_TYPE] = headers[HTTP2.constants.HTTP2_HEADER_CONTENT_TYPE] || contentType;
 				headers[HTTP2.constants.HTTP2_HEADER_PATH] = headers[HTTP2.constants.HTTP2_HEADER_PATH] || this.resolve(path);
 				headers[HTTP2.constants.HTTP2_HEADER_METHOD] = headers[HTTP2.constants.HTTP2_HEADER_METHOD] || "GET";
 				headers[HTTP2.constants.HTTP2_HEADER_SCHEME] = headers[HTTP2.constants.HTTP2_HEADER_SCHEME] || "https";
+				headers[HTTP2.constants.HTTP2_HEADER_CONTENT_TYPE] = headers[HTTP2.constants.HTTP2_HEADER_CONTENT_TYPE] || contentType;
+				let h2headers = {};
+				Object.keys(headers).forEach((key)=>{
+					if (key.startsWith(":")) {
+						h2headers[key] = headers[key];
+						delete headers[key];
+					}
+				});
 
 				let stream = FS.createReadStream(filename);
 
-				let pusher = await PushResponse.create(this,headers);
-				pusher.writeHead(statusCode);
+				let pusher = await PushResponse.create(this,h2headers);
+				pusher.writeHead(statusCode,headers);
 				await pusher.pipeFrom(stream);
-				await pusher.end();
+				// no end because the pipeFrom will do it for us.
 
 				resolve();
 			}

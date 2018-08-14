@@ -418,7 +418,8 @@ class AbstractResponse {
 				this.writeHead(statusCode,headers);
 				let stream = FS.createReadStream(filename);
 				await this.pipeFrom(stream);
-				await this.end();
+				// no end() needed, pipeFrom handles it for us.
+				resolve();
 			}
 			catch (ex) {
 				return reject(ex);

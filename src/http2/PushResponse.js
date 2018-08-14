@@ -9,6 +9,7 @@ const Log = require("AwesomeLog");
 const $PARENT = Symbol("parent");
 const $STREAM = Symbol("stream");
 const $HEADERS = Symbol("headers");
+const $CLOSED = Symbol("closed");
 
 /**
  * Class for wrapping HTTP/2 push response streams.
@@ -35,9 +36,10 @@ class PushResponse {
 	static create(parent,headers) {
 		return new Promise((resolve,reject)=>{
 			try {
-				parent.original.createPushResponse(headers||{},(err,stream,headers)=>{
+				parent.original.createPushResponse(headers||{},(err,stream)=>{
 					if (err) return reject(err);
 					if (stream && stream.code && stream.code==="ERR_HTTP2_INVALID_STREAM") return reject("HTTP/2 Stream closed.");
+
 					resolve(new PushResponse(parent,stream,headers));
 				});
 			}
@@ -63,9 +65,15 @@ class PushResponse {
 		this[$PARENT] = parent;
 		this[$STREAM] = stream;
 		this[$HEADERS] = headers;
+		this[$CLOSED] = false;
 
-		this.stream.on("error",(err)=>{
-			Log.warn("PushResponse","Push rejected for "+headers[":path"]+".",err);
+		this.stream.on("close",()=>{
+			this[$CLOSED] = true;
+		});
+		this.stream.stream.on("error",()=>{
+			// this must be here or node will die when the error gets swallowed by http2.
+			// See https://github.com/nodejs/node/issues/22323
+			Log.warn("PushResponse","The client refushed the push stream for "+this.headers[":path"]+".");
 		});
 	}
 
@@ -96,6 +104,14 @@ class PushResponse {
 	}
 
 	/**
+	 * Returns true if this stream has been closed, regardless of how it was closed.
+	 * @return {[type]} [description]
+	 */
+	get closed() {
+		return this[$CLOSED];
+	}
+
+	/**
 	 * Sets the status code and headers for the push response. This may only be
 	 * called once per push response and cannot be called after a write() or
 	 * and end() for this push response has been called.
@@ -110,11 +126,12 @@ class PushResponse {
 	 * @param headers {Object} optional.
 	 */
 	writeHead(statusCode,statusMessage,headers) {
+		if (this.closed) return;
+
 		if (arguments.length===1) [statusCode,statusMessage,headers] = [statusCode,null,null];
-		if (arguments.length===2) [statusCode,statusMessage,headers] = [statusCode,null,headers];
+		if (arguments.length===2) [statusCode,statusMessage,headers] = [statusCode,null,statusMessage];
 
 		headers = headers || {};
-
 		return this.stream.writeHead(statusCode,statusMessage,headers);
 	}
 
@@ -130,6 +147,8 @@ class PushResponse {
 	 * @return {Promise}
 	 */
 	write(data,encoding) {
+		if (this.closed) return Promise.resolve();
+
 		return new Promise((resolve,reject)=>{
 			try {
 				this.stream.write(data,encoding,(err)=>{
@@ -156,6 +175,8 @@ class PushResponse {
 	 * @return {Promise}
 	 */
 	end(data,encoding) {
+		if (this.closed) return Promise.resolve();
+
 		return new Promise((resolve,reject)=>{
 			try {
 				this.stream.end(data,encoding,(err)=>{
@@ -196,8 +217,8 @@ class PushResponse {
 					await this.end();
 					resolve();
 				});
-				readable.pipe(this.stream,{
-					end:false
+				readable.on("data",async (chunk)=>{
+					await this.write(chunk);
 				});
 			}
 			catch (ex) {
