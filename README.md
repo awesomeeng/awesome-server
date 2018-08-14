@@ -154,7 +154,7 @@ Each call to route take three arguments:
 > **path**: Describes how to match against the path portion of the incoming request.  There are different types of way to match the path and you can read all about the options in the [Paths](#paths) section below.
 
 > **handler**: May be one of several different things used to describe how to handle the incoming request that has matched the method and path conditions. The handler is only called if the method and path are matches.  A handler must return a Promise.
-<br/> It is important to note that it is possible to have multiple routes match a single request and their effects to build upon one another. However, when the incoming requests' response object is "finished", AwesomeServer stop executing handlers. See [Routing documentation(./docs/Advanced_Routing.md)] for more details.
+<br/><br/>See [Routing documentation(./docs/Advanced_Routing.md)] for more details.
 
 #### Handler Types
 
