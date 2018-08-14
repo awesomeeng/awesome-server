@@ -206,7 +206,7 @@ Most of the routing stuff above allows you to specify the *path* you want to mat
 ```
 *path*
 ```
- - An **Or** path expression string:
+ - An **Or Expression** path string:
 ```
 /path|/path*|*/path
 ```
