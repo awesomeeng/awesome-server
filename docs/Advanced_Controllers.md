@@ -1,4 +1,4 @@
-# AwesomeServer: Paths
+# AwesomeServer: Controllers
 
 This document describes Controllers, how and why to use them, and some of the really awesome things they can do.
 

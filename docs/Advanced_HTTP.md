@@ -36,95 +36,61 @@ let config = {
 };
 ```
 
- - **host**: specifies the host interface to bind to. AwesomeServer sets this to "localhost" by default. To bind to all interfaces change this to "0.0.0.0".
+> **host**: specifies the host interface to bind to. AwesomeServer sets this to "localhost" by default. To bind to all interfaces change this to "0.0.0.0".
 
- - **port**: the interface port to bind to. For a random port, set to 0.
+> **port**: the interface port to bind to. For a random port, set to 0.
 
- - **path**: See [nodejs documentation](https://nodejs.org/dist/latest-v10.x/docs/api/net.html#net_server_listen_options_callback).
+> **path**: See [nodejs documentation](https://nodejs.org/dist/latest-v10.x/docs/api/net.html#net_server_listen_options_callback).
 
- - **backlog**:  See [nodejs documentation](https://nodejs.org/dist/latest-v10.x/docs/api/net.html#net_server_listen_options_callback).
+> **backlog**:  See [nodejs documentation](https://nodejs.org/dist/latest-v10.x/docs/api/net.html#net_server_listen_options_callback).
 
- - **exclusive**:  See [nodejs documentation](https://nodejs.org/dist/latest-v10.x/docs/api/net.html#net_server_listen_options_callback).
+> **exclusive**:  See [nodejs documentation](https://nodejs.org/dist/latest-v10.x/docs/api/net.html#net_server_listen_options_callback).
 
- - **readableAll**:  See [nodejs documentation](https://nodejs.org/dist/latest-v10.x/docs/api/net.html#net_server_listen_options_callback).
+> **readableAll**:  See [nodejs documentation](https://nodejs.org/dist/latest-v10.x/docs/api/net.html#net_server_listen_options_callback).
 
- - **writableAll**:  See [nodejs documentation](https://nodejs.org/dist/latest-v10.x/docs/api/net.html#net_server_listen_options_callback).
+> **writableAll**:  See [nodejs documentation](https://nodejs.org/dist/latest-v10.x/docs/api/net.html#net_server_listen_options_callback).
 
- - **IncomingMessage** See [nodejs documentation](https://nodejs.org/dist/latest-v10.x/docs/api/http.html#http_http_createserver_options_requestlistener). Note that the request that is routed through AwesomeServer gets wrapped in AwesomeServer's custom HTTP Request object.
+> **IncomingMessage** See [nodejs documentation](https://nodejs.org/dist/latest-v10.x/docs/api/http.html#http_http_createserver_options_requestlistener). Note that the request that is routed through AwesomeServer gets wrapped in AwesomeServer's custom HTTP Request object.
 
- - **ServerResponse**:  See [nodejs documentation](https://nodejs.org/dist/latest-v10.x/docs/api/http.html#http_http_createserver_options_requestlistener). Note that the response that is routed through AwesomeServer gets wrapped in AwesomeServer's custom HTTP Response object.
+> **ServerResponse**:  See [nodejs documentation](https://nodejs.org/dist/latest-v10.x/docs/api/http.html#http_http_createserver_options_requestlistener). Note that the response that is routed through AwesomeServer gets wrapped in AwesomeServer's custom HTTP Response object.
 
 ## HTTP Requests
 
-Each request that is received by AwesomeServer has both a request and a response object. When the request is received by the HTTP server, the original request is wrapped in a custom AwesomeServer Request object.  We do this to provide a more consistent, simplified request structure.
+Each incoming request that is received by AwesomeServer has both a request and a response object. When the incoming request is received by the HTTP server, its request object is wrapped in a custom AwesomeServer HTTP Request object.  Likewise, its response object is wrapped in a custom AwesomeServer HTTP Response object. We do this to provide a more consistent, simplified request structure.
 
-An AwesomeServer Request object is an instance of `AwesomeServer.AbstractRequest`. For HTTP request, the request object is also an instance of HTTPRequest, but that is not exposed to the developer.
+An AwesomeServer HTTP Request object is an instance of `AwesomeServer.http.HTTPRequest` which is itself an instance of `AwesomeServer.AbstractRequest`. if you need access to the original nodejs IncomingMessage object, you can simply use the `request.original` getter to obtain it.
 
-The Request object has a number of convenience methods on it to help dealing with incoming requests.  However, if you need access to the original nodejs IncomingMessage object, you can simply use the `request.original` getter to obtain it.
+The Request object has a number of convenience methods on it to help dealing with incoming requests.  These include getters for...
 
-Here's a quick rundown of the Request object members and methods.
+> **request.method**: String: Returns the request HTTP Method.
 
-**request.original** > [IncomingMessage](https://nodejs.org/dist/latest-v10.x/docs/api/http.html#http_class_http_incomingmessage)
+> **request.url**: URL: Returns the parsed URL of the request.
 
-  Returns the wrapped IncomingMessage received from the underlying server.  This allows you access to the "raw" request, if you so desire it.
+> **request.path**: String: Returns the path portion of the parsed URL of the request.
 
-**request.origin** > string
+> **request.query**: Object: Returns the parsed query portion of the parsed URL of the request.
 
-  Returns the origin hostname/port if it can be determined from the IncomingMessage.  In many cases this cannot always be determinedm in which case this would return an empty string.
+> **request.querystring**: String: Returns the srting query portion of the parsed URL of the request.
 
-**request.method** > string
+> **request.headers**: Object: Returns an object of all the headers of the request.
 
-  Returns the HTTP Method of this request. The method will always be uppercased.
+> **request.contentType**: String: Returns the mime-type portion of the `content-type` header.
 
-**request.url** > [URL](https://nodejs.org/dist/latest-v10.x/docs/api/url.html)
+> **request.contentEncoding**: String: Returns the charset (encoding) portion of the `content-type` header.
 
-  Returns a full parsed [URL object](https://nodejs.org/dist/latest-v10.x/docs/api/url.html) representing this request.
+> **request.useragent**: String: Returns the `user-agent` header, if any.
 
-**request.path** > string
+You can read all about the HTTPRequest class and AbstractRequest class in our API Documentation.
 
-  Returns the unmodified path from the `request.url` above. It's important to note that when a route is called it gets three arguments: path,request,response.  The *path* argument is a **modified** version of the path, relative to the current route. The `request.path` member differs in that it has not been modified.
+#### Reading the Request Content
 
-**request.query** > Object
+One of the little conveniences AwesomeServer provides to use by wrapping things in HTTPRequest, is easier access to reading the incoming content of POST, PUT and PATCH methods.  HTTPRequest provides three extra methods for doing the reading and making your life a whole lot easier.
 
-  Returns the parsed query (aka search) portion of the URL. If no query portion was given this will return an empty object.
+> **`request.read()`** - This function returns a Promise that will resolve to a Buffer when the content has been read entirely. This will also store the read content so additional calls to `read()` will return faster.
 
-**request.querystring** > string
+> **`request.readText(encoding="utf-8")`** - This uses `read()` above, but before returning it decodes the Buffer into a String and returns that instead. You may pass an optional *encoding* parameters to it. This will reject if the string cannot be decoded for some reason.
 
-  Returns the string contents of the query (aka search) portion of the URL.
-
-**request.headers** > Object
-
-  Returns an object representing all of the headers passed as part of this request.
-
-**request.contentType** > string
-
-  Returns the string `content-type` header. This returns only the MIME-type portion of Content-Type. The charset or other parameters are removed.
-
-**request.contentEncoding** > string
-
-  Returns the charset portion of the `content-type` header. If no encoding was passed as part of the `content-type` header, this will return the assumed `utf-8` setting.
-
-**request.useragent** > string
-
-  Returns the `user-agent` header, if any was given.
-
-**request.read()** > Promise > Buffer
-
-  Used to read the content body of the request, if any was given. This function will return a Promise that will resolve later into a Buffer. Once called this will cache the Buffer content so subsequent calls will return faster.
-
-  - **Returns**: Promise > Buffer
-
-**request.readText()** > Promise > string
-
-  An alternative method of `read()` that will return a Promise which resolves to a String of the request content body, if any. This will attempt to use the encoding of the `content-type` header, or `utf-8` if none was given. This Promise will reject if the content body cannot be decoded into a string.
-
-  - **Returns**: Promise > string
-
-**request.readJSON()** > Promise > any
-
-  An alternative method of `read()` that will return a Promise which resolves to the result of running `JSON.parse()` on the returned string from `readText()`. This Promise will reject if the content body cannot be decoded into a string, or if the content body cannot be parsed as JSON.
-
-  - **Returns**: Promise > any
+> **`request.readJSON(encoding="utf-8")`** - Likewise, this uses `read()` above, but before returning it decodes the Buffer into a String and then parses the String with `JSON.parse()`. You may pass an optional *encoding* parameters to it. This will reject if the string cannot be decoded or `JSON.parse()` fails.
 
 ## HTTP Responses
 
