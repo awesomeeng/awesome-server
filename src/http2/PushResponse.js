@@ -71,9 +71,9 @@ class PushResponse {
 			this[$CLOSED] = true;
 		});
 		this.stream.stream.on("error",()=>{
-			// this must be here or node will die when the error gets swallowed by http2.
+			// this event handler must be here or node will die when the error gets swallowed by http2.
 			// See https://github.com/nodejs/node/issues/22323
-			Log.warn("PushResponse","The client refushed the push stream for "+this.headers[":path"]+".");
+			Log.warn && Log.warn("PushResponse","The client refushed the push stream for "+this.headers[":path"]+".");
 		});
 	}
 

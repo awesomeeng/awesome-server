@@ -63,7 +63,7 @@ class DirectoryServeController extends AbstractController {
 
 				let exists = await AwesomeUtils.FS.exists(filename);
 				if (!exists) {
-					Log.warn("DirectoryServeController","File not found: "+path);
+					Log.warn && Log.warn("DirectoryServeController","File not found: "+path);
 					response.writeError(404,"File not found: "+path);
 					resolve();
 				}

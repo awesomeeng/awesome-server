@@ -413,7 +413,7 @@ class AbstractResponse {
 			try {
 				if (!AwesomeUtils.FS.existsSync(filename)) throw new Error("File not found: "+filename);
 
-				Log.info("AbstractResponse","Serving "+filename);
+				Log.info && Log.info("AbstractResponse","Serving "+filename);
 
 				this.writeHead(statusCode,headers);
 				let stream = FS.createReadStream(filename);

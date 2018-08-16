@@ -97,26 +97,26 @@ class HTTPServer extends AbstractServer {
 		let host = this.config.host || "127.0.0.1";
 		let port = this.config.port || 0;
 
-		Log.info("HTTPServer","Starting HTTP Server on "+host+":"+port+"...");
+		Log.info && Log.info("HTTPServer","Starting HTTP Server on "+host+":"+port+"...");
 		return new Promise((resolve,reject)=>{
 			try {
 				let server = HTTP.createServer(this.config);
 
 				server.on("error",(err)=>{
-					Log.error("HTTPServer","Error on HTTP Server on "+host+":"+port+":",err);
+					Log.error && Log.error("HTTPServer","Error on HTTP Server on "+host+":"+port+":",err);
 				});
 
 				server.on("request",this.handleRequest.bind(this,handler));
 
 				server.listen(this.config.port,this.config.host,this.config.backlog,(err)=>{
 					if (err) {
-						Log.error("HTTPServer","Error starting server on "+host+":"+port+".",err);
+						Log.error && Log.error("HTTPServer","Error starting server on "+host+":"+port+".",err);
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						reject(err);
 					}
 					else {
-						Log.info("HTTPServer","Started HTTP Server on "+host+":"+port+"...");
+						Log.info && Log.info("HTTPServer","Started HTTP Server on "+host+":"+port+"...");
 						this[$RUNNING] = true;
 						this[$SERVER] = server;
 						resolve();
@@ -143,19 +143,19 @@ class HTTPServer extends AbstractServer {
 		let host = this.config.host || "127.0.0.1";
 		let port = this.config.port || 0;
 
-		Log.info("HTTPServer","Stopping HTTP Server on "+host+":"+port+"...");
+		Log.info && Log.info("HTTPServer","Stopping HTTP Server on "+host+":"+port+"...");
 		return new Promise((resolve,reject)=>{
 			try {
 				let server = this[$SERVER];
 				server.close((err)=>{
 					if (err) {
-						Log.error("HTTPServer","Error stopping HTTP server on "+host+":"+port+".",err);
+						Log.error && Log.error("HTTPServer","Error stopping HTTP server on "+host+":"+port+".",err);
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						reject(err);
 					}
 					else {
-						Log.info("HTTPServer","Stopped HTTP Server on "+host+":"+port+"...");
+						Log.info && Log.info("HTTPServer","Stopped HTTP Server on "+host+":"+port+"...");
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						resolve();
