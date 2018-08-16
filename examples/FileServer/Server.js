@@ -3,7 +3,6 @@
 "use strict";
 
 const Log = require("AwesomeLog");
-Log.init();
 Log.start();
 
 const AwesomeServer = require("AwesomeServer");
