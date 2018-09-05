@@ -13,12 +13,12 @@
         "node": ">=10.5.0"
     },
     "dependencies": {
-        "mime-types": "^2.1.19"
+        "mime-types": "^2.1.20"
     },
     "devDependencies": {
-        "mocha": "*",
         "jsdoc": "*",
-        "request": "^2.87.0",
+        "mocha": "*",
+        "request": "^2.88.0",
         "request-promise-native": "^1.0.5"
     },
     "optionalDependencies": {},
