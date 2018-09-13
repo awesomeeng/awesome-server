@@ -4,7 +4,7 @@
 
 const HTTP2 = require("http2");
 
-const Log = require("awesome-log");
+const Log = require("@awesomeeng/awesome-log");
 
 const HTTPSServer = require("../https/HTTPSServer");
 const HTTP2Request = require("./HTTP2Request");

@@ -6,8 +6,8 @@ const HTTP2 = require("http2");
 const URL = require("url");
 const FS = require("fs");
 
-const Log = require("awesome-log");
-const AwesomeUtils = require("AwesomeUtils");
+const Log = require("@awesomeeng/awesome-log");
+const AwesomeUtils = require("@awesomeeng/awesome-utils");
 
 const HTTPSResponse = require("../https/HTTPSResponse");
 const PushResponse = require("./PushResponse");

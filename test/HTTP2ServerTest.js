@@ -12,7 +12,7 @@ const Request = require("request-promise-native").defaults({
 	rejectUnauthorized: false // for http2 we need to ignore our self-signed cert.
 });
 
-const AwesomeUtils = require("AwesomeUtils");
+const AwesomeUtils = require("@awesomeeng/awesome-utils");
 // require("AwesomeLog").init().start();
 
 const AwesomeServer = require("../src/AwesomeServer");

@@ -5,8 +5,8 @@
 const Path = require("path");
 const FS = require("fs");
 
-const Log = require("awesome-log");
-const AwesomeUtils = require("AwesomeUtils");
+const Log = require("@awesomeeng/awesome-log");
+const AwesomeUtils = require("@awesomeeng/awesome-utils");
 
 const AbstractServer = require("./AbstractServer");
 const AbstractRequest = require("./AbstractRequest");

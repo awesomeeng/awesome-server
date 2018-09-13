@@ -9,7 +9,7 @@
 const assert = require("assert");
 const URL = require("url");
 
-const AwesomeUtils = require("AwesomeUtils");
+const AwesomeUtils = require("@awesomeeng/awesome-utils");
 // require("AwesomeLog").init().start();
 
 const AwesomeServer = require("../src/AwesomeServer");

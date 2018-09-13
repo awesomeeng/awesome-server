@@ -4,7 +4,7 @@
 
 const Readable = require("stream").Readable;
 
-const Log = require("awesome-log");
+const Log = require("@awesomeeng/awesome-log");
 
 const $PARENT = Symbol("parent");
 const $STREAM = Symbol("stream");

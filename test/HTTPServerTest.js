@@ -10,7 +10,7 @@ const assert = require("assert");
 
 const Request = require("request-promise-native");
 
-const AwesomeUtils = require("AwesomeUtils");
+const AwesomeUtils = require("@awesomeeng/awesome-utils");
 // require("AwesomeLog").init().start();
 
 const AwesomeServer = require("../src/AwesomeServer");

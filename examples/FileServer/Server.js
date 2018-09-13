@@ -2,10 +2,10 @@
 
 "use strict";
 
-const Log = require("awesome-log");
+const Log = require("@awesomeeng/awesome-log");
 Log.start();
 
-const AwesomeServer = require("awesome-server");
+const AwesomeServer = require("@awesomeeng/awesome-server");
 
 let server = new AwesomeServer();
 server.addHTTPServer({

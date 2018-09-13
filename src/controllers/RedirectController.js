@@ -2,7 +2,7 @@
 
 "use strict";
 
-const Log = require("awesome-log");
+const Log = require("@awesomeeng/awesome-log");
 
 const AbstractController = require("../AbstractController");
 

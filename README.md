@@ -52,7 +52,7 @@ Setup has five steps:
 1). Require AwesomeServer...
 
 ```
-const AwesomeServer = require("awesome-server");
+const AwesomeServer = require("@awesomeeng/awesome-server");
 ```
 
 2). Instantiate AwesomeServer...
