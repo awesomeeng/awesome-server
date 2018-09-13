@@ -1,32 +1,46 @@
 {
-    "name": "AwesomeServer",
-    "version": "1.0.0",
-    "author": "the awesome engineering company",
-    "license": "(c) 2018, The Awesome Engineering Company, inc",
-    "contributors": [
-        {
-            "name": "Glen R. Goodwin"
-        }
-    ],
-    "main": "./src/AwesomeServer.js",
-    "engines": {
-        "node": ">=10.5.0"
-    },
-    "dependencies": {
-        "mime-types": "^2.1.20"
-    },
-    "devDependencies": {
-        "jsdoc": "*",
-        "mocha": "*",
-        "request": "^2.88.0",
-        "request-promise-native": "^1.0.5"
-    },
-    "optionalDependencies": {},
-    "nodemonConfig": {
-        "spawn": true,
-        "verbose": true
-    },
-    "scripts": {
-        "docs": "jsdoc src -r -d docs/api"
-    }
+  "name": "@awesomeeng/awesome-server",
+  "version": "1.0.0",
+  "author": "the awesome engineering company",
+  "license": "MIT",
+  "contributors": [
+    "Glen R. Goodwin"
+  ],
+  "main": "./src/AwesomeServer.js",
+  "engines": {
+    "node": ">=10.5.0"
+  },
+  "dependencies": {
+    "mime-types": "^2.1.20",
+    "@awesomeeng/awesome-utils": "1.0.0"
+  },
+  "devDependencies": {
+    "jsdoc-to-markdown": "*",
+    "mocha": "*",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.5"
+  },
+  "optionalDependencies": {},
+  "scripts": {
+    "docs": "jsdoc2md src/** --separators > docs/API.md"
+  },
+  "description": "AwesomeServer is a customizable API Server framework for Enterprise Ready nodejs applications. It is an easy to setup HTTP or HTTPS or HTTP/2 server allowing you to provide flexible routing and controllers for responding to incoming requests in a consistent, repeatable, performant fashion.",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/awesomeeng/awesome-server.git"
+  },
+  "keywords": [
+    "awesome",
+    "awesomeeng",
+    "awesome",
+    "engineering"
+  ],
+  "bugs": {
+    "url": "https://github.com/awesomeeng/awesome-server/issues"
+  },
+  "homepage": "https://github.com/awesomeeng/awesome-server#readme"
 }

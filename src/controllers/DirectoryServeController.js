@@ -7,7 +7,7 @@ const Path = require("path");
 const Mime = require("mime-types");
 
 const AwesomeUtils = require("AwesomeUtils");
-const Log = require("AwesomeLog");
+const Log = require("awesome-log");
 
 const AbstractController = require("../AbstractController");
 

@@ -2,7 +2,7 @@
 
 "use strict";
 
-const AwesomeServer = require("AwesomeServer");
+const AwesomeServer = require("awesome-server");
 const AbstractController = AwesomeServer.AbstractController;
 
 class ControllerThreeOne extends AbstractController {

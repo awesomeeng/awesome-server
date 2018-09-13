@@ -6,7 +6,7 @@ const HTTPS = require("https");
 const FS = require("fs");
 const Path = require("path");
 
-const Log = require("AwesomeLog");
+const Log = require("awesome-log");
 const AwesomeUtils = require("AwesomeUtils");
 
 const HTTPServer = require("../http/HTTPServer");

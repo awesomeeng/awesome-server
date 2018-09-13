@@ -2,10 +2,10 @@
 
 "use strict";
 
-const Log = require("AwesomeLog");
+const Log = require("awesome-log");
 Log.start();
 
-const AwesomeServer = require("AwesomeServer");
+const AwesomeServer = require("awesome-server");
 const AbstractController = AwesomeServer.AbstractController;
 
 class MyController extends AbstractController {

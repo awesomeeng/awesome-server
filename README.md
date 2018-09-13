@@ -40,7 +40,7 @@ AwesomeServer is similar to Express, or Fastly, Hapi, etc. and those are all goo
 
 Couldn't be easier.
 ```
-npm install --save @awesomeeng/AwesomeServer
+npm install --save @awesomeeng/awesome-server
 ```
 
 ## Setup
@@ -52,7 +52,7 @@ Setup has five steps:
 1). Require AwesomeServer...
 
 ```
-const AwesomeServer = require("AwesomeServer");
+const AwesomeServer = require("awesome-server");
 ```
 
 2). Instantiate AwesomeServer...

@@ -4,7 +4,7 @@
 
 const HTTP = require("http");
 
-const Log = require("AwesomeLog");
+const Log = require("awesome-log");
 
 const AbstractServer = require("../AbstractServer");
 const HTTPRequest = require("./HTTPRequest");
