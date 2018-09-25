@@ -109,7 +109,7 @@ class HTTPSServer extends HTTPServer {
 		let host = this.config.host || "127.0.0.1";
 		let port = this.config.port || 0;
 
-		Log.info && Log.info("HTTPSServer","Starting HTTPS Server on "+host+":"+port+"...");
+		Log.info("Starting HTTPS Server on "+host+":"+port+"...");
 		return new Promise((resolve,reject)=>{
 			try {
 				this.config.cert = HTTPSServer.resolveCertConfig(this.config.cert,"cert");
@@ -119,20 +119,20 @@ class HTTPSServer extends HTTPServer {
 				let server = HTTPS.createServer(this.config);
 
 				server.on("error",(err)=>{
-					Log.info && Log.error("HTTPSServer","Error on HTTPS Server on "+host+":"+port+":",err);
+					Log.info("Error on HTTPS Server on "+host+":"+port+":",err);
 				});
 
 				server.on("request",this.handleRequest.bind(this,handler));
 
 				server.listen(this.config.port,this.config.host,this.config.backlog,(err)=>{
 					if (err) {
-						Log.info && Log.error("HTTPSServer","Error starting server on "+host+":"+port+".",err);
+						Log.info("Error starting server on "+host+":"+port+".",err);
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						reject(err);
 					}
 					else {
-						Log.info && Log.info("HTTPSServer","Started HTTPS Server on "+host+":"+port+"...");
+						Log.info("Started HTTPS Server on "+host+":"+port+"...");
 						this[$RUNNING] = true;
 						this[$SERVER] = server;
 
@@ -161,19 +161,19 @@ class HTTPSServer extends HTTPServer {
 		let host = this.config.host || "127.0.0.1";
 		let port = this.config.port || 0;
 
-		Log.info && Log.info("HTTPSServer","Stopping HTTPS Server on "+host+":"+port+"...");
+		Log.info("Stopping HTTPS Server on "+host+":"+port+"...");
 		return new Promise((resolve,reject)=>{
 			try {
 				let server = this[$SERVER];
 				server.close((err)=>{
 					if (err) {
-						Log.info && Log.error("HTTPSServer","Error stopping HTTPS server on "+host+":"+port+".",err);
+						Log.info("Error stopping HTTPS server on "+host+":"+port+".",err);
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						reject(err);
 					}
 					else {
-						Log.info && Log.info("HTTPSServer","Stopped HTTPS Server on "+host+":"+port+"...");
+						Log.info("Stopped HTTPS Server on "+host+":"+port+"...");
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						resolve();
@@ -215,7 +215,7 @@ class HTTPSServer extends HTTPServer {
 	static resolveCertConfig(value,type="certificate",parentName="HTTPSServer") {
 		if (value && typeof value==="string" && !value.startsWith("----")) {
 			let filename = Path.resolve(process.cwd(),value);
-			Log.info && Log.info(parentName,"Loading "+type+" from "+filename+".");
+			Log.info("Loading "+type+" from "+filename+".");
 
 			if (AwesomeUtils.FS.existsSync(filename)) {
 				try {
@@ -224,15 +224,15 @@ class HTTPSServer extends HTTPServer {
 					value = pfx;
 				}
 				catch (ex) {
-					Log.info && Log.error(parentName,"Error reading "+type+" from "+filename+".",ex);
+					Log.info("Error reading "+type+" from "+filename+".",ex);
 				}
 			}
 			else {
-				Log.info && Log.info(parentName,type+" file not found: "+filename+".");
+				Log.info(type+" file not found: "+filename+".");
 			}
 		}
 		else  if (value) {
-			Log.info && Log.info(parentName,"Using passed contents for "+type+" value.");
+			Log.info("Using passed contents for "+type+" value.");
 		}
 
 		return value;

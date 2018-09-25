@@ -107,7 +107,7 @@ class HTTP2Server extends HTTPSServer {
 		let host = this.config.host || "127.0.0.1";
 		let port = this.config.port || 0;
 
-		Log.info && Log.info("HTTP2Server","Starting HTTP/2 Server on "+host+":"+port+"...");
+		Log.info("Starting HTTP/2 Server on "+host+":"+port+"...");
 		return new Promise((resolve,reject)=>{
 			try {
 
@@ -118,20 +118,20 @@ class HTTP2Server extends HTTPSServer {
 				let server = HTTP2.createSecureServer(this.config);
 
 				server.on("error",(err)=>{
-					Log.error && Log.error("HTTP2Server","Error on HTTP/2 Server on "+host+":"+port+":",err);
+					Log.error("Error on HTTP/2 Server on "+host+":"+port+":",err);
 				});
 
 				server.on("request",this.handleRequest.bind(this,handler));
 
 				server.listen(this.config.port,this.config.host,this.config.backlog,(err)=>{
 					if (err) {
-						Log.error && Log.error("HTTP2Server","Error starting server on "+host+":"+port+".",err);
+						Log.error("Error starting server on "+host+":"+port+".",err);
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						reject(err);
 					}
 					else {
-						Log.info && Log.info("HTTP2Server","Started HTTP/2 Server on "+host+":"+port+"...");
+						Log.info("Started HTTP/2 Server on "+host+":"+port+"...");
 						this[$RUNNING] = true;
 						this[$SERVER] = server;
 						resolve();
@@ -158,19 +158,19 @@ class HTTP2Server extends HTTPSServer {
 		let host = this.config.host || "127.0.0.1";
 		let port = this.config.port || 0;
 
-		Log.info && Log.info("HTTP2Server","Stopping HTTP/2 Server on "+host+":"+port+"...");
+		Log.info("Stopping HTTP/2 Server on "+host+":"+port+"...");
 		return new Promise((resolve,reject)=>{
 			try {
 				let server = this[$SERVER];
 				server.close((err)=>{
 					if (err) {
-						Log.error && Log.error("HTTP2Server","Error stopping HTTP/2 server on "+host+":"+port+".",err);
+						Log.error("Error stopping HTTP/2 server on "+host+":"+port+".",err);
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						reject(err);
 					}
 					else {
-						Log.info && Log.info("HTTP2Server","Stopped HTTP/2 Server on "+host+":"+port+"...");
+						Log.info("Stopped HTTP/2 Server on "+host+":"+port+"...");
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						resolve();

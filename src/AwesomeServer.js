@@ -6,6 +6,15 @@ const Path = require("path");
 const FS = require("fs");
 
 const Log = require("@awesomeeng/awesome-log");
+Log.init({
+	writers: [{
+		type: "null",
+		name: "null"
+	}],
+	disableLoggingNotices: true
+});
+Log.start();
+
 const AwesomeUtils = require("@awesomeeng/awesome-utils");
 
 const AbstractServer = require("./AbstractServer");
@@ -161,10 +170,10 @@ class AwesomeServer {
 	async start() {
 		if (this.running) return Promise.resolve();
 
-		Log.info && Log.info("AwesomeServer","Starting...");
+		Log.info("Starting...");
 
 		if (this[$SERVERS].size<1) {
-			Log.warn && Log.warn("AwesomeServer","No servers defined. Nothing to do.");
+			Log.warn("No servers defined. Nothing to do.");
 		}
 		else {
 			await Promise.all([...this[$SERVERS]].map((server)=>{
@@ -176,7 +185,7 @@ class AwesomeServer {
 
 		this[$RUNNING] = true;
 
-		Log.info && Log.info("AwesomeServer","Started.");
+		Log.info("Started.");
 	}
 
 	/**
@@ -188,7 +197,7 @@ class AwesomeServer {
 	async stop() {
 		if (!this.running) return Promise.resolve();
 
-		Log.info && Log.info("AwesomeServer","Stopping...");
+		Log.info("Stopping...");
 
 		await Promise.all([...this[$SERVERS]].map((server)=>{
 			let prom = server.stop();
@@ -198,7 +207,7 @@ class AwesomeServer {
 
 		this[$RUNNING] = false;
 
-		Log.info && Log.info("AwesomeServer","Stopped.");
+		Log.info("Stopped.");
 	}
 
 	/**
@@ -701,7 +710,7 @@ class AwesomeServer {
 		let url = request.method+" "+(request.url && request.url.href || request.url && request.url.toString() || request.url.toString());
 		let path = request.path || "/";
 
-		Log.access && Log.access("AwesomeServer","Request "+url+" from "+request.origin+".");
+		Log.access("Request "+url+" from "+request.origin+".");
 
 		let matching = this[$ROUTES].filter((route)=>{
 			return (route.method==="*" || route.method===method) && route.matcher.match(path) && route.routes && route.routes.length>0;
@@ -736,13 +745,13 @@ class AwesomeServer {
 				nextRouter();
 			}
 			catch (ex) {
-				Log.error && Log.error("AwesomeServer","Error handling request "+url+".",ex);
+				Log.error("Error handling request "+url+".",ex);
 				response.writeError(500,"Error handling request "+url+".");
 			}
 		});
 
 		if (!response.finished) {
-			Log.error && Log.error("AwesomeServer","404 Not found "+url+".");
+			Log.error("404 Not found "+url+".");
 			response.writeError(404,"404 Not found "+url+".");
 		}
 	}
@@ -806,7 +815,7 @@ const _route = function route(method,path,handler,parent=null) {
 		parent.children.push(route);
 	}
 
-	Log.info && Log.info("AwesomeServer","Added route "+method+" "+route.matcher.toString());
+	Log.info("Added route "+method+" "+route.matcher.toString());
 
 	return route;
 };
@@ -853,12 +862,12 @@ const _routeFile = function routeControllerFile(route,filename) {
 		clazz = AwesomeUtils.Module.require(filename);
 	}
 	catch (ex) {
-		Log.error && Log.error("DefaultRouter","Error loading controller "+filename,ex);
+		Log.error("Error loading controller "+filename,ex);
 		throw ex;
 	}
 
 	if (!clazz) {
-		Log.error && Log.error("DefaultRouter","Loaded controller not found "+filename);
+		Log.error("Loaded controller not found "+filename);
 		throw new Error("Loaded controller not found "+filename);
 	}
 	else if (clazz instanceof Function && AbstractController.isPrototypeOf(clazz)) {
@@ -867,23 +876,23 @@ const _routeFile = function routeControllerFile(route,filename) {
 			instance = new clazz();
 		}
 		catch (ex) {
-			Log.error && Log.error("DefaultRouter","Error instantiating controller.",ex);
+			Log.error("Error instantiating controller.",ex);
 			throw ex;
 		}
 		if (!(instance instanceof AbstractController)) {
-			Log.error && Log.error("DefaultRouter","Loaded controller does not extend AbstractController "+filename);
+			Log.error("Loaded controller does not extend AbstractController "+filename);
 			throw new Error("Loaded controller does not extend AbstractController "+filename);
 		}
 
-		Log.info && Log.info("AwesomeServer","Loaded controller from "+filename+".");
+		Log.info("Loaded controller from "+filename+".");
 		_routeController.call(this,route,instance);
 	}
 	else if (clazz instanceof AbstractController) {
-		Log.info && Log.info("AwesomeServer","Loaded controller from "+filename+".");
+		Log.info("Loaded controller from "+filename+".");
 		_routeController.call(this,route,clazz);
 	}
 	else {
-		Log.error && Log.error("DefaultRouter","Loaded controller does not extend AbstractController "+filename);
+		Log.error("Loaded controller does not extend AbstractController "+filename);
 		throw new Error("Loaded controller does not extend AbstractController "+filename);
 	}
 
@@ -953,7 +962,7 @@ const _unroute = function _unroute(method,path,handler) {
 		});
 	});
 
-	if (matching.length>0) Log.info && Log.info("AwesomeServer","Removed route "+method+" "+path.toString());
+	if (matching.length>0) Log.info("Removed route "+method+" "+path.toString());
 
 	return matching.length>0;
 };
@@ -965,7 +974,7 @@ const _unroute = function _unroute(method,path,handler) {
 const _resolve = function resolve(filename) {
 	const getStat = (f)=>{
 		try {
-			Log.debug && Log.debug("AwesomeServer","Looking for "+f);
+			Log.debug("Looking for "+f);
 			return FS.statSync(f);
 		}
 		catch (ex) {

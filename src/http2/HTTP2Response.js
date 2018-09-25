@@ -101,7 +101,7 @@ class HTTP2Response extends HTTPSResponse {
 
 		return new Promise(async (resolve,reject)=>{
 			try {
-				Log.info && Log.info("HTTP2Response","Pushed to client: "+path);
+				Log.info("Pushed to client: "+path);
 
 				headers = headers || {};
 				headers[HTTP2.constants.HTTP2_HEADER_STATUS] = headers[HTTP2.constants.HTTP2_HEADER_STATUS] || 200;
@@ -226,7 +226,7 @@ class HTTP2Response extends HTTPSResponse {
 			try {
 				if (!AwesomeUtils.FS.existsSync(filename)) throw new Error("File not found: "+filename);
 
-				Log.info && Log.info("HTTP2Response","Pushed to client "+path+" from "+filename);
+				Log.info("Pushed to client "+path+" from "+filename);
 
 				// we actually want two sets of headers, one for creating
 				// the pushResponse, and one for sending to writeHead. The
