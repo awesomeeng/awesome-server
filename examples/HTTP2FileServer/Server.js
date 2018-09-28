@@ -29,3 +29,4 @@ server.push("/hello","/hello/hello.css",server.resolve("./files/hello.css"));
 
 // Serve our basic html page at /hello. Because of the prior push rules, this will also include the pushed css file.
 server.serve("/hello",server.resolve("./files/index.html"));
+server.serve("/hello/index.html",server.resolve("./files/index.html")); // sometimes firefox likes to help and redirect to index.html. this works around that.
