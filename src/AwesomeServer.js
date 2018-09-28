@@ -641,7 +641,7 @@ class AwesomeServer {
  	 * of a HTTP/2 response; instead of having to create a custom route every time.
 	 *
 	 * @param  {(string|RegExp|AbstractPathMatcher)}  path           The path to match.
-	 * @param  {[type]}                               referencePath  the path the push is served as, used by http/2 in its resolve.
+	 * @param  {string}                               referencePath  the path the push is served as, used by http/2 in its resolve.
 	 * @param  {(string|null)}                        contentType    Optional contentType to use when serving.
 	 * @param  {string}                               filename       Filename or directory to serve.
 	 */

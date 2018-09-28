@@ -207,12 +207,11 @@ class HTTPSServer extends HTTPServer {
 	 * Static utility function for loading a certificate from a file system
 	 * or treating the passed string as the certificate.
 	 *
-	 * @param  {[type]} value                      [description]
-	 * @param  {String} [type="certificate"]       [description]
-	 * @param  {String} [parentName="HTTPSServer"] [description]
-	 * @return {[type]}                            [description]
+	 * @param  {string|buffer} value
+	 * @param  {string} [type="certificate"]
+	 * @return {string}                            
 	 */
-	static resolveCertConfig(value,type="certificate",parentName="HTTPSServer") {
+	static resolveCertConfig(value,type="certificate") {
 		if (value && typeof value==="string" && !value.startsWith("----")) {
 			let filename = Path.resolve(process.cwd(),value);
 			Log.info("Loading "+type+" from "+filename+".");

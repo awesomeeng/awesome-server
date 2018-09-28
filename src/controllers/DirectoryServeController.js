@@ -38,7 +38,7 @@ class DirectoryServeController extends AbstractController {
 	/**
 	 * Returns the directory being served.
 	 *
-	 * @return {[type]}
+	 * @return {string}
 	 */
 	get dir() {
 		return this[$DIR];

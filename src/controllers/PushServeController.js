@@ -30,9 +30,9 @@ class PushServeController extends AbstractController {
 	 * from the filename. If it cannot do that it will fallback to
 	 * "application/octet-stream".
 	 *
-	 * @param {string} referencePath [description]
-	 * @param {(string|null)} contentType   [description]
-	 * @param {string} filename      [description]
+	 * @param {string} referencePath 
+	 * @param {(string|null)} contentType   
+	 * @param {string} filename      
 	 */
 	constructor(referencePath,contentType,filename) {
 		if (!filename) throw new Error("Missing filename.");
@@ -50,7 +50,7 @@ class PushServeController extends AbstractController {
 	/**
 	 * Returns the filename passed to the constructor.
 	 *
-	 * @return {[type]} [description]
+	 * @return {string} 
 	 */
 	get filename() {
 		return this[$FILENAME];
@@ -60,7 +60,7 @@ class PushServeController extends AbstractController {
 	 * Returns the contentType. If the contentType passed to the constructor was
 	 * null, this will return the guessed contentType or "application/octet-stream".
 	 *
-	 * @return {[type]} [description]
+	 * @return {string} 
 	 */
 	get contentType() {
 		return this[$CONTENTTYPE];
@@ -69,7 +69,7 @@ class PushServeController extends AbstractController {
 	/**
 	 * Returns the referencePath passed into the constructor.
 	 *
-	 * @return {[type]} [description]
+	 * @return {string} 
 	 */
 	get referencePath() {
 		return this[REFERENCEPATH];

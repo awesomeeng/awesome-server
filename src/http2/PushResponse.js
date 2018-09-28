@@ -29,9 +29,9 @@ class PushResponse {
 	/**
 	 * Factory function. Use this instead of the constructor.
 	 *
-	 * @param  {[type]} parent  [description]
-	 * @param  {[type]} headers [description]
-	 * @return {[type]}         [description]
+	 * @param  {HTTP2Response} parent  
+	 * @param  {Object|null} headers 
+	 * @return {Promise}         
 	 */
 	static create(parent,headers) {
 		return new Promise((resolve,reject)=>{
@@ -53,9 +53,9 @@ class PushResponse {
 	 * Constructor, but should not be used. use PushResponse.create() instead.
 	 *
 	 * @constructor
-	 * @param {[type]} parent       [description]
-	 * @param {[type]} stream       [description]
-	 * @param {Object} [headers={}] [description]
+	 * @param {HTTP2Response} parent       
+	 * @param {*} stream       
+	 * @param {Object} [headers={}] 
 	 */
 	constructor(parent,stream,headers={}) {
 		if (!parent) throw new Error("Missing parent.");
@@ -80,7 +80,7 @@ class PushResponse {
 	/**
 	 * Returns the parent HTTP2 or PushResponse object.
 	 *
-	 * @return {(HTTP2Response|PushResponse)} [description]
+	 * @return {(HTTP2Response|PushResponse)} 
 	 */
 	get parent() {
 		return this[$PARENT];
@@ -89,7 +89,7 @@ class PushResponse {
 	/**
 	 * Returns the underlying HTTP/2 stream.
 	 *
-	 * @return {[type]} [description]
+	 * @return {*} 
 	 */
 	get stream() {
 		return this[$STREAM];
@@ -97,7 +97,7 @@ class PushResponse {
 
 	/**
 	 * Returns the headers object set by writeHead().
-	 * @return {[type]} [description]
+	 * @return {Object} 
 	 */
 	get headers() {
 		return this[$HEADERS];
@@ -105,7 +105,7 @@ class PushResponse {
 
 	/**
 	 * Returns true if this stream has been closed, regardless of how it was closed.
-	 * @return {[type]} [description]
+	 * @return {boolean} 
 	 */
 	get closed() {
 		return this[$CLOSED];

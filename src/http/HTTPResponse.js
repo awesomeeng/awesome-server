@@ -28,7 +28,7 @@ class HTTPResponse extends AbstractResponse {
 	 * Returns true when the response is finished (end() has been called)
 	 * and cannot receive any more data/changes.
 	 *
-	 * @return {[type]} [description]
+	 * @return {boolean} 
 	 */
 	get finished() {
 		return this.original.finished;
@@ -37,7 +37,7 @@ class HTTPResponse extends AbstractResponse {
 	/**
 	 * Returns the status code set with writeHead for this response.
 	 *
-	 * @return {[type]} [description]
+	 * @return {number} 
 	 */
 	get statusCode() {
 		return this.original.statusCode;
@@ -45,7 +45,7 @@ class HTTPResponse extends AbstractResponse {
 
 	/**
 	 * Returns the headers set with writeHead for this response.
-	 * @return {[type]} [description]
+	 * @return {Object} 
 	 */
 	get headers() {
 		return this.original.getHeaders();
@@ -54,7 +54,7 @@ class HTTPResponse extends AbstractResponse {
 	/**
 	 * Returns the mime-type portion from the content-type header.
 	 *
-	 * @return {[type]} [description]
+	 * @return {String} 
 	 */
 	get contentType() {
 		return (this.headers && this.headers["content-type"] || "").split(/;\s*/g)[0];
@@ -64,7 +64,7 @@ class HTTPResponse extends AbstractResponse {
 	 * Returns the charset (encoding) portion from the content-type
 	 * header for this response.
 	 *
-	 * @return {[type]} [description]
+	 * @return {String} 
 	 */
 	get contentEncoding() {
 		let parameters = (this.headers && this.headers["content-type"] || "").split(/;\s*/g).slice(1).join(";");
