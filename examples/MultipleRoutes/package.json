@@ -1,0 +1,14 @@
+{
+    "name": "AwesomeServer/Examples/MultipleRoutes",
+    "version": "1.0.0",
+    "author": "the awesome engineering company",
+    "license": "(c) 2018, The Awesome Engineering Company, inc",
+    "main": "./Server.js",
+    "engines": {
+        "node": ">=10.5.0"
+    },
+    "dependencies": {
+        "@AwesomeEng/AwesomeLog": "*",
+        "@AwesomeEng/AwesomeServer": "*"
+    }
+}
