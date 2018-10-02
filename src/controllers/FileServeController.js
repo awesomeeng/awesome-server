@@ -2,7 +2,7 @@
 
 "use strict";
 
-const Mime = require("mime-types");
+const MimeTypes = require("../MimeTypes");
 
 const AbstractController = require("../AbstractController");
 
@@ -27,7 +27,7 @@ class FileServeController extends AbstractController {
 	 * The filename needs to have been fully resolved.
 	 *
 	 * @param {(string|null)} contentType
-	 * @param {string} filename    
+	 * @param {string} filename
 	 */
 	constructor(contentType,filename) {
 		if (!filename) throw new Error("Missing filename.");
@@ -35,7 +35,8 @@ class FileServeController extends AbstractController {
 
 		super();
 
-		if (!contentType) contentType = Mime.lookup(filename) || "application/octet-stream";
+		if (!contentType) contentType = MimeTypes.getTypeForExtension(filename,"application/octet-stream");
+
 
 		this[$FILENAME] = filename;
 		this[$CONTENTTYPE] = contentType;
@@ -44,7 +45,7 @@ class FileServeController extends AbstractController {
 	/**
 	 * Returns the filename passed into the constructor.
 	 *
-	 * @return {string} 
+	 * @return {string}
 	 */
 	get filename() {
 		return this[$FILENAME];
@@ -54,7 +55,7 @@ class FileServeController extends AbstractController {
 	 * Returns the contentType. If the contentType passed into the controller
 	 * was null, this will return the guessed contentType.
 	 *
-	 * @return {(string|null)} 
+	 * @return {(string|null)}
 	 */
 	get contentType() {
 		return this[$CONTENTTYPE];

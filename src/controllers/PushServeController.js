@@ -2,7 +2,7 @@
 
 "use strict";
 
-const Mime = require("mime-types");
+const MimeTypes = require("../MimeTypes");
 
 const AbstractController = require("../AbstractController");
 
@@ -30,9 +30,9 @@ class PushServeController extends AbstractController {
 	 * from the filename. If it cannot do that it will fallback to
 	 * "application/octet-stream".
 	 *
-	 * @param {string} referencePath 
-	 * @param {(string|null)} contentType   
-	 * @param {string} filename      
+	 * @param {string} referencePath
+	 * @param {(string|null)} contentType
+	 * @param {string} filename
 	 */
 	constructor(referencePath,contentType,filename) {
 		if (!filename) throw new Error("Missing filename.");
@@ -40,7 +40,7 @@ class PushServeController extends AbstractController {
 
 		super();
 
-		if (!contentType) contentType = Mime.lookup(filename) || "application/octet-stream";
+		if (!contentType) contentType = MimeTypes.getTypeForExtension(filename,"application/octet-stream");
 
 		this[$FILENAME] = filename;
 		this[$CONTENTTYPE] = contentType;
@@ -50,7 +50,7 @@ class PushServeController extends AbstractController {
 	/**
 	 * Returns the filename passed to the constructor.
 	 *
-	 * @return {string} 
+	 * @return {string}
 	 */
 	get filename() {
 		return this[$FILENAME];
@@ -60,7 +60,7 @@ class PushServeController extends AbstractController {
 	 * Returns the contentType. If the contentType passed to the constructor was
 	 * null, this will return the guessed contentType or "application/octet-stream".
 	 *
-	 * @return {string} 
+	 * @return {string}
 	 */
 	get contentType() {
 		return this[$CONTENTTYPE];
@@ -69,7 +69,7 @@ class PushServeController extends AbstractController {
 	/**
 	 * Returns the referencePath passed into the constructor.
 	 *
-	 * @return {string} 
+	 * @return {string}
 	 */
 	get referencePath() {
 		return this[REFERENCEPATH];
