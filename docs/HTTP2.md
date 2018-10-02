@@ -3,14 +3,20 @@
 This document details how to work with HTTP/2 Servers in relation to AwesomeServer including configuration, request, and responses.
 
 ## Contents
+ - [Inheritance](#inheritance)
+ - [Compatability Mode](#compatability-mode)
  - [Usage](#usage)
  - [Configuring](#configuring-http-servers)
  - [Requests](#http-requests)
  - [Responses](#http-responses)
 
-## HTTP2Server extends HTTPSServer extends HTTPServer
+## Inheritance
 
 The HTTP2Server detailed below extends [the HTTPSServer described already in our documentation](./Advanced_HTTPS.md) which in turn extends [the HTTPServer described already in our documentation](./Advanced_HTTP.md). Everything that is true for HTTPSServer and HTTPServer is true for HTTP2Server, and thus can be used in HTTP2Server.  (The inverse is not true, so things specific to HTTP2Server may not be available for HTTPSServer or HTTPServer.)
+
+## Compatability Mode
+
+AwesomeServer supports HTTP/2 connections using NodeJS's HTTP/2 Compatability Mode.  This makes HTTP/2 request and responses look and behave similar to HTTP/HTTPS requests and responses. Additionally, AwesomeServer provides some extra shortcut tools for HTTP/2 requests and responses to make working with HTTP/2 a little easier.
 
 ## Usage
 

@@ -4,7 +4,7 @@ This document details requests and some of the things AwesomeServer does to save
 
 ## Contents
  - [Inheritence](#inheritence)
- - [Accessing the Underlying Server Object](#accessing-the-underlying-server-object)
+ - [Accessing the Underlying Server Request Object](#accessing-the-underlying-server-request-object)
  - [Getting Method and URL Details](#getting-method-and-url-details)
  - [Getting Header Information](#getting-header-information)
  - [Reading Content](#reading-content)
@@ -21,7 +21,7 @@ While we are on the subject of inheritence, it is important to understand how `A
 
  - **HTTPS**: HTTPS2Request < HTTPSRequest < HTTPRequest < AbstractRequest
 
-## Accessing the Underlying Server Object
+## Accessing the Underlying Server Request Object
 
 HTTPRequest, HTTPSRequest and HTTP2Request all wrap nodejs' underlying `http.IncomingMessage` or `http2.Http2ServerRequest` classes.  Sometimes it is helpful to get at the underlying object.  `AbstractRequest` provides a means to do that.
 

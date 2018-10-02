@@ -4,7 +4,7 @@ This document details requests and some of the things AwesomeServer does to save
 
 ## Contents
  - [Inheritence](#inheritence)
- - [Accessing the Underlying Server Object](#accessing-the-underlying-server-object)
+ - [Accessing the Underlying Server Response Object](#accessing-the-underlying-server-response-object)
  - [Getting Response State](#getting-response-state)
  - [Getting Response Header Information](#getting-response-header-information)
  - [Writing Content](#Writing-content)
@@ -21,7 +21,7 @@ While we are on the subject of inheritence, it is important to understand how `A
 
  - **HTTPS**: HTTPS2Response < HTTPSResponse < HTTPResponse < AbstractResponse
 
-## Accessing the Underlying Server Object
+## Accessing the Underlying Server Response Object
 
 HTTPResponse, HTTPSResponse and HTTP2Response all wrap nodejs' underlying `http.ServerResponse` or `http2.Http2ServerResponse` classes.  Sometimes it is helpful to get at the underlying object.  `AbstractResponse` provides a means to do that.
 
@@ -29,7 +29,7 @@ HTTPResponse, HTTPSResponse and HTTP2Response all wrap nodejs' underlying `http.
 
 ## Getting Response State
 
-`AbstractResponse` has a number of shortcuts for easily getting the Method and URL and URL portions.
+`AbstractResponse` has a number of shortcuts for easily getting the current response state.
 
 > **response.statusCode**: [number] - Returns the status code for this response, if set via `response.writeHead()`.  Returns null if the statusCode has not been set yet.
 

@@ -193,7 +193,7 @@ files/
   three/
     four.js
 ```
-> and routed `server.route("*","api","./files");` the resulting routes would be `/api/one`, `/api/two`, `/api/three`, and `/api/three/four`. One route for each matching `.js` file
+> and routed `server.route("*","api","./files");` the resulting routes would be `/api/one`, `/api/two`, `/api/three`, and `/api/three/four`. One route for each matching `.js` file.
 
 ## Paths
 

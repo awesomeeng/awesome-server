@@ -3,9 +3,9 @@
 This document details the various types of Paths you can provide for routing with AwesomeServer.
 
 ## Contents
- - [Basic Paths](#basic_paths)
- - [Regular Expression Paths](#regular_expression_paths)
- - [Custom Paths](#custom_paths)
+ - [Basic Paths](#basic-paths)
+ - [Regular Expression Paths](#regular-expression-paths)
+ - [Custom Paths](#custom-paths)
 
 ## Basic Paths
 

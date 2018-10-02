@@ -3,12 +3,13 @@
 This document details how to work with HTTPS Servers in relation to AwesomeServer including configuration, request, and responses.
 
 ## Contents
+ - [Inheritance](#inheritance)
  - [Usage](#usage)
  - [Configuring](#configuring-http-servers)
  - [Requests](#http-requests)
  - [Responses](#http-responses)
 
-## HTTPSServer extends HTTPServer
+## Inheritance
 
 The HTTPSServer detailed below extends [the HTTPServer described already in our documentation](./Advanced_HTTP.md). Everything that is true for HTTPServer is true for HTTPSServer, and thus can be used in HTTPSServer.  (The inverse is not true, so things specific to HTTPSServer are may not be available for HTTPServer.)
 
