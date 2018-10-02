@@ -131,6 +131,14 @@ class AwesomeServer {
 			HTTP2Response: require("./http2/HTTP2Response")
 		};
 	}
+	static get controllers() {
+		return {
+			RedirectController: require("./controllers/RedirectController"),
+			FileServeController: require("./controllers/FileServeController"),
+			DirectoryServeController: require("./controllers/DirectoryServeController"),
+			PushServeController: require("./controllers/PushServeController")
+		};
+	}
 
 	/**
 	 * Returns the array of servers associated with this AwesomeServer instance.
@@ -402,9 +410,9 @@ class AwesomeServer {
 	 *   controllers below) if the method and path match for an incoming request. (see method and
 	 *   see path below).
 	 *
-	 *   route(method,controller) - A synonym for calling route("*",path,controller).
+	 *   route(path,controller) - A synonym for calling route("*",path,controller).
 	 *
-	 *   route(string,path,filename) - A synonym for calling route(method,path,controller)
+	 *   route(method,path,filename) - A synonym for calling route(method,path,controller)
 	 *   except the given filename is loaded an instantiated as a controller first. This lets you
 	 *   reference external controllers by filename easily.
 	 *
