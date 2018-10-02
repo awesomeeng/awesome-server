@@ -115,7 +115,7 @@ AwesomeServer has some special routing systems over and above the basic `server.
 
 AwesomeServer provides a standard Redirect router for your convenience.  It can be used to respond with temporary or permanent redirections.  It has the following form:
 
-> **server.redirect(method,path,toPath,temporary=false)**
+**server.redirect(method,path,toPath,temporary=false)**
  - **method**: [string] The method to match, or "*".
  - **path**: [string|RegExp|PathMatcher] The path matcher to match against.
  - **toPath**: [string] The new url or url path to redirect to.
@@ -130,9 +130,9 @@ An often use case in Server development is to respond to some incoming request b
 
 Here is the form for the `server.serve()` method:
 
-> **server.serve(path,filename)**<br/>
-> **server.serve(path,contentType,filename)**<br/>
-> **server.serve(path,directory)**<br/>
+**server.serve(path,filename)**<br/>
+**server.serve(path,contentType,filename)**<br/>
+**server.serve(path,directory)**<br/>
 
 It is worth pointing out that `server.serve()` does not take a *method* to match against.  `server.serve()` only works for GET requests.
 
@@ -157,7 +157,7 @@ For HTTP/2 servers, an additional option for routing is the `server.push()` meth
 
 It has the following form:
 
-> **server.push(path,referencePath,contentType,filename)**
+**server.push(path,referencePath,contentType,filename)**
  - **path**: [string|RegExp|PathMatcher] The path matcher to match against.
  - **referencePath**: [string] The path to push this filename as; that is how is this filename to be referenced.
  - **contentType**: [string] The content type to serve this file as. Optional. If not given AwesomeServer will attempt to guess the contentType from the filename extension.

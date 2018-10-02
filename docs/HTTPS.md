@@ -36,13 +36,13 @@ let config = {
 };
 ```
 
-> **host**: [string] specifies the host interface to bind to. AwesomeServer sets this to "localhost" by default. To bind to all interfaces change this to "0.0.0.0".
+**host**: [string] specifies the host interface to bind to. AwesomeServer sets this to "localhost" by default. To bind to all interfaces change this to "0.0.0.0".
 
-> **port**: [number] the interface port to bind to. For a random port, set to 0.
+**port**: [number] the interface port to bind to. For a random port, set to 0.
 
-> **cert**: [string|buffer] The `cert` option is required for an https server to be instantiated.  You may pass in a string or buffer that contains a PEM encoded certificate.  Optionally, you may pass in a valid existing filename that contains a PEM encoded certificate and AwesomeServer will load its contents for you.
+**cert**: [string|buffer] The `cert` option is required for an https server to be instantiated.  You may pass in a string or buffer that contains a PEM encoded certificate.  Optionally, you may pass in a valid existing filename that contains a PEM encoded certificate and AwesomeServer will load its contents for you.
 
-> **key**: [string|buffer] The `key` option is required for an https server to be instantiated.  You may pass in a string or buffer that contains a PEM encoded private key.  Optionally, you may pass in a valid existing filename that contains a PEM encoded private key and AwesomeServer will load its contents for you.
+**key**: [string|buffer] The `key` option is required for an https server to be instantiated.  You may pass in a string or buffer that contains a PEM encoded private key.  Optionally, you may pass in a valid existing filename that contains a PEM encoded private key and AwesomeServer will load its contents for you.
 
 If you need greater fidelity of configuration, please see the following for more information on options:
 

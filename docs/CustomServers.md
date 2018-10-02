@@ -93,18 +93,18 @@ class MyCustomServer extends AbstractServer {
 
 The following members and methods must be overloaded by your class:
 
-> **constructor(config)** Returns a new instance of your Server.  Must pass *config* to the super class.
+**constructor(config)** Returns a new instance of your Server.  Must pass *config* to the super class.
 - **config**: [Object] A configuration object for your server.
 
-> **running**: [boolean] Returns true if the underlying server is running.
+**running**: [boolean] Returns true if the underlying server is running.
 
-> **original**: [*] Returns the underlying server.
+**original**: [*] Returns the underlying server.
 
-> **start(handler)** Executed when AwesomeServer is started. This receives the handler function must call for each incoming request you want to process. It is on you to call it. Returns a Promise that resolves when the underlying server is started.
+**start(handler)** Executed when AwesomeServer is started. This receives the handler function must call for each incoming request you want to process. It is on you to call it. Returns a Promise that resolves when the underlying server is started.
 - **handler**: [Function] The AwesomeServer handler function to be called for each request.
 - returns **Promise > void**
 
-> **stop()** Executed when AwesomeServer is stopped. Returns a Promise that resolves when the underlying server is stopped.
+**stop()** Executed when AwesomeServer is stopped. Returns a Promise that resolves when the underlying server is stopped.
 - returns **Promise > void**
 
 ## Handling Requests
@@ -130,27 +130,27 @@ class MyCustomRequest extends AbstractRequest {
 
 Each implementation of `AbstractRequest` must overload the following functions:
 
-> **request.original**: [IncomingMessage|Http2ServerRequest] - Returns the underlying request object.
+**request.original**: [IncomingMessage|Http2ServerRequest] - Returns the underlying request object.
 
-> **request.method**: [string] - Returns the HTTP Method string, all uppercased.
+**request.method**: [string] - Returns the HTTP Method string, all uppercased.
 
-> **request.url**: [URL] - Returns the request URL as a nodejs URL Object
+**request.url**: [URL] - Returns the request URL as a nodejs URL Object
 
-> **request.path**: [string] - Returns the path portion of the request URL. Note that this is the actual entire path for the URL as opposed to the *path* argument your receive in your route functions which may have been reduced.
+**request.path**: [string] - Returns the path portion of the request URL. Note that this is the actual entire path for the URL as opposed to the *path* argument your receive in your route functions which may have been reduced.
 
-> **request.query**: [Object] - The parsed querystring object.
+**request.query**: [Object] - The parsed querystring object.
 
-> **request.querystring**: [string] - The unparsed querystring string.
+**request.querystring**: [string] - The unparsed querystring string.
 
-> **request.headers**: [Object] - Returns the request headers object.
+**request.headers**: [Object] - Returns the request headers object.
 
-> **request.contentType**: [string] - Returns the mime-type portion of the `Content-Type` header, if any.
+**request.contentType**: [string] - Returns the mime-type portion of the `Content-Type` header, if any.
 
-> **request.contentEncoding**: [string] - Returns the encoding portion of the `Content-Type` header, if any.
+**request.contentEncoding**: [string] - Returns the encoding portion of the `Content-Type` header, if any.
 
-> **request.useragent**: [string] - Returns the `User-Agent` header, if any.
+**request.useragent**: [string] - Returns the `User-Agent` header, if any.
 
-> **read()** - Returns a Promise that resolves when the entire content is read from the request.
+**read()** - Returns a Promise that resolves when the entire content is read from the request.
  - returns **Promise > Buffer **
 
 ## Custom AbstractResponse Implementation
@@ -168,37 +168,37 @@ class MyCustomResponse extends AbstractResponse {
 
 Each implementation of `AbstractResponse` must overload the following functions:
 
-> **response.original**: [ServerResponse|Http2ServerResponse] - Returns the underlying response object.
+**response.original**: [ServerResponse|Http2ServerResponse] - Returns the underlying response object.
 
-> **response.statusCode**: [number] - Returns the status code for this response, if set via `response.writeHead()`.  Returns null if the statusCode has not been set yet.
+**response.statusCode**: [number] - Returns the status code for this response, if set via `response.writeHead()`.  Returns null if the statusCode has not been set yet.
 
-> **response.finished**: [boolean] - Returns true if the underlying object has been closed via `response.end()`. This signals that no more content can be written to the response.  This will also signal AwesomeServer to stop processing routes in multiple routing situations.
+**response.finished**: [boolean] - Returns true if the underlying object has been closed via `response.end()`. This signals that no more content can be written to the response.  This will also signal AwesomeServer to stop processing routes in multiple routing situations.
 
-> **response.pushSupported**: [boolean] - Returns true if the underlying server support push behaviors (ala HTTP/2). Both HTTP and HTTPS return false.
+**response.pushSupported**: [boolean] - Returns true if the underlying server support push behaviors (ala HTTP/2). Both HTTP and HTTPS return false.
 
-> **request.contentType**: [string] - Returns the mime-type portion of the `Content-Type` header, if any has been set yet.
+**request.contentType**: [string] - Returns the mime-type portion of the `Content-Type` header, if any has been set yet.
 
-> **request.contentEncoding**: [string] - Returns the encoding portion of the `Content-Type` header, if any has been set yet.
+**request.contentEncoding**: [string] - Returns the encoding portion of the `Content-Type` header, if any has been set yet.
 
-> **writeHead(statusCode)**<br/>
-> **writeHead(statusCode,headers)**<br/>
-> **writeHead(statusCode,statusMessage,headers)**<br/>
+**writeHead(statusCode)**<br/>
+**writeHead(statusCode,headers)**<br/>
+**writeHead(statusCode,statusMessage,headers)**<br/>
 > Used to set the status code, status message (very optional), and the headers.  The statusCode argument is the only required argument.
  - **statusCode**: [number] The HTTP Status Code to send for this response.
  - **statusMessage**: [string] A status message to send for this response. Very optional.
  - **headers**: [null|Object] An object of headers, if any, to send for this response.
  - returns **Promise > void **
 
-> **write(chunk,encoding="utf-8")** - Write a chunk of data to the response. You can call this multiple times, so long as you dont call `response.end()`.
+**write(chunk,encoding="utf-8")** - Write a chunk of data to the response. You can call this multiple times, so long as you dont call `response.end()`.
  - **chunk**: [*] The data to be written.
  - **encoding**: [string] The content encoding to be used for string content.
  - returns **Promise > void**
 
-> **end(chunk,encoding="utf-8")** - Called to signal the end of writing and flag the response as finished. If *data* is included, this calls `response.write(data,encoding)` first, then ends.
+**end(chunk,encoding="utf-8")** - Called to signal the end of writing and flag the response as finished. If *data* is included, this calls `response.write(data,encoding)` first, then ends.
  - **chunk**: [*] The data to be written.
  - **encoding**: [string] The content encoding to be used for string content.
  - returns **Promise > void**
 
-> **pipeFrom(readable)** - Pipes the contents from the given readable stream into the response. This is kind of backward from how streams normally work, but due to the structure of AwesoneServer, that's how its got to be.
+**pipeFrom(readable)** - Pipes the contents from the given readable stream into the response. This is kind of backward from how streams normally work, but due to the structure of AwesoneServer, that's how its got to be.
  - **readable**: [Readable] A readable stream.
  - returns **Promise > void**

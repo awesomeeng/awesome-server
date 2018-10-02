@@ -137,21 +137,21 @@ There are several forms you can use to add a controller as a route. Use the mann
 
 #### Route using an instance of a Controller Class
 
-> **server.route(method,path,controllerInstance)** - Takes a controller instance (aka `new MyController()`) and maps that instance to the given method and path.
+**server.route(method,path,controllerInstance)** - Takes a controller instance (aka `new MyController()`) and maps that instance to the given method and path.
 - **method**: [string] Optional. One of the HTTP Method names or "*".  If this is ommited, which we recommend for controller, all methods will be routed through. If this is included, only the matching methods will get routed.
 - **path**: [string|RegExp|PathMatcher] The path matcher to match against.
 - **controllerInstance**: [AbstractController] The controller to execute.
 
 #### Route using a Controller Class
 
-> **server.route(method,path,controllerClass)** - Takes a controller class, instantiates it, and maps that instance to the given method and path.
+**server.route(method,path,controllerClass)** - Takes a controller class, instantiates it, and maps that instance to the given method and path.
 - **method**: [string] Optional. One of the HTTP Method names or "*".  If this is ommited, which we recommend for controller, all methods will be routed through. If this is included, only the matching methods will get routed.
 - **path**: [string|RegExp|PathMatcher] The path matcher to match against.
 - **controllerClass**: [AbstractController] The controller class to instantiate to execute.
 
 #### Route using a Filename
 
-> **server.route(method,path,filename)** - If the given filename exists, is a JavaScript file, exports a class that inherits from `AbstractClass` or exports an instance of a class that inherits from `AbstractClass`, this approach will creates an instance of the class (or use the provided instance), and map that instance to the given method and path.
+**server.route(method,path,filename)** - If the given filename exists, is a JavaScript file, exports a class that inherits from `AbstractClass` or exports an instance of a class that inherits from `AbstractClass`, this approach will creates an instance of the class (or use the provided instance), and map that instance to the given method and path.
 - **method**: [string] Optional. One of the HTTP Method names or "*".  If this is ommited, which we recommend for controller, all methods will be routed through. If this is included, only the matching methods will get routed.
 - **path**: [string|RegExp|PathMatcher] The path matcher to match against.
 - **filename**: [AbstractController] The filename to require, instantiate, and map.
@@ -160,7 +160,7 @@ Note that the file must exist when the `server.route()` method is executed.  The
 
 #### Route using a Directory
 
-> **server.route(method,path,filename)** - For a given directory, walk the directory and all of its sub-directories, and any file that ends with `.js` which satisfies the criterea for **Route using a Filename** from above, will be mapped to the given route and sub-directory and filename.
+**server.route(method,path,filename)** - For a given directory, walk the directory and all of its sub-directories, and any file that ends with `.js` which satisfies the criterea for **Route using a Filename** from above, will be mapped to the given route and sub-directory and filename.
 - **method**: [string] Optional. One of the HTTP Method names or "*".  If this is ommited, which we recommend for controller, all methods will be routed through. If this is included, only the matching methods will get routed.
 - **path**: [string|RegExp|PathMatcher] The path matcher to match against.
 - **filename**: [AbstractController] The filename to require, instantiate, and map.
