@@ -12,16 +12,16 @@ AwesomeServer provides...
  - Or mix and match all three types of servers.
  - Basic routing to channel HTTP Method X along path Y into predefined functions.
  - Advanced routing using Controllers that takes your routing to the next level.
- - Controllers from Classes, Files, or whole Directory trees.
- - Support for serving static files (or whole directories) to specific routes.
+ - Controllers from classes, files, or whole directory trees.
+ - Support for serving static files or whole directories to specific routes.
  - Easy built-in redirects.
  - Built around native promises and ready for async/await.
  - Integrated with [AwesomeLog](https://github.com/awesomeeng/AwesomeLog) for easy logging if you want it.
- - Extensible with custom Servers.
+ - Add your own custom servers beyond HTTP, HTTPS, or HTTP/2.
 
 ## Why another API Server solution?
 
-AwesomeServer is similar to Express, or Fastly, Hapi, etc. and those are all good products.  AwesomeServer just provides a different apporach to API Server code; one we think is cleaner and easier to use. If you want to use Express/Fastly/Hapi/whatever, that's perfectly fine by us. But if you want to try something a little cleaner, with less clutter, consider AwesomeServer.
+AwesomeServer is similar to Express, Fastly, Hapi, etc. and those are all good products.  AwesomeServer just provides a different apporach to API Server code; one we think is cleaner and easier to use. If you want to use Express/Fastly/Hapi/whatever, that's perfectly fine by us. But if you want to try something a little cleaner, with less clutter, consider AwesomeServer.
 
 ## Contents
  - [Installation](#installation)
@@ -99,7 +99,7 @@ server.addHTTPServer({
 
 HTTP Server functionally wraps the nodejs http module.
 
-For more information on using HTTP Server with AwesomeServer, read [the HTTP documentation](./docs/Advanced_HTTP.md).
+For more information on using HTTP Server with AwesomeServer, read [the HTTP documentation](./docs/HTTP.md).
 
 #### HTTPS Server
 
@@ -117,7 +117,7 @@ server.addHTTPSServer({
 
 HTTPS Server functionally wraps the nodejs https module.
 
-For more information on using HTTPS Server with AwesomeServer, read [the HTTPS documentation](./docs/Advanced_HTTPS.md).
+For more information on using HTTPS Server with AwesomeServer, read [the HTTPS documentation](./docs/HTTPS.md).
 
 #### HTTP/2 Server
 
@@ -135,7 +135,7 @@ server.addHTTP2Server({
 
 HTTP/2 Server functionally wraps the nodejs https module.
 
-For more information on using HTTP/2 Server with AwesomeServer, read [the HTTP/2 documentation](./docs/Advanced_HTTP2.md).
+For more information on using HTTP/2 Server with AwesomeServer, read [the HTTP/2 documentation](./docs/HTTP2.md).
 
 ## Routing
 
@@ -155,7 +155,7 @@ Each call to route take three arguments:
 
 > **handler**: May be one of several different things used to describe how to handle the incoming request that has matched the method and path conditions. The handler is only called if the method and path are matches.  A handler must return a Promise.
 
-See our detailed [Routing documentation](./docs/Advanced_Routing.md) for a lot more details.
+See our detailed [Routing documentation](./docs/Routing.md) for a lot more details.
 
 #### Handler Types
 
@@ -228,7 +228,7 @@ Most of the routing stuff above allows you to specify the *path* you want to mat
 new AbstractPathMatcher() { ... }
 ```
 
-To learn more about the details of Paths and Path Matching, check out our dedicated [Paths Documentation](./docs/Advanced_Paths.md).
+To learn more about the details of Paths and Path Matching, check out our dedicated [Paths Documentation](./docs/Paths.md).
 
 ## Controllers
 
@@ -256,16 +256,16 @@ class MyController extends AbstractController {
 
 If the controller does not contain a corresponding method for the *HTTP Method* the controller will execute the `any()` function (see below).
 
-You can read lots more about Controllers in our dedicated [Controller Documentation](./docs/Advanced_Controllers).
+You can read lots more about Controllers in our dedicated [Controller Documentation](./docs/Controllers).
 
 ## Documentation
 
  - [HTTP Setup and Configuration](./docs/HTTP.md)
  - [HTTPS Setup and Configuration](./docs/HTTPS.md)
  - [HTTP/2 Setup and Configuration](./docs/HTTP2.md)
- - [Route ordering and multiple handlers](./docs/Routing.md)
- - [Advanced Paths](./docs/Paths.md)
- - [Advanced Controllers](./docs/Controllers.md)
+ - [Routing](./docs/Routing.md)
+ - [Paths](./docs/Paths.md)
+ - [Controllers](./docs/Controllers.md)
  - [Requests](./docs/Requests.md)
  - [Responses](./docs/Responses.md)
  - [HTTP/2 Techniques](./docs/HTTP2Techniques.md)
@@ -305,4 +305,4 @@ To learn more about The Awesome Engineering Company and our suite of products, v
 
 ## License
 
-AwesomeServer is released under the MIT License. Please read the  [LICENSE](https://raw.githubusercontent.com/awesomeeng/AwesomeServer/master/LICENSE?token=ABA2_wogpYds4a1qC_4aeUZd8C1in6Qcks5bUiQFwA%3D%3D) file for details.
+AwesomeServer is released under the MIT License. Please read the  [LICENSE](./LICENSE) file for details.
