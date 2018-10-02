@@ -1,4 +1,4 @@
-# AwesomeServer: Paths
+# [AwesomeServer](../README.md) > Paths
 
 This document details the various types of Paths you can provide for routing with AwesomeServer.
 
@@ -9,7 +9,7 @@ This document details the various types of Paths you can provide for routing wit
 
 ## Basic Paths
 
-Basic paths are string expressions that may include wildcard hints to where in the path portion of the incoming request URL, the matching should occur.  AwesomeServer has five types of basic paths: **Exact**, **Starts With**, **Ends With**, **Contains**, or **Or Expression**.
+Basic paths are string expressions that may include wildcard hints to where in the path portion of the incoming request URL the matching should occur.  AwesomeServer has five types of basic paths: **Exact**, **Starts With**, **Ends With**, **Contains**, or **Or Expression**.
 
 #### Exact
 
@@ -84,8 +84,8 @@ server.route("*",new MyMatcher(),handler);
 
 In extending `AwesomeServer.AbstractPathMatcher` you are required to provide the implementation for three methods:
 
-- `matches(path)` - Which is called with an incoming requests path and returns true if it is a match;
-- `subtract(path)` - Which is called with an incoming requests path and returns the revised path if the matching portion of the path was removed, but only if `matches(path)` returns true.
+- `matches(path)` - Which is called with an incoming request's *path* and returns *true* if it is a match;
+- `subtract(path)` - Which is called with an incoming requests *path* and returns the revised *path* if the matching portion of the *path* was removed, but only if `matches(path)` returns *true*.
 - `toString()` - Which returns a string displayable version of this patch matcher, mostly used by logging.
 
 Here's an example...

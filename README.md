@@ -1,6 +1,6 @@
 # AwesomeServer
 
-AwesomeServer is a customizable API Server framework for Enterprise Ready nodejs applications. It is an easy to setup HTTP or HTTPS or HTTP/2 server allowing you to provide flexible routing and controllers for responding to incoming requests in a consistent, repeatable, performant fashion.
+AwesomeServer is a customizable API Server framework for enterprise ready nodejs applications. It is an easy to setup HTTP or HTTPS or HTTP/2 server allowing you to provide flexible routing and controllers for responding to incoming requests in a consistent, repeatable, performant fashion.
 
 ## Features
 
@@ -21,7 +21,7 @@ AwesomeServer provides...
 
 ## Why another API Server solution?
 
-AwesomeServer is similar to Express, or Fastly, Hapi, etc. and those are all good products.  AwesomeServer just provides a different apporach to API Server code; one we think is cleaner and more understandable. If you want to use Express/Fastly/Hapi/whatever, that's perfectly fine by us. But if you want to try something a little cleaner, with less clutter, consider AwesomeServer.
+AwesomeServer is similar to Express, or Fastly, Hapi, etc. and those are all good products.  AwesomeServer just provides a different apporach to API Server code; one we think is cleaner and easier to use. If you want to use Express/Fastly/Hapi/whatever, that's perfectly fine by us. But if you want to try something a little cleaner, with less clutter, consider AwesomeServer.
 
 ## Contents
  - [Installation](#installation)
@@ -40,7 +40,7 @@ AwesomeServer is similar to Express, or Fastly, Hapi, etc. and those are all goo
 
 Couldn't be easier.
 ```
-npm install --save @awesomeeng/awesome-server
+npm install @awesomeeng/awesome-server
 ```
 
 ## Setup
@@ -149,9 +149,9 @@ server.route("*","*",catchAllHandler);
 
 Each call to route take three arguments:
 
-> **method**: Is a valid HTTP Method or the wildcard "*" character.
+> **method**: Is a valid HTTP Method or the wildcard "*" character. Methods are case-insemsitive.
 
-> **path**: Describes how to match against the path portion of the incoming request.  There are different types of way to match the path and you can read all about the options in the [Paths](#paths) section below.
+> **path**: Describes how to match against the path portion of the incoming request. The most basic type of path is an exact match which is a string without any wildcard characters such as `/hello/world`. There are several different types of paths and you can read all about the options in the [Paths](#paths) section below.
 
 > **handler**: May be one of several different things used to describe how to handle the incoming request that has matched the method and path conditions. The handler is only called if the method and path are matches.  A handler must return a Promise.
 
@@ -161,16 +161,30 @@ See our detailed [Routing documentation](./docs/Advanced_Routing.md) for a lot m
 
 Handlers can be one of several different means of describing how to handle a request:
 
-> **function**: The most basic form of handling a route, a function passed in as a handler will be
-	executed when the route matches.  The function is executed with the signature
-	(path,request,response).
+ > **function**: The most basic form of handling a route, a function passed in as a handler will be
+ executed when the route matches.  The function is executed with the signature `(path,request,response)`.
+ ```
+ server.route("GET","/test",function(path,request,response){
+	 return new Promise((resolve,reject)=>{
+		 ... do something ...
+		 resolve();
+	 });
+ });
+ ```
 
-> **controller**: You can pass a controller or controller class in as a handler.  The controller
-	will then be executed when the route matches.  If a controller class is passed in, an instance of the controller is instantiated and used. Learn more about the awesomeness that is controllers here: [Controllers](#controllers).
+ > **controller**: You can pass a controller or controller class in as a handler.  The controller
+ will then be executed when the route matches.  If a controller class is passed in, an instance of the controller is instantiated and used. Learn more about the awesomeness that is controllers in the [Controllers](#controllers) section below.
+ ```
+ let mycontroller = new MyController();
+ server.route("GET","/test",mycontroller);
+ ```
 
-> **filename**: If you pass a filename to a valid existing `.js` file that exports a Controller instance or Controller class, AwesomeServer will require the Controller file, create an instance of that controller, if needed, and then use that as the handler as described above. This enables working with Controllers in a much easier way.
+ > **filename**: If you pass a filename to a valid existing `.js` file that exports a Controller instance or Controller class, AwesomeServer will require the Controller file, create an instance of that controller, if needed, and then use that as the handler as described above. This enables working with Controllers in a much easier way.
+ ```
+ server.route("GET","/test","./MyController.js");
+ ```
 
-> **directory**: If you pass a filename to a valid existing directory, AwesomeServer will recursively walk the directory mapping any valid `.js` file that exports a Controller instance or Controller class. The mapping is based on the route passed in, the location of the controller file relative to the root directory name provided, and the filename itself.  So if you had the following structure...
+ > **directory**: If you pass a path to a valid existing directory, AwesomeServer will recursively walk the directory mapping any valid `.js` file that exports a Controller instance or Controller class. The mapping is based on the route passed in, the location of the controller file relative to the root directory name provided, and the filename itself.  So if you had the following structure...
 ```
 files/
   one.js
@@ -218,7 +232,7 @@ To learn more about the details of Paths and Path Matching, check out our dedica
 
 ## Controllers
 
-A controller is a special type of routing that allows you to keep logical API behaviour together in a unified class.  Controllers respond to any HTTP method for a given path; so you can write a GET handler and a POST handler together in a single class focus around a given endpoint route. Controllers are roughly based on Grails and other frameworks, but with a little more JS magic.
+A controller is a special type of routing that allows you to keep logical API behaviour together in a unified class.  Controllers respond to any HTTP method for a given path; so you can write a GET handler and a POST handler together in a single class focused around a given endpoint route. Controllers are roughly based on Rail/Grails and other frameworks, but with a little more JS magic.
 
 A controller is always a Class (or instance of) that extends from `AwesomeServer.AbstractContoller`. AbstractController provides the handling of the incoming request and executing the appropriate method for the request based on the *HTTP method*.
 
@@ -246,16 +260,16 @@ You can read lots more about Controllers in our dedicated [Controller Documentat
 
 ## Documentation
 
- - [HTTP Setup and Configuration](./docs/Advanced_HTTP.md)
- - [HTTPS Setup and Configuration](./docs/Advacned_HTTPS.md)
- - [HTTP/2 Setup and Configuration](./docs/Advanced_HTTP2.md)
- - [Route ordering and multiple handlers](./docs/Advanced_Routing.md)
- - [Advanced Paths](./docs/Advanced_Paths.md)
- - [Advanced Controllers](./docs/Advanced_Controllers.md)
- - [HTTP/2 Techniques](./docs/Advanced_HTTP2Techniques.md)
- - [Requests](./docs/Advanced_Requests.md)
- - [Responses](./docs/Advanced_Responses.md)
- - [Custom Servers](./docs/Advanced_CustomServers.md)
+ - [HTTP Setup and Configuration](./docs/HTTP.md)
+ - [HTTPS Setup and Configuration](./docs/HTTPS.md)
+ - [HTTP/2 Setup and Configuration](./docs/HTTP2.md)
+ - [Route ordering and multiple handlers](./docs/Routing.md)
+ - [Advanced Paths](./docs/Paths.md)
+ - [Advanced Controllers](./docs/Controllers.md)
+ - [Requests](./docs/Requests.md)
+ - [Responses](./docs/Responses.md)
+ - [HTTP/2 Techniques](./docs/HTTP2Techniques.md)
+ - [Custom Servers](./docs/CustomServers.md)
 
  - [API Documentation](./docs/API.md)
 
@@ -278,6 +292,8 @@ AwesomeServer ships with a set of examples for your reference.
  - [FileServer](./examples/FileServer): How to build a basic File Server using Server Directory Routing.
 
  - [HTTP2FileServer](./examples/HTTP2FileServer): An example of doing a slightly more complicated HTTP/2 server using Push Serve Routing and File Serve Routing fallback.
+
+ - [MultipleRoutes](./examples/MultipleRoutes): An example of doing multiple routes for a single request and why route ordering is important.
 
 ## The Awesome Engineering Company
 
