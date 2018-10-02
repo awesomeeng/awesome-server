@@ -137,7 +137,7 @@ Here is the form for the `server.serve()` method:
 It is worth pointing out that `server.serve()` does not take a *method* to match against.  `server.serve()` only works for GET requests.
 
 Also, one will note that `server.serve()` has three different signature, but they all roughly work the same...
-> - **path**: [string|RegExp|PathMatcher] The path matcher to match against.
+- **path**: [string|RegExp|PathMatcher] The path matcher to match against.
 - **contentType**: [string] If provided serve the given filename as the given content type.  If not given AwesomeServer will attempt to guess the content type from the filename extension.  This option has no meaning in the directory version of this routing.
 - **filename**: [string] The filename to serve.
 - **directory**: [string] The directory to serve.
