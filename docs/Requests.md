@@ -57,7 +57,7 @@ HTTPRequest, HTTPSRequest and HTTP2Request all wrap nodejs' underlying `http.Inc
 
 For HTTP POST, PUT, and PATCH methods, additional content can be sent with the incoming request.  AwesomeServer naturally supplies an easy way to do this as well as two shortcut methods to make it even easier.
 
-> **read()** - Returns a Promise that resolves when the entire content is read from the request.
+**read()** - Returns a Promise that resolves when the entire content is read from the request.
  - returns **Promise > Buffer **
 
 > **readText** - Shortcut for `request.read()` but decodes the buffer into a text string of the given encoding.
