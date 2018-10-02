@@ -1096,6 +1096,7 @@ Please see the documentation at @link https://github.com/awesomeeng/AwesomeServe
         * [.http](#AwesomeServer.http)
         * [.https](#AwesomeServer.https)
         * [.http2](#AwesomeServer.http2)
+        * [.controllers](#AwesomeServer.controllers)
 
 
 * * *
@@ -1347,9 +1348,9 @@ the arguments passed into it.
   controllers below) if the method and path match for an incoming request. (see method and
   see path below).
 
-  route(method,controller) - A synonym for calling route("*",path,controller).
+  route(path,controller) - A synonym for calling route("*",path,controller).
 
-  route(string,path,filename) - A synonym for calling route(method,path,controller)
+  route(method,path,filename) - A synonym for calling route(method,path,controller)
   except the given filename is loaded an instantiated as a controller first. This lets you
   reference external controllers by filename easily.
 
@@ -1702,6 +1703,15 @@ Returns references to HTTPSServer, HTTPSRequest, and HTTPSResponse for custom ex
 
 ### AwesomeServer.http2
 Returns references to HTTP2Server, HTTP2Request, and HTTP2Response for custom extensions.
+
+**Kind**: static property of [<code>AwesomeServer</code>](#AwesomeServer)  
+
+* * *
+
+<a name="AwesomeServer.controllers"></a>
+
+### AwesomeServer.controllers
+Returns reference to the built-in controllers.
 
 **Kind**: static property of [<code>AwesomeServer</code>](#AwesomeServer)  
 

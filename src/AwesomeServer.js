@@ -131,6 +131,10 @@ class AwesomeServer {
 			HTTP2Response: require("./http2/HTTP2Response")
 		};
 	}
+
+	/**
+	 * Returns reference to the built-in controllers.
+	 */
 	static get controllers() {
 		return {
 			RedirectController: require("./controllers/RedirectController"),
