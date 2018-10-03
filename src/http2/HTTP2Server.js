@@ -36,7 +36,7 @@ class HTTP2Server extends HTTPSServer {
 	 * ```
 	 * const config = {
 	 *   host: "localhost"
-	 *   port: 7080,
+	 *   port: 7443,
 	 *   key: null,
 	 *   cert: null,
 	 *   pfx: null
@@ -61,7 +61,7 @@ class HTTP2Server extends HTTPSServer {
 	constructor(config) {
 		super(Object.assign({
 			host: "localhost",
-			port: 7080,
+			port: 7443,
 			allowHTTP1: true
 		},config));
 

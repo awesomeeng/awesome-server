@@ -95,7 +95,7 @@ class HTTPServer extends AbstractServer {
 		if (this[$SERVER]) return Promise.resolve();
 
 		let host = this.config.host || "127.0.0.1";
-		let port = this.config.port || 0;
+		let port = this.config.port || 7080;
 
 		Log.info("Starting HTTP Server on "+host+":"+port+"...");
 		return new Promise((resolve,reject)=>{
