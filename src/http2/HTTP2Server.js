@@ -12,6 +12,7 @@ const HTTP2Response = require("./HTTP2Response");
 
 const $SERVER = Symbol("server");
 const $RUNNING = Symbol("running");
+const $SESSIONS = Symbol("sessions");
 
 /**
  * HTTP/2 implementation of AbstractServer, which is used by AwesomeServer
@@ -67,6 +68,7 @@ class HTTP2Server extends HTTPSServer {
 
 		this[$SERVER] = null;
 		this[$RUNNING] = false;
+		this[$SESSIONS] = [];
 	}
 
 	/**
@@ -104,6 +106,8 @@ class HTTP2Server extends HTTPSServer {
 	start(handler) {
 		if (this[$SERVER]) return Promise.resolve();
 
+		this[$SESSIONS] = [];
+
 		let host = this.config.host || "127.0.0.1";
 		let port = this.config.port || 0;
 
@@ -122,6 +126,15 @@ class HTTP2Server extends HTTPSServer {
 				});
 
 				server.on("request",this.handleRequest.bind(this,handler));
+
+				server.on("session",(session)=>{
+					this[$SESSIONS].push(session);
+					session.on("close",()=>{
+						this[$SESSIONS] = this[$SESSIONS].filter((ses)=>{
+							return ses!==session;
+						});
+					});
+				});
 
 				server.listen(this.config.port,this.config.host,this.config.backlog,(err)=>{
 					if (err) {
@@ -159,9 +172,23 @@ class HTTP2Server extends HTTPSServer {
 		let port = this.config.port || 0;
 
 		Log.info("Stopping HTTP/2 Server on "+host+":"+port+"...");
-		return new Promise((resolve,reject)=>{
+		return new Promise(async (resolve,reject)=>{
 			try {
 				let server = this[$SERVER];
+
+				await Promise.all(this[$SESSIONS].map((session)=>{
+					return new Promise((resolve,reject)=>{
+						try {
+							session.close(()=>{
+								resolve();
+							});
+						}
+						catch (ex) {
+							return reject(ex);
+						}
+					});
+				}));
+				
 				server.close((err)=>{
 					if (err) {
 						Log.error("Error stopping HTTP/2 server on "+host+":"+port+".",err);
