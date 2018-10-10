@@ -695,7 +695,7 @@ class AwesomeServer {
 	 * used by the AwesomeServe wherever a filename is used.
 	 *
 	 * @param  {string} filename   filename to find
-	 * @return {(string|null)      fully resolved filename
+	 * @return {(string|null)}      fully resolved filename
 	 */
 	resolve(filename) {
 		let resolved = _resolve(filename);
@@ -722,7 +722,7 @@ class AwesomeServer {
 		let url = request.method+" "+(request.url && request.url.href || request.url && request.url.toString() || request.url.toString());
 		let path = request.path || "/";
 
-		Log.access("Request "+url+" from "+request.origin+".");
+		// Log.access("Request "+url+" from "+request.origin+".");
 
 		let matching = this[$ROUTES].filter((route)=>{
 			return (route.method==="*" || route.method===method) && route.matcher.match(path) && route.routes && route.routes.length>0;
