@@ -27,10 +27,10 @@ describe("HTTPServer",function(){
 	beforeEach(async function(){
 		server = new AwesomeServer();
 		port = await AwesomeUtils.Net.randomPort();
-		url = "http://127.0.0.1:"+port;
+		url = "http://localhost:"+port;
 
 		server.addHTTPServer({
-			host: "127.0.0.1",
+			hostname: "localhost",
 			port
 		});
 		await server.start();

@@ -259,7 +259,7 @@ class AwesomeServer {
 	 *
 	 * ```
 	 * const config = {
-	 *   host: "localhost"
+	 *   hostname: "localhost"
 	 *   port: 7080
 	 * };
 	 * ```
@@ -295,7 +295,7 @@ class AwesomeServer {
 	 *
 	 * ```
 	 * const config = {
-	 *   host: "localhost"
+	 *   hostname: "localhost"
 	 *   port: 7080,
 	 *   key: null,
 	 *   cert: null,
@@ -340,7 +340,7 @@ class AwesomeServer {
 	 *
 	 * ```
 	 * const config = {
-	 *   host: "localhost"
+	 *   hostname: "localhost"
 	 *   port: 7080,
 	 *   key: null,
 	 *   cert: null,

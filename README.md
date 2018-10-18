@@ -63,7 +63,7 @@ let server = new AwesomeServer();
 3). Add Servers...
 ```
 server.addHTTPServer({
-	host: "localhost",
+	hostname: "localhost",
 	port: 7080
 });
 ```
@@ -92,7 +92,7 @@ You create a HTTP Server instance with the `addHTTPServer(config)` method, as sh
 ```
 let server = new AwesomeServer();
 server.addHTTPServer({
-	host: "localhost",
+	hostname: "localhost",
 	port: 7080
 });
 ```
@@ -108,7 +108,7 @@ You create a HTTPS Server instance with the `addHTTPSServer(config)` method, as 
 ```
 let server = new AwesomeServer();
 server.addHTTPSServer({
-	host: "localhost",
+	hostname: "localhost",
 	port: 7080,
 	cert: "./publickey.pem",
 	key: "./privatekey.pem"
@@ -126,7 +126,7 @@ You create a HTTP/2 Server instance with the `addHTTP2Server(config)` method, as
 ```
 let server = new AwesomeServer();
 server.addHTTP2Server({
-	host: "localhost",
+	hostname: "localhost",
 	port: 7080,
 	cert: "./publickey.pem",
 	key: "./privatekey.pem"

@@ -4,6 +4,7 @@
 
 const HTTP2 = require("http2");
 
+const AwesomeUtils = require("@awesomeeng/awesome-utils");
 const Log = require("@awesomeeng/awesome-log");
 
 const HTTPSServer = require("../https/HTTPSServer");
@@ -36,8 +37,8 @@ class HTTP2Server extends HTTPSServer {
 	 *
 	 * ```
 	 * const config = {
-	 *   host: "localhost"
-	 *   port: 7443,
+	 *   hostname: "localhost"
+	 *   port: 0,
 	 *   key: null,
 	 *   cert: null,
 	 *   pfx: null
@@ -51,7 +52,7 @@ class HTTP2Server extends HTTPSServer {
 	 *
 	 * For more details about config values, please see [nodejs' *http2* module]()
 	 *
-	 * **An important note about config**: The default *host* setting for AwesomeServer
+	 * **An important note about config**: The default *hostname* setting for AwesomeServer
 	 * is `localhost`. This is different than the default for the underlying
 	 * nodejs *http2* module of `0.0.0.0`.
 	 *
@@ -60,9 +61,9 @@ class HTTP2Server extends HTTPSServer {
 	 * @return {AbstractServer}        the server added.
 	 */
 	constructor(config) {
-		super(Object.assign({
-			host: "localhost",
-			port: 7443,
+		super(AwesomeUtils.Object.extend({
+			hostname: "localhost",
+			port: 0,
 			allowHTTP1: true
 		},config));
 
@@ -90,6 +91,24 @@ class HTTP2Server extends HTTPSServer {
 	}
 
 	/**
+	 * Returns the bound hostname for this server.
+	 *
+	 * @return {string}
+	 */
+	get hostname() {
+		return this.original && this.original.address().address || this.config.hostname || this.config.host || "localhost";
+	}
+
+	/**
+	 * Returns the bound port for this server.
+	 *
+	 * @return {number}
+	 */
+	get port() {
+		return this.original && this.original.address().port || this.config.port || 0;
+	}
+
+	/**
 	 * Starts this server running and accepting requests. This effectively
 	 * creates the nodejs http2 server, and begins the listening process,
 	 * routing incoming requests to the provided handler.
@@ -108,10 +127,10 @@ class HTTP2Server extends HTTPSServer {
 
 		this[$SESSIONS] = [];
 
-		let host = this.config.host || "127.0.0.1";
+		let hostname = this.config.hostname || this.config.host || "localhost";
 		let port = this.config.port || 0;
 
-		Log.info("Starting HTTP/2 Server on "+host+":"+port+"...");
+		Log.info("Starting HTTP/2 Server on "+hostname+":"+port+"...");
 		return new Promise((resolve,reject)=>{
 			try {
 
@@ -122,7 +141,7 @@ class HTTP2Server extends HTTPSServer {
 				let server = HTTP2.createSecureServer(this.config);
 
 				server.on("error",(err)=>{
-					Log.error("Error on HTTP/2 Server on "+host+":"+port+":",err);
+					Log.error("Error on HTTP/2 Server on "+hostname+":"+port+":",err);
 				});
 
 				server.on("request",this.handleRequest.bind(this,handler));
@@ -136,15 +155,15 @@ class HTTP2Server extends HTTPSServer {
 					});
 				});
 
-				server.listen(this.config.port,this.config.host,this.config.backlog,(err)=>{
+				server.listen(port,hostname,this.config.backlog,(err)=>{
 					if (err) {
-						Log.error("Error starting server on "+host+":"+port+".",err);
+						Log.error("Error starting server on "+hostname+":"+port+".",err);
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						reject(err);
 					}
 					else {
-						Log.info("Started HTTP/2 Server on "+host+":"+port+"...");
+						Log.info("Started HTTP/2 Server on "+this.hostname+":"+this.port+"...");
 						this[$RUNNING] = true;
 						this[$SERVER] = server;
 						resolve();
@@ -168,10 +187,10 @@ class HTTP2Server extends HTTPSServer {
 	stop() {
 		if (!this[$SERVER]) return Promise.resolve();
 
-		let host = this.config.host || "127.0.0.1";
-		let port = this.config.port || 0;
+		let hostname = this.hostname || "localhost";
+		let port = this.port || 0;
 
-		Log.info("Stopping HTTP/2 Server on "+host+":"+port+"...");
+		Log.info("Stopping HTTP/2 Server on "+hostname+":"+port+"...");
 		return new Promise(async (resolve,reject)=>{
 			try {
 				let server = this[$SERVER];
@@ -188,16 +207,16 @@ class HTTP2Server extends HTTPSServer {
 						}
 					});
 				}));
-				
+
 				server.close((err)=>{
 					if (err) {
-						Log.error("Error stopping HTTP/2 server on "+host+":"+port+".",err);
+						Log.error("Error stopping HTTP/2 server on "+hostname+":"+port+".",err);
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						reject(err);
 					}
 					else {
-						Log.info("Stopped HTTP/2 Server on "+host+":"+port+"...");
+						Log.info("Stopped HTTP/2 Server on "+hostname+":"+port+"...");
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						resolve();

@@ -6,8 +6,8 @@ const HTTPS = require("https");
 const FS = require("fs");
 const Path = require("path");
 
-const Log = require("@awesomeeng/awesome-log");
 const AwesomeUtils = require("@awesomeeng/awesome-utils");
+const Log = require("@awesomeeng/awesome-log");
 
 const HTTPServer = require("../http/HTTPServer");
 const HTTPSRequest = require("./HTTPSRequest");
@@ -38,8 +38,8 @@ class HTTPSServer extends HTTPServer {
 	 *
 	 * ```
 	 * const config = {
-	 *   host: "localhost"
-	 *   port: 7080,
+	 *   hostname: "localhost"
+	 *   port: 0,
 	 *   key: null,
 	 *   cert: null,
 	 *   pfx: null
@@ -53,7 +53,7 @@ class HTTPSServer extends HTTPServer {
 	 *
 	 * For more details about config values, please see [nodejs' *https* module]()
 	 *
-	 * **An important note about config**: The default *host* setting for AwesomeServer
+	 * **An important note about config**: The default *hostname* setting for AwesomeServer
 	 * is `localhost`. This is different than the default for the underlying
 	 * nodejs *https* module of `0.0.0.0`.
 	 *
@@ -62,9 +62,9 @@ class HTTPSServer extends HTTPServer {
 	 * @return {AbstractServer}        the server added.
 	 */
 	constructor(config) {
-		super(Object.assign({
-			host: "localhost",
-			port: 7080
+		super(AwesomeUtils.Object.extend({
+			hostname: "localhost",
+			port: 0
 		},config));
 
 		this[$SERVER] = null;
@@ -90,6 +90,24 @@ class HTTPSServer extends HTTPServer {
 	}
 
 	/**
+	 * Returns the bound hostname for this server.
+	 *
+	 * @return {string}
+	 */
+	get hostname() {
+		return this.original && this.original.address().address || this.config.hostname || this.config.host || "localhost";
+	}
+
+	/**
+	 * Returns the bound port for this server.
+	 *
+	 * @return {number}
+	 */
+	get port() {
+		return this.original && this.original.address().port || this.config.port || 0;
+	}
+
+	/**
 	* Starts this server running and accepting requests. This effectively
 	* creates the nodejs https server, and begins the listening process,
 	* routing incoming requests to the provided handler.
@@ -106,10 +124,10 @@ class HTTPSServer extends HTTPServer {
 	start(handler) {
 		if (this[$SERVER]) return Promise.resolve();
 
-		let host = this.config.host || "127.0.0.1";
+		let hostname = this.config.hostname || this.config.host || "localhost";
 		let port = this.config.port || 0;
 
-		Log.info("Starting HTTPS Server on "+host+":"+port+"...");
+		Log.info("Starting HTTPS Server on "+hostname+":"+port+"...");
 		return new Promise((resolve,reject)=>{
 			try {
 				this.config.cert = HTTPSServer.resolveCertConfig(this.config.cert,"cert");
@@ -119,20 +137,20 @@ class HTTPSServer extends HTTPServer {
 				let server = HTTPS.createServer(this.config);
 
 				server.on("error",(err)=>{
-					Log.info("Error on HTTPS Server on "+host+":"+port+":",err);
+					Log.info("Error on HTTPS Server on "+hostname+":"+port+":",err);
 				});
 
 				server.on("request",this.handleRequest.bind(this,handler));
 
-				server.listen(this.config.port,this.config.host,this.config.backlog,(err)=>{
+				server.listen(port,hostname,this.config.backlog,(err)=>{
 					if (err) {
-						Log.info("Error starting server on "+host+":"+port+".",err);
+						Log.info("Error starting server on "+hostname+":"+port+".",err);
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						reject(err);
 					}
 					else {
-						Log.info("Started HTTPS Server on "+host+":"+port+"...");
+						Log.info("Started HTTPS Server on "+this.hostname+":"+this.port+"...");
 						this[$RUNNING] = true;
 						this[$SERVER] = server;
 
@@ -158,22 +176,22 @@ class HTTPSServer extends HTTPServer {
 	stop() {
 		if (!this[$SERVER]) return Promise.resolve();
 
-		let host = this.config.host || "127.0.0.1";
-		let port = this.config.port || 0;
+		let hostname = this.hostname || "localhost";
+		let port = this.port || 0;
 
-		Log.info("Stopping HTTPS Server on "+host+":"+port+"...");
+		Log.info("Stopping HTTPS Server on "+hostname+":"+port+"...");
 		return new Promise((resolve,reject)=>{
 			try {
 				let server = this[$SERVER];
 				server.close((err)=>{
 					if (err) {
-						Log.info("Error stopping HTTPS server on "+host+":"+port+".",err);
+						Log.info("Error stopping HTTPS server on "+hostname+":"+port+".",err);
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						reject(err);
 					}
 					else {
-						Log.info("Stopped HTTPS Server on "+host+":"+port+"...");
+						Log.info("Stopped HTTPS Server on "+hostname+":"+port+"...");
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						resolve();
@@ -209,7 +227,7 @@ class HTTPSServer extends HTTPServer {
 	 *
 	 * @param  {string|buffer} value
 	 * @param  {string} [type="certificate"]
-	 * @return {string}                            
+	 * @return {string}
 	 */
 	static resolveCertConfig(value,type="certificate") {
 		if (value && typeof value==="string" && !value.startsWith("----")) {

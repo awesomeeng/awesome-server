@@ -29,10 +29,10 @@ describe("HTTP2Server",function(){
 	beforeEach(async function(){
 		server = new AwesomeServer();
 		port = await AwesomeUtils.Net.randomPort();
-		url = "https://127.0.0.1:"+port;
+		url = "https://localhost:"+port;
 
 		server.addHTTP2Server({
-			host: "127.0.0.1",
+			hostname: "localhost",
 			port,
 			cert: server.resolve("./certificate.pub"), // load our cert relative to this Server.js file.
 			key: server.resolve("./certificate.key") // load our key relative to this Server.js file.

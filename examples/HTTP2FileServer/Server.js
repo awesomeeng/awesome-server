@@ -9,7 +9,7 @@ const AwesomeServer = require("@awesomeeng/awesome-server");
 
 let server = new AwesomeServer();
 server.addHTTP2Server({
-	host: "localhost",
+	hostname: "localhost",
 	port: 7443,
 	cert: server.resolve("./certificate.pub"), // load our cert relative to this Server.js file.
 	key: server.resolve("./certificate.key") // load our key relative to this Server.js file.

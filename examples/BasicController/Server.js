@@ -24,7 +24,7 @@ class MyController extends AbstractController {
 
 let server = new AwesomeServer();
 server.addHTTPServer({
-	host: "localhost",
+	hostname: "localhost",
 	port: 7080
 });
 server.route("/hello",new MyController());

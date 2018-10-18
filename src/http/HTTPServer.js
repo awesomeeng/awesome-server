@@ -4,6 +4,7 @@
 
 const HTTP = require("http");
 
+const AwesomeUtils = require("@awesomeeng/awesome-utils");
 const Log = require("@awesomeeng/awesome-log");
 
 const AbstractServer = require("../AbstractServer");
@@ -35,13 +36,13 @@ class HTTPServer extends AbstractServer {
 	*
 	* ```
 	* const config = {
-	*   host: "localhost"
-	*   port: 7080
+	*   hostname: "localhost"
+	*   port: 0
 	* };
 	* ```
 	* For more details about config values, please see [nodejs' http module]()
 	*
-	* **An important note about config**: The default *host* setting for AwesomeServer
+	* **An important note about config**: The default *hostname* setting for AwesomeServer
 	* is `localhost`. This is different than the default for the underlying
 	* nodejs http module of `0.0.0.0`.
 	*
@@ -50,9 +51,9 @@ class HTTPServer extends AbstractServer {
 	* @return {AbstractServer}        the server added.
 	 */
 	constructor(config) {
-		super(Object.assign({
-			host: !config.path && "localhost" || null,
-			port: !config.path && 7080 || null
+		super(AwesomeUtils.Object.extend({
+			hostname: "localhost",
+			port: 0
 		},config));
 
 		this[$SERVER] = null;
@@ -78,6 +79,24 @@ class HTTPServer extends AbstractServer {
 	}
 
 	/**
+	 * Returns the bound hostname for this server.
+	 *
+	 * @return {string}
+	 */
+	get hostname() {
+		return this.original && this.original.address().address || this.config.hostname || this.config.host || "localhost";
+	}
+
+	/**
+	 * Returns the bound port for this server.
+	 *
+	 * @return {number}
+	 */
+	get port() {
+		return this.original && this.original.address().port || this.config.port || 0;
+	}
+
+	/**
 	 * Starts this server running and accepting requests. This effectively
 	 * creates the nodejs http server, and begins the listening process,
 	 * routing incoming requests to the provided handler.
@@ -94,29 +113,29 @@ class HTTPServer extends AbstractServer {
 	start(handler) {
 		if (this[$SERVER]) return Promise.resolve();
 
-		let host = this.config.host || "127.0.0.1";
-		let port = this.config.port || 7080;
+		let hostname = this.config.hostname || this.config.host || "localhost";
+		let port = this.config.port || 0;
 
-		Log.info("Starting HTTP Server on "+host+":"+port+"...");
+		Log.info("Starting HTTP Server on "+hostname+":"+port+"...");
 		return new Promise((resolve,reject)=>{
 			try {
 				let server = HTTP.createServer(this.config);
 
 				server.on("error",(err)=>{
-					Log.error("Error on HTTP Server on "+host+":"+port+":",err);
+					Log.error("Error on HTTP Server on "+hostname+":"+port+":",err);
 				});
 
 				server.on("request",this.handleRequest.bind(this,handler));
 
-				server.listen(this.config.port,this.config.host,this.config.backlog,(err)=>{
+				server.listen(port,hostname,this.config.backlog,(err)=>{
 					if (err) {
-						Log.error("Error starting server on "+host+":"+port+".",err);
+						Log.error("Error starting server on "+hostname+":"+port+".",err);
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						reject(err);
 					}
 					else {
-						Log.info("Started HTTP Server on "+host+":"+port+"...");
+						Log.info("Started HTTP Server on "+this.hostname+":"+this.port+"...");
 						this[$RUNNING] = true;
 						this[$SERVER] = server;
 						resolve();
@@ -140,22 +159,22 @@ class HTTPServer extends AbstractServer {
 	stop() {
 		if (!this[$SERVER]) return Promise.resolve();
 
-		let host = this.config.host || "127.0.0.1";
-		let port = this.config.port || 0;
+		let hostname = this.hostname || "localhost";
+		let port = this.port || 0;
 
-		Log.info("Stopping HTTP Server on "+host+":"+port+"...");
+		Log.info("Stopping HTTP Server on "+hostname+":"+port+"...");
 		return new Promise((resolve,reject)=>{
 			try {
 				let server = this[$SERVER];
 				server.close((err)=>{
 					if (err) {
-						Log.error("Error stopping HTTP server on "+host+":"+port+".",err);
+						Log.error("Error stopping HTTP server on "+hostname+":"+port+".",err);
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						reject(err);
 					}
 					else {
-						Log.info("Stopped HTTP Server on "+host+":"+port+"...");
+						Log.info("Stopped HTTP Server on "+hostname+":"+port+"...");
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						resolve();

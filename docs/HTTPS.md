@@ -29,7 +29,7 @@ The example below shows the default configuration object you would get if you di
 
 ```
 let config = {
-	host: "localhost",
+	hostname: "localhost",
 	port: 7080,
 	cert: null,
 	key: null

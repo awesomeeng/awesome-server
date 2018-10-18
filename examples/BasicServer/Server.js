@@ -9,7 +9,7 @@ const AwesomeServer = require("@awesomeeng/awesome-server");
 
 let server = new AwesomeServer();
 server.addHTTPServer({
-	host: "localhost",
+	hostname: "localhost",
 	port: 7080
 });
 server.route("*","/hello",async (path,request,response)=>{

@@ -74,7 +74,7 @@ const AwesomeServer = require("@awesomeeng/awesome-server");
 
 let server = new AwesomeServer();
 server.addHTTPServer({
-	host: "localhost",
+	hostname: "localhost",
 	port: 7080
 });
 
@@ -171,7 +171,7 @@ const AwesomeServer = require("@awesomeeng/awesome-server");
 
 let server = new AwesomeServer();
 server.addHTTP2Server({
-	host: "localhost",
+	hostname: "localhost",
 	port: 7443,
 	cert: server.resolve("./certificate.pub"),
 	key: server.resolve("./certificate.key")

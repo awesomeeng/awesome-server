@@ -28,6 +28,7 @@ class AbstractServer {
 
 	/**
 	 * Returns the passed in config object.
+	 *
 	 * @return {(AwesomeConfig|Object)}
 	 */
 	get config() {
@@ -36,6 +37,7 @@ class AbstractServer {
 
 	/**
 	 * Returns true if this server has been started.
+	 *
 	 * @return {boolean}
 	 */
 	get running() {
@@ -44,9 +46,28 @@ class AbstractServer {
 
 	/**
 	 * Returns the underlying server object that this AbstractServer represents.
+	 *
 	 * @return {*}
 	 */
 	get original() {
+		throw new Error("To be implemented by subclass.");
+	}
+
+	/**
+	 * Returns the bound hostname for this server.
+	 *
+	 * @return {string} 
+	 */
+	get hostname() {
+		throw new Error("To be implemented by subclass.");
+	}
+
+	/**
+	 * Returns the bound port for this server.
+	 *
+	 * @return {number}
+	 */
+	get port() {
 		throw new Error("To be implemented by subclass.");
 	}
 

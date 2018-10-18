@@ -1197,7 +1197,7 @@ module.  The basic structure of this config is below with the default values sho
 
 ```
 const config = {
-  host: "localhost"
+  hostname: "localhost"
   port: 7080
 };
 ```
@@ -1233,7 +1233,7 @@ module.  The basic structure of this config is below with the default values sho
 
 ```
 const config = {
-  host: "localhost"
+  hostname: "localhost"
   port: 7080,
   key: null,
   cert: null,
@@ -1278,7 +1278,7 @@ module.  The basic structure of this config is below with the default values sho
 
 ```
 const config = {
-  host: "localhost"
+  hostname: "localhost"
   port: 7080,
   key: null,
   cert: null,
@@ -3017,7 +3017,7 @@ module.  The basic structure of this config is below with the default values sho
 
 ```
 const config = {
-  host: "localhost"
+  hostname: "localhost"
   port: 7080
 };
 ```
@@ -3389,7 +3389,7 @@ module.  The basic structure of this config is below with the default values sho
 
 ```
 const config = {
-  host: "localhost"
+  hostname: "localhost"
   port: 7080,
   key: null,
   cert: null,
@@ -3770,7 +3770,7 @@ module.  The basic structure of this config is below with the default values sho
 
 ```
 const config = {
-  host: "localhost"
+  hostname: "localhost"
   port: 7080,
   key: null,
   cert: null,

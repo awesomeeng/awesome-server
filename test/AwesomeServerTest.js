@@ -56,7 +56,7 @@ describe("AwesomeServer",function(){
 
 		let request = new (class Request extends AbstractRequest{
 			get origin() {
-				return "127.0.0.1:1234";
+				return "localhost:1234";
 			}
 
 			get method() {
@@ -99,7 +99,7 @@ describe("AwesomeServer",function(){
 		assert.equal(server.servers.length,0);
 
 		server.addHTTPServer({
-			host: "127.0.0.1",
+			hostname: "localhost",
 			port: 1234
 		});
 
@@ -112,7 +112,7 @@ describe("AwesomeServer",function(){
 		assert.equal(server.servers.length,0);
 
 		server.addHTTPSServer({
-			host: "127.0.0.1",
+			hostname: "localhost",
 			port: 1234
 		});
 
@@ -125,7 +125,7 @@ describe("AwesomeServer",function(){
 		assert.equal(server.servers.length,0);
 
 		server.addHTTP2Server({
-			host: "127.0.0.1",
+			hostname: "localhost",
 			port: 1234
 		});
 
@@ -138,15 +138,15 @@ describe("AwesomeServer",function(){
 		assert.equal(server.servers.length,0);
 
 		server.addHTTPServer({
-			host: "127.0.0.1",
+			hostname: "localhost",
 			port: 1234
 		});
 		server.addHTTPSServer({
-			host: "127.0.0.1",
+			hostname: "localhost",
 			port: 1234
 		});
 		server.addHTTP2Server({
-			host: "127.0.0.1",
+			hostname: "localhost",
 			port: 1234
 		});
 
@@ -164,7 +164,7 @@ describe("AwesomeServer",function(){
 
 		let server = new AwesomeServer();
 		server.addHTTPServer({
-			host: "127.0.0.1",
+			hostname: "localhost",
 			port
 		});
 
@@ -179,7 +179,7 @@ describe("AwesomeServer",function(){
 
 		let server = new AwesomeServer();
 		server.addHTTPSServer({
-			host: "127.0.0.1",
+			hostname: "localhost",
 			port
 		});
 
@@ -194,7 +194,7 @@ describe("AwesomeServer",function(){
 
 		let server = new AwesomeServer();
 		server.addHTTP2Server({
-			host: "127.0.0.1",
+			hostname: "localhost",
 			port
 		});
 
