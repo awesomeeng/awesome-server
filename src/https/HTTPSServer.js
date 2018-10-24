@@ -95,7 +95,7 @@ class HTTPSServer extends HTTPServer {
 	 * @return {string}
 	 */
 	get hostname() {
-		return this.original && this.original.address().address || this.config.hostname || this.config.host || "localhost";
+		return this.original && this.original.address() && this.original.address().address || this.config.hostname || this.config.host || "localhost";
 	}
 
 	/**
@@ -104,7 +104,7 @@ class HTTPSServer extends HTTPServer {
 	 * @return {number}
 	 */
 	get port() {
-		return this.original && this.original.address().port || this.config.port || 0;
+		return this.original && this.original.address() && this.original.address().port || this.config.port || 0;
 	}
 
 	/**
