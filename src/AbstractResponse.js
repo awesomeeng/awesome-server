@@ -354,22 +354,21 @@ class AbstractResponse {
 	 * @param  {(Object|null)} [headers=null]
 	 * @return {Promise}
 	 */
-	writeError(statusCode,content,headers=null) {
+	writeError(statusCode,content=null,headers=null) {
 		if (arguments.length===0) throw new Error("Missing content.");
 		if (arguments.length>0 && typeof statusCode!=="number") [statusCode,content,headers] = [200,...arguments];
-		if (content===undefined || content===null || content==="") throw new Error("Missing content.");
 
 		headers = headers || {};
 		headers["Content-Type"] = headers["Content-Type"] || "text/plain; charset=utf-8";
 		statusCode = statusCode || 200;
 
-		if (content instanceof Error && content.stack) content = content.message+"\n\n"+content.stack;
-		else if (content instanceof Error) content = content.message;
+		if (content!==undefined && content!==null && content instanceof Error && content.stack) content = content.message+"\n\n"+content.stack;
+		else if (content!==undefined && content!==null && content instanceof Error) content = content.message;
 
 		return new Promise(async (resolve,reject)=>{
 			try {
 				this.writeHead(statusCode,headers);
-				await this.write(content);
+				if (content!==undefined && content!==null) await this.write(content);
 				await this.end();
 
 				resolve();

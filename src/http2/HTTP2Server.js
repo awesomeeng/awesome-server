@@ -14,6 +14,7 @@ const HTTP2Response = require("./HTTP2Response");
 const $SERVER = Symbol("server");
 const $RUNNING = Symbol("running");
 const $SESSIONS = Symbol("sessions");
+const $CONNECTIONS = Symbol("connections");
 
 /**
  * HTTP/2 implementation of AbstractServer, which is used by AwesomeServer
@@ -70,6 +71,7 @@ class HTTP2Server extends HTTPSServer {
 		this[$SERVER] = null;
 		this[$RUNNING] = false;
 		this[$SESSIONS] = [];
+		this[$CONNECTIONS] = [];
 	}
 
 	/**
@@ -155,6 +157,24 @@ class HTTP2Server extends HTTPSServer {
 					});
 				});
 
+				server.on("connection",(connection)=>{
+					this[$CONNECTIONS].push(connection);
+					connection.on("close",()=>{
+						this[$CONNECTIONS] = this[$CONNECTIONS].filter((ses)=>{
+							return ses!==connection;
+						});
+					});
+				});
+
+				server.on("secureConnection",(connection)=>{
+					this[$CONNECTIONS].push(connection);
+					connection.on("close",()=>{
+						this[$CONNECTIONS] = this[$CONNECTIONS].filter((ses)=>{
+							return ses!==connection;
+						});
+					});
+				});
+
 				server.listen(port,hostname,this.config.backlog,(err)=>{
 					if (err) {
 						Log.error("Error starting server on "+hostname+":"+port+".",err);
@@ -207,6 +227,9 @@ class HTTP2Server extends HTTPSServer {
 						}
 					});
 				}));
+				this[$CONNECTIONS].map((connection)=>{
+					connection.destroy();
+				});
 
 				server.close((err)=>{
 					if (err) {
