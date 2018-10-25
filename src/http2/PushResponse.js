@@ -29,16 +29,16 @@ class PushResponse {
 	/**
 	 * Factory function. Use this instead of the constructor.
 	 *
-	 * @param  {HTTP2Response} parent  
-	 * @param  {Object|null} headers 
-	 * @return {Promise}         
+	 * @param  {HTTP2Response} parent
+	 * @param  {Object|null} headers
+	 * @return {Promise}
 	 */
 	static create(parent,headers) {
 		return new Promise((resolve,reject)=>{
 			try {
 				parent.original.createPushResponse(headers||{},(err,stream)=>{
 					if (err) return reject(err);
-					if (stream && stream.code && stream.code==="ERR_HTTP2_INVALID_STREAM") return reject("HTTP/2 Stream closed.");
+					if (stream && stream.code && stream.code==="ERR_HTTP2_INVALID_STREAM") return reject(new Error("HTTP/2 Stream closed."));
 
 					resolve(new PushResponse(parent,stream,headers));
 				});
@@ -53,9 +53,9 @@ class PushResponse {
 	 * Constructor, but should not be used. use PushResponse.create() instead.
 	 *
 	 * @constructor
-	 * @param {HTTP2Response} parent       
-	 * @param {*} stream       
-	 * @param {Object} [headers={}] 
+	 * @param {HTTP2Response} parent
+	 * @param {*} stream
+	 * @param {Object} [headers={}]
 	 */
 	constructor(parent,stream,headers={}) {
 		if (!parent) throw new Error("Missing parent.");
@@ -80,7 +80,7 @@ class PushResponse {
 	/**
 	 * Returns the parent HTTP2 or PushResponse object.
 	 *
-	 * @return {(HTTP2Response|PushResponse)} 
+	 * @return {(HTTP2Response|PushResponse)}
 	 */
 	get parent() {
 		return this[$PARENT];
@@ -89,7 +89,7 @@ class PushResponse {
 	/**
 	 * Returns the underlying HTTP/2 stream.
 	 *
-	 * @return {*} 
+	 * @return {*}
 	 */
 	get stream() {
 		return this[$STREAM];
@@ -97,7 +97,7 @@ class PushResponse {
 
 	/**
 	 * Returns the headers object set by writeHead().
-	 * @return {Object} 
+	 * @return {Object}
 	 */
 	get headers() {
 		return this[$HEADERS];
@@ -105,7 +105,7 @@ class PushResponse {
 
 	/**
 	 * Returns true if this stream has been closed, regardless of how it was closed.
-	 * @return {boolean} 
+	 * @return {boolean}
 	 */
 	get closed() {
 		return this[$CLOSED];

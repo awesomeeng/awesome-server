@@ -87,8 +87,8 @@ class HTTP2Response extends HTTPSResponse {
 	 * @return {Promise}
 	 */
 	push(statusCode,path,contentType,content,headers={}) {
-		if (!this.pushSupported) return Promise.reject("Push not supported.");
-		if (!this.original.stream) return Promise.reject("Not http2 request, probably downgraded to http1.");
+		if (!this.pushSupported) return Promise.reject(new Error("Push not supported."));
+		if (!this.original.stream) return Promise.reject(new Error("Not http2 request, probably downgraded to http1."));
 
 		if (arguments.length===1 && typeof statusCode!=="number") [statusCode,path,contentType,content,headers] = [200,null,"application/json",statusCode,null];
 		if (typeof statusCode!=="number") [statusCode,path,contentType,content,headers] = [200,...arguments];
@@ -210,8 +210,8 @@ class HTTP2Response extends HTTPSResponse {
 	 * @return {Promise}             [description]
 	 */
 	pushServe(statusCode,path,contentType,filename,headers) {
-		if (!this.pushSupported) return Promise.reject("Push not supported.");
-		if (!this.original.stream) return Promise.reject("Not http2 request, probably downgraded to http1.");
+		if (!this.pushSupported) return Promise.reject(new Error("Push not supported."));
+		if (!this.original.stream) return Promise.reject(new Error("Not http2 request, probably downgraded to http1."));
 
 		if (arguments.length===1 && typeof statusCode!=="number") [statusCode,path,contentType,filename,headers] = [200,null,null,statusCode,null];
 		if (typeof statusCode!=="number") [statusCode,path,contentType,filename,headers] = [200,...arguments];
