@@ -526,9 +526,9 @@ class AwesomeServer {
 	 * @param  {(string|RegExp|AbstractPathMatcher)} path    see above.
 	 * @param  {(Function|AbstractController)} handler 		 see above.
 	 */
-	route(method,path,handler,...args) {
+	route(method,path,handler,...additionalArgs) {
 		// we are just wrapping the internal function here so we dont expose what the internal functions returns.
-		_route.call(this,method,path,handler,null,args);
+		_route.call(this,method,path,handler,null,additionalArgs);
 	}
 
 	/**
@@ -777,7 +777,7 @@ class AwesomeServer {
  * Internal route function.
  * @private
  */
-const _route = function route(method,path,handler,parent=null,args=[]) {
+const _route = function _route(method,path,handler,parent=null,additionalArgs=[]) {
 	if (typeof method==="string" && path instanceof AbstractController) [method,path,handler,parent] = ["*",...arguments];
 	if (typeof method==="string" && AbstractController.isPrototypeOf(path)) [method,path,handler,parent] = ["*",...arguments];
 
@@ -800,7 +800,7 @@ const _route = function route(method,path,handler,parent=null,args=[]) {
 		_routeController.call(this,route,handler);
 	}
 	else if (AbstractController.isPrototypeOf(handler)) {
-		_routeController.call(this,route,Reflect.construct(handler,args));
+		_routeController.call(this,route,Reflect.construct(handler,additionalArgs));
 	}
 	else if (handler instanceof Function) {
 		_routeFunction.call(this,route,handler);
@@ -813,10 +813,10 @@ const _route = function route(method,path,handler,parent=null,args=[]) {
 		let stat = resolved.stat;
 
 		if (stat.isDirectory()) {
-			_routeDirectory.call(this,route,filename,path);
+			_routeDirectory.call(this,route,filename,path,additionalArgs);
 		}
 		else if (stat.isFile()) {
-			_routeFile.call(this,route,filename);
+			_routeFile.call(this,route,filename,additionalArgs);
 		}
 		else {
 			throw new Error("Invalid handler, is neither directory or file: "+filename);
@@ -840,7 +840,7 @@ const _route = function route(method,path,handler,parent=null,args=[]) {
  * Internal route function specifically for function cases.
  * @private
  */
-const _routeFunction = function routeContoller(route,handler,args=[]) {
+const _routeFunction = function _routeContoller(route,handler) {
 	route.routes = [function router(path,request,response) {
 		return new Promise(async (resolve,reject)=>{
 			try {
@@ -863,7 +863,7 @@ const _routeFunction = function routeContoller(route,handler,args=[]) {
  * Internal route function specifically for controller cases.
  * @private
  */
-const _routeController = function routeController(route,controller,args=[]) {
+const _routeController = function _routeController(route,controller) {
 	_routeFunction.call(this,route,controller.handler.bind(controller));
 	return route;
 };
@@ -872,7 +872,7 @@ const _routeController = function routeController(route,controller,args=[]) {
  * Internal route function specifically for file cases.
  * @private
  */
-const _routeFile = function routeControllerFile(route,filename,args=[]) {
+const _routeFile = function routeControllerFile(route,filename,additionalArgs=[]) {
 	let clazz;
 	try {
 		clazz = AwesomeUtils.Module.require(filename);
@@ -889,7 +889,7 @@ const _routeFile = function routeControllerFile(route,filename,args=[]) {
 	else if (clazz instanceof Function && AbstractController.isPrototypeOf(clazz)) {
 		let instance;
 		try {
-			instance = Reflect.construct(clazz,args);
+			instance = Reflect.construct(clazz,additionalArgs);
 		}
 		catch (ex) {
 			Log.error("Error instantiating controller.",ex);
@@ -919,7 +919,7 @@ const _routeFile = function routeControllerFile(route,filename,args=[]) {
  * Internal route function specifically for directory cases.
  * @private
  */
-const _routeDirectory = function routeDirectory(parent,dir,path="/",args=[]) {
+const _routeDirectory = function _routeDirectory(parent,dir,path="/",additionalArgs=[]) {
 	parent.routes = [];
 
 	FS.readdirSync(dir).forEach((filename)=>{
@@ -935,9 +935,9 @@ const _routeDirectory = function routeDirectory(parent,dir,path="/",args=[]) {
 		}
 		if (!stats) return;
 
-		if (stats.isDirectory()) return routeDirectory.call(this,parent,filename,filepath);
+		if (stats.isDirectory()) return _routeDirectory.call(this,parent,filename,filepath,additionalArgs);
 
-		if (ext===".js" || ext===".node") _route.call(this,"*",filepath,filename,parent,args);
+		if (ext===".js" || ext===".node") _route.call(this,"*",filepath,filename,parent,additionalArgs);
 	});
 };
 
