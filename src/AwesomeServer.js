@@ -516,15 +516,19 @@ class AwesomeServer {
 	 * 			- Not contain any syntax errors.
 	 * 			- export a class that extends AbstractController or exports an instance of a class that extends AbstractController.
 	 *
+	 * 		When using filename routing, you may provide additional arguments to the `route()`
+	 * 		function and these will be passed to the controller constructor. This allows you
+	 * 		to ensure critical data for the controller be passed upward as needed.
+	 *
 	 * Routes may be added whether or not AwesomeServer has been started.
 	 *
 	 * @param  {string} method 								 see above.
 	 * @param  {(string|RegExp|AbstractPathMatcher)} path    see above.
 	 * @param  {(Function|AbstractController)} handler 		 see above.
 	 */
-	route(method,path,handler) {
+	route(method,path,handler,...args) {
 		// we are just wrapping the internal function here so we dont expose what the internal functions returns.
-		_route.call(this,method,path,handler);
+		_route.call(this,method,path,handler,null,args);
 	}
 
 	/**
@@ -708,7 +712,7 @@ class AwesomeServer {
 	 *
 	 * It is exposed here to be overloaded as needed.
 	 *
-	 * @param  {AbstractRequest}   request  The incoming request request object.
+	 *,args @param  {AbstractRequest}   request  The incoming request request object.
 	 * @param  {AbstractResponse}  response THe incoming request response object.
 	 * @return {Promise} A promise that resolves when the request handling is complete.
 	 */
@@ -773,7 +777,7 @@ class AwesomeServer {
  * Internal route function.
  * @private
  */
-const _route = function route(method,path,handler,parent=null) {
+const _route = function route(method,path,handler,parent=null,args=[]) {
 	if (typeof method==="string" && path instanceof AbstractController) [method,path,handler,parent] = ["*",...arguments];
 	if (typeof method==="string" && AbstractController.isPrototypeOf(path)) [method,path,handler,parent] = ["*",...arguments];
 
@@ -796,7 +800,7 @@ const _route = function route(method,path,handler,parent=null) {
 		_routeController.call(this,route,handler);
 	}
 	else if (AbstractController.isPrototypeOf(handler)) {
-		_routeController.call(this,route,new handler());
+		_routeController.call(this,route,Reflect.construct(handler,args));
 	}
 	else if (handler instanceof Function) {
 		_routeFunction.call(this,route,handler);
@@ -836,7 +840,7 @@ const _route = function route(method,path,handler,parent=null) {
  * Internal route function specifically for function cases.
  * @private
  */
-const _routeFunction = function routeContoller(route,handler) {
+const _routeFunction = function routeContoller(route,handler,args=[]) {
 	route.routes = [function router(path,request,response) {
 		return new Promise(async (resolve,reject)=>{
 			try {
@@ -859,7 +863,7 @@ const _routeFunction = function routeContoller(route,handler) {
  * Internal route function specifically for controller cases.
  * @private
  */
-const _routeController = function routeController(route,controller) {
+const _routeController = function routeController(route,controller,args=[]) {
 	_routeFunction.call(this,route,controller.handler.bind(controller));
 	return route;
 };
@@ -868,7 +872,7 @@ const _routeController = function routeController(route,controller) {
  * Internal route function specifically for file cases.
  * @private
  */
-const _routeFile = function routeControllerFile(route,filename) {
+const _routeFile = function routeControllerFile(route,filename,args=[]) {
 	let clazz;
 	try {
 		clazz = AwesomeUtils.Module.require(filename);
@@ -885,7 +889,7 @@ const _routeFile = function routeControllerFile(route,filename) {
 	else if (clazz instanceof Function && AbstractController.isPrototypeOf(clazz)) {
 		let instance;
 		try {
-			instance = new clazz();
+			instance = Reflect.construct(clazz,args);
 		}
 		catch (ex) {
 			Log.error("Error instantiating controller.",ex);
@@ -915,7 +919,7 @@ const _routeFile = function routeControllerFile(route,filename) {
  * Internal route function specifically for directory cases.
  * @private
  */
-const _routeDirectory = function routeDirectory(parent,dir,path="/") {
+const _routeDirectory = function routeDirectory(parent,dir,path="/",args=[]) {
 	parent.routes = [];
 
 	FS.readdirSync(dir).forEach((filename)=>{
@@ -933,7 +937,7 @@ const _routeDirectory = function routeDirectory(parent,dir,path="/") {
 
 		if (stats.isDirectory()) return routeDirectory.call(this,parent,filename,filepath);
 
-		if (ext===".js" || ext===".node") _route.call(this,"*",filepath,filename,parent);
+		if (ext===".js" || ext===".node") _route.call(this,"*",filepath,filename,parent,args);
 	});
 };
 
