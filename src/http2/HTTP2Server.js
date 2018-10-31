@@ -3,6 +3,8 @@
 "use strict";
 
 const HTTP2 = require("http2");
+const FS = require("fs");
+const Path = require("path");
 
 const AwesomeUtils = require("@awesomeeng/awesome-utils");
 const Log = require("@awesomeeng/awesome-log");
@@ -42,7 +44,8 @@ class HTTP2Server extends HTTPSServer {
 	 *   port: 0,
 	 *   key: null,
 	 *   cert: null,
-	 *   pfx: null
+	 *   pfx: null,
+	 *   informative: true
 	 * };
 	 * ```
 	 *
@@ -65,7 +68,8 @@ class HTTP2Server extends HTTPSServer {
 		super(AwesomeUtils.Object.extend({
 			hostname: "localhost",
 			port: 0,
-			allowHTTP1: true
+			allowHTTP1: true,
+			informative: true
 		},config));
 
 		this[$SERVER] = null;
@@ -132,13 +136,13 @@ class HTTP2Server extends HTTPSServer {
 		let hostname = this.config.hostname || this.config.host || "localhost";
 		let port = this.config.port || 0;
 
-		Log.info("Starting HTTP/2 Server on "+hostname+":"+port+"...");
+		if (this.config.informative) Log.info("Starting HTTP/2 Server on "+hostname+":"+port+"...");
 		return new Promise((resolve,reject)=>{
 			try {
 
-				this.config.cert = HTTPSServer.resolveCertConfig(this.config.cert,"cert","HTTP2Server");
-				this.config.key = HTTPSServer.resolveCertConfig(this.config.key,"key","HTTP2Server");
-				this.config.pfx = HTTPSServer.resolveCertConfig(this.config.pfx,"pfx","HTTP2Server");
+				this.config.cert = HTTP2Server.resolveCertConfig(this.config.cert,"cert",this.config.informative);
+				this.config.key = HTTP2Server.resolveCertConfig(this.config.key,"key",this.config.informative);
+				this.config.pfx = HTTP2Server.resolveCertConfig(this.config.pfx,"pfx",this.config.informative);
 
 				let server = HTTP2.createSecureServer(this.config);
 
@@ -183,7 +187,7 @@ class HTTP2Server extends HTTPSServer {
 						reject(err);
 					}
 					else {
-						Log.info("Started HTTP/2 Server on "+this.hostname+":"+this.port+"...");
+						if (this.config.informative) Log.info("Started HTTP/2 Server on "+this.hostname+":"+this.port+"...");
 						this[$RUNNING] = true;
 						this[$SERVER] = server;
 						resolve();
@@ -210,7 +214,7 @@ class HTTP2Server extends HTTPSServer {
 		let hostname = this.hostname || "localhost";
 		let port = this.port || 0;
 
-		Log.info("Stopping HTTP/2 Server on "+hostname+":"+port+"...");
+		if (this.config.informative) Log.info("Stopping HTTP/2 Server on "+hostname+":"+port+"...");
 		return new Promise(async (resolve,reject)=>{
 			try {
 				let server = this[$SERVER];
@@ -239,7 +243,7 @@ class HTTP2Server extends HTTPSServer {
 						reject(err);
 					}
 					else {
-						Log.info("Stopped HTTP/2 Server on "+hostname+":"+port+"...");
+						if (this.config.informative) Log.info("Stopped HTTP/2 Server on "+hostname+":"+port+"...");
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						resolve();
@@ -267,6 +271,40 @@ class HTTP2Server extends HTTPSServer {
 		let req = new HTTP2Request(request,response);
 		let resp = new HTTP2Response(request,response);
 		handler(req,resp);
+	}
+
+	/**
+	 * Static utility function for loading a certificate from a file system
+	 * or treating the passed string as the certificate.
+	 *
+	 * @param  {string|buffer} value
+	 * @param  {string} [type="certificate"]
+	 * @return {string}
+	 */
+	static resolveCertConfig(value,type="certificate",informative=true) {
+		if (value && typeof value==="string" && !value.startsWith("----")) {
+			let filename = Path.resolve(process.cwd(),value);
+			if (informative) Log.info("Loading "+type+" from "+filename+".");
+
+			if (AwesomeUtils.FS.existsSync(filename)) {
+				try {
+					let pfx = FS.readFileSync(filename);
+					if (!pfx) throw new Error(type+" file empty: "+filename+".");
+					value = pfx;
+				}
+				catch (ex) {
+					Log.error("Error reading "+type+" from "+filename+".",ex);
+				}
+			}
+			else {
+				Log.error(type+" file not found: "+filename+".");
+			}
+		}
+		else if (value) {
+			if (informative) Log.info("Using passed contents for "+type+" value.");
+		}
+
+		return value;
 	}
 }
 

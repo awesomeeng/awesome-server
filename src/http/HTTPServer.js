@@ -37,7 +37,8 @@ class HTTPServer extends AbstractServer {
 	* ```
 	* const config = {
 	*   hostname: "localhost"
-	*   port: 0
+	*   port: 0,
+	*   informative: true
 	* };
 	* ```
 	* For more details about config values, please see [nodejs' http module]()
@@ -53,7 +54,8 @@ class HTTPServer extends AbstractServer {
 	constructor(config) {
 		super(AwesomeUtils.Object.extend({
 			hostname: "localhost",
-			port: 0
+			port: 0,
+			informative: true
 		},config));
 
 		this[$SERVER] = null;
@@ -116,7 +118,7 @@ class HTTPServer extends AbstractServer {
 		let hostname = this.config.hostname || this.config.host || "localhost";
 		let port = this.config.port || 0;
 
-		Log.info("Starting HTTP Server on "+hostname+":"+port+"...");
+		if (this.config.informative) Log.info("Starting HTTP Server on "+hostname+":"+port+"...");
 		return new Promise((resolve,reject)=>{
 			try {
 				let server = HTTP.createServer(this.config);
@@ -135,7 +137,7 @@ class HTTPServer extends AbstractServer {
 						reject(err);
 					}
 					else {
-						Log.info("Started HTTP Server on "+this.hostname+":"+this.port+"...");
+						if (this.config.informative) Log.info("Started HTTP Server on "+this.hostname+":"+this.port+"...");
 						this[$RUNNING] = true;
 						this[$SERVER] = server;
 						resolve();
@@ -162,7 +164,7 @@ class HTTPServer extends AbstractServer {
 		let hostname = this.hostname || "localhost";
 		let port = this.port || 0;
 
-		Log.info("Stopping HTTP Server on "+hostname+":"+port+"...");
+		if (this.config.informative) Log.info("Stopping HTTP Server on "+hostname+":"+port+"...");
 		return new Promise((resolve,reject)=>{
 			try {
 				let server = this[$SERVER];
@@ -174,7 +176,7 @@ class HTTPServer extends AbstractServer {
 						reject(err);
 					}
 					else {
-						Log.info("Stopped HTTP Server on "+hostname+":"+port+"...");
+						if (this.config.informative) Log.info("Stopped HTTP Server on "+hostname+":"+port+"...");
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						resolve();

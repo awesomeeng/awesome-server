@@ -42,7 +42,8 @@ class HTTPSServer extends HTTPServer {
 	 *   port: 0,
 	 *   key: null,
 	 *   cert: null,
-	 *   pfx: null
+	 *   pfx: null,
+	 *   informative: true
 	 * };
 	 * ```
 	 *
@@ -64,7 +65,8 @@ class HTTPSServer extends HTTPServer {
 	constructor(config) {
 		super(AwesomeUtils.Object.extend({
 			hostname: "localhost",
-			port: 0
+			port: 0,
+			informative: true
 		},config));
 
 		this[$SERVER] = null;
@@ -127,30 +129,30 @@ class HTTPSServer extends HTTPServer {
 		let hostname = this.config.hostname || this.config.host || "localhost";
 		let port = this.config.port || 0;
 
-		Log.info("Starting HTTPS Server on "+hostname+":"+port+"...");
+		if (this.config.informative) Log.info("Starting HTTPS Server on "+hostname+":"+port+"...");
 		return new Promise((resolve,reject)=>{
 			try {
-				this.config.cert = HTTPSServer.resolveCertConfig(this.config.cert,"cert");
-				this.config.key = HTTPSServer.resolveCertConfig(this.config.key,"key");
-				this.config.pfx = HTTPSServer.resolveCertConfig(this.config.pfx,"pfx");
+				this.config.cert = HTTPSServer.resolveCertConfig(this.config.cert,"cert",this.config.informative);
+				this.config.key = HTTPSServer.resolveCertConfig(this.config.key,"key",this.config.informative);
+				this.config.pfx = HTTPSServer.resolveCertConfig(this.config.pfx,"pfx",this.config.informative);
 
 				let server = HTTPS.createServer(this.config);
 
 				server.on("error",(err)=>{
-					Log.info("Error on HTTPS Server on "+hostname+":"+port+":",err);
+					Log.error("Error on HTTPS Server on "+hostname+":"+port+":",err);
 				});
 
 				server.on("request",this.handleRequest.bind(this,handler));
 
 				server.listen(port,hostname,this.config.backlog,(err)=>{
 					if (err) {
-						Log.info("Error starting server on "+hostname+":"+port+".",err);
+						Log.error("Error starting server on "+hostname+":"+port+".",err);
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						reject(err);
 					}
 					else {
-						Log.info("Started HTTPS Server on "+this.hostname+":"+this.port+"...");
+						if (this.config.informative) Log.info("Started HTTPS Server on "+this.hostname+":"+this.port+"...");
 						this[$RUNNING] = true;
 						this[$SERVER] = server;
 
@@ -179,19 +181,19 @@ class HTTPSServer extends HTTPServer {
 		let hostname = this.hostname || "localhost";
 		let port = this.port || 0;
 
-		Log.info("Stopping HTTPS Server on "+hostname+":"+port+"...");
+		if (this.config.informative) Log.info("Stopping HTTPS Server on "+hostname+":"+port+"...");
 		return new Promise((resolve,reject)=>{
 			try {
 				let server = this[$SERVER];
 				server.close((err)=>{
 					if (err) {
-						Log.info("Error stopping HTTPS server on "+hostname+":"+port+".",err);
+						Log.error("Error stopping HTTPS server on "+hostname+":"+port+".",err);
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						reject(err);
 					}
 					else {
-						Log.info("Stopped HTTPS Server on "+hostname+":"+port+"...");
+						if (this.config.informative) Log.info("Stopped HTTPS Server on "+hostname+":"+port+"...");
 						this[$RUNNING] = false;
 						this[$SERVER] = null;
 						resolve();
@@ -229,10 +231,10 @@ class HTTPSServer extends HTTPServer {
 	 * @param  {string} [type="certificate"]
 	 * @return {string}
 	 */
-	static resolveCertConfig(value,type="certificate") {
+	static resolveCertConfig(value,type="certificate",informative=true) {
 		if (value && typeof value==="string" && !value.startsWith("----")) {
 			let filename = Path.resolve(process.cwd(),value);
-			Log.info("Loading "+type+" from "+filename+".");
+			if (informative) Log.info("Loading "+type+" from "+filename+".");
 
 			if (AwesomeUtils.FS.existsSync(filename)) {
 				try {
@@ -241,15 +243,15 @@ class HTTPSServer extends HTTPServer {
 					value = pfx;
 				}
 				catch (ex) {
-					Log.info("Error reading "+type+" from "+filename+".",ex);
+					Log.error("Error reading "+type+" from "+filename+".",ex);
 				}
 			}
 			else {
-				Log.info(type+" file not found: "+filename+".");
+				Log.error(type+" file not found: "+filename+".");
 			}
 		}
-		else  if (value) {
-			Log.info("Using passed contents for "+type+" value.");
+		else if (value) {
+			if (informative) Log.info("Using passed contents for "+type+" value.");
 		}
 
 		return value;

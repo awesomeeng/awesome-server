@@ -6,13 +6,6 @@ const Path = require("path");
 const FS = require("fs");
 
 const Log = require("@awesomeeng/awesome-log");
-Log.init({
-	writers: [{
-		type: "null",
-		name: "null"
-	}],
-	disableLoggingNotices: true
-});
 Log.start();
 
 const AwesomeUtils = require("@awesomeeng/awesome-utils");
@@ -29,6 +22,7 @@ const DirectoryServeController = require("./controllers/DirectoryServeController
 const PushServeController = require("./controllers/PushServeController");
 const RedirectController = require("./controllers/RedirectController");
 
+const $CONFIG = Symbol("config");
 const $SERVERS = Symbol("servers");
 const $ROUTES = Symbol("routes");
 const $RUNNING = Symbol("running");
@@ -47,10 +41,30 @@ class AwesomeServer {
 	 *
 	 * You may create multiple AwesomeServer instances and do different things with them.
 	 *
+	 * Takes an optional config object for passing in configuration about the overall
+	 * AwesomeServer instance.  This is not the same as the config provided to each
+	 * server when it is constructed/added via addHTTPServer(config) and the like.
+	 * Those configs are separate.
+	 *
+	 * The default configuration looks like this:
+	 *
+	 * 	 config = {
+	 * 	 	informative: true
+	 * 	 }
+	 *
+	 * 	 config.informative - If true, log statements are provided for how AwesomeServer
+	 * 	 is executing. If false, no log statements are output. Error and warning
+	 * 	 log message are always output.
+	 *
 	 * @constructor
 	 *
 	 */
-	constructor() {
+	constructor(config={}) {
+		config = AwesomeUtils.Object.extend({
+			informative: true
+		},config);
+		this[$CONFIG] = config;
+
 		this[$RUNNING] = false;
 		this[$SERVERS] = new Set();
 		this[$ROUTES] = [];
@@ -145,6 +159,17 @@ class AwesomeServer {
 	}
 
 	/**
+	 * Returns the AwesomeServer instance config.  This is not the same as the
+	 * config supplied to each server. Instead this config applies to the greater
+	 * AwesomeServer instance which is running the various servers.
+	 *
+	 * @return {[type]} [description]
+	 */
+	get config() {
+		return this[$CONFIG];
+	}
+
+	/**
 	 * Returns the array of servers associated with this AwesomeServer instance.
 	 *
 	 * @return {Array<AbstractServer>}
@@ -182,7 +207,7 @@ class AwesomeServer {
 	async start() {
 		if (this.running) return Promise.resolve();
 
-		Log.info("Starting...");
+		if (this.config.informative) Log.info("Starting...");
 
 		if (this[$SERVERS].size<1) {
 			Log.warn("No servers defined. Nothing to do.");
@@ -197,7 +222,7 @@ class AwesomeServer {
 
 		this[$RUNNING] = true;
 
-		Log.info("Started.");
+		if (this.config.informative) Log.info("Started.");
 	}
 
 	/**
@@ -209,7 +234,7 @@ class AwesomeServer {
 	async stop() {
 		if (!this.running) return Promise.resolve();
 
-		Log.info("Stopping...");
+		if (this.config.informative) Log.info("Stopping...");
 
 		await Promise.all([...this[$SERVERS]].map((server)=>{
 			let prom = server.stop();
@@ -219,7 +244,7 @@ class AwesomeServer {
 
 		this[$RUNNING] = false;
 
-		Log.info("Stopped.");
+		if (this.config.informative) Log.info("Stopped.");
 	}
 
 	/**
@@ -260,7 +285,8 @@ class AwesomeServer {
 	 * ```
 	 * const config = {
 	 *   hostname: "localhost"
-	 *   port: 7080
+	 *   port: 7080,
+	 *   informative: {inherits from top level config}
 	 * };
 	 * ```
 	 * For more details about config values, please see [nodejs' http module]()
@@ -275,6 +301,11 @@ class AwesomeServer {
 	 */
 	addHTTPServer(config) {
 		const HTTPServer = require("./http/HTTPServer"); // this is here on purpose.
+
+		config = AwesomeUtils.Object.extend({
+			informative: this.config.informative
+		},config);
+
 		let server = new HTTPServer(config);
 		this.addServer(server);
 
@@ -299,7 +330,8 @@ class AwesomeServer {
 	 *   port: 7080,
 	 *   key: null,
 	 *   cert: null,
-	 *   pfx: null
+	 *   pfx: null,
+	 *   informative: {inherits from top level config}
 	 * };
 	 * ```
 	 *
@@ -320,6 +352,11 @@ class AwesomeServer {
 	 */
 	addHTTPSServer(config) {
 		const HTTPSServer = require("./https/HTTPSServer"); // this is here on purpose.
+
+		config = AwesomeUtils.Object.extend({
+			informative: this.config.informative
+		},config);
+
 		let server = new HTTPSServer(config);
 		this.addServer(server);
 
@@ -344,7 +381,8 @@ class AwesomeServer {
 	 *   port: 7080,
 	 *   key: null,
 	 *   cert: null,
-	 *   pfx: null
+	 *   pfx: null,
+	 *   informative: {inherits from top level config}
 	 * };
 	 * ```
 	 *
@@ -365,6 +403,11 @@ class AwesomeServer {
 	 */
 	addHTTP2Server(config) {
 		const HTTP2Server = require("./http2/HTTP2Server"); // this is here on purpose.
+
+		config = AwesomeUtils.Object.extend({
+			informative: this.config.informative
+		},config);
+
 		let server = new HTTP2Server(config);
 		this.addServer(server);
 
@@ -831,7 +874,7 @@ const _route = function _route(method,path,handler,parent=null,additionalArgs=[]
 		parent.children.push(route);
 	}
 
-	Log.info("Added route "+method+" "+route.matcher.toString());
+	if (this.config.informative) Log.info("Added route "+method+" "+route.matcher.toString());
 
 	return route;
 };
@@ -900,11 +943,11 @@ const _routeFile = function routeControllerFile(route,filename,additionalArgs=[]
 			throw new Error("Loaded controller does not extend AbstractController "+filename);
 		}
 
-		Log.info("Loaded controller from "+filename+".");
+		if (this.config.informative) Log.info("Loaded controller from "+filename+".");
 		_routeController.call(this,route,instance);
 	}
 	else if (clazz instanceof AbstractController) {
-		Log.info("Loaded controller from "+filename+".");
+		if (this.config.informative) Log.info("Loaded controller from "+filename+".");
 		_routeController.call(this,route,clazz);
 	}
 	else {
@@ -978,7 +1021,7 @@ const _unroute = function _unroute(method,path,handler) {
 		});
 	});
 
-	if (matching.length>0) Log.info("Removed route "+method+" "+path.toString());
+	if (matching.length>0 && this.config.informative) Log.info("Removed route "+method+" "+path.toString());
 
 	return matching.length>0;
 };
@@ -990,7 +1033,6 @@ const _unroute = function _unroute(method,path,handler) {
 const _resolve = function resolve(filename) {
 	const getStat = (f)=>{
 		try {
-			Log.debug("Looking for "+f);
 			return FS.statSync(f);
 		}
 		catch (ex) {
