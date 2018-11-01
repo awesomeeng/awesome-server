@@ -63,6 +63,7 @@ class AbstractPathMatcher {
 		else if (path instanceof AbstractPathMatcher) return path;
 		else if (path instanceof RegExp) return new (require("./matchers/RegExpMatcher"))(path);
 		else if (type==="string" && path.indexOf("|")>-1) return new (require("./matchers/StringOrMatcher"))(path);
+		else if (type==="string" && path==="*") return new (require("./matchers/StringWildcardMatcher"))(path);
 		else if (type==="string" && path.endsWith("*") && !path.startsWith("*")) return new (require("./matchers/StringStartsWithMatcher"))(path);
 		else if (type==="string" && path.startsWith("*") && !path.endsWith("*")) return new (require("./matchers/StringEndsWithMatcher"))(path);
 		else if (type==="string" && path.startsWith("*") && path.endsWith("*")) return new (require("./matchers/StringContainsMatcher"))(path);
