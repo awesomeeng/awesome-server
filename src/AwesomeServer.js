@@ -6,7 +6,7 @@ const Path = require("path");
 const FS = require("fs");
 
 const Log = require("@awesomeeng/awesome-log");
-Log.start();
+// Log.start();
 
 const AwesomeUtils = require("@awesomeeng/awesome-utils");
 
