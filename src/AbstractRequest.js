@@ -215,7 +215,7 @@ class AbstractRequest {
 		return new Promise(async (resolve,reject)=>{
 			try {
 				let content = await this.readText(encoding);
-				resolve(JSON.parse(content));
+				resolve(content && JSON.parse(content) || undefined);
 			}
 			catch (ex) {
 				return reject(ex);
