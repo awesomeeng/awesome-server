@@ -15,7 +15,7 @@ class StringWildcardMatcher extends AbstractPathMatcher {
 	}
 
 	toString() {
-		return "\""+this.path+"\"";
+		return "\"*\"";
 	}
 
 	match(/*path*/) {
