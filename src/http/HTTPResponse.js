@@ -5,6 +5,8 @@
 const QS = require("querystring");
 const Readable = require("stream").Readable;
 
+const AwesomeUtils =  require("@awesomeeng/awesome-utils");
+
 const AbstractResponse = require("../AbstractResponse");
 
 /**
@@ -28,7 +30,7 @@ class HTTPResponse extends AbstractResponse {
 	 * Returns true when the response is finished (end() has been called)
 	 * and cannot receive any more data/changes.
 	 *
-	 * @return {boolean} 
+	 * @return {boolean}
 	 */
 	get finished() {
 		return this.original.finished;
@@ -37,7 +39,7 @@ class HTTPResponse extends AbstractResponse {
 	/**
 	 * Returns the status code set with writeHead for this response.
 	 *
-	 * @return {number} 
+	 * @return {number}
 	 */
 	get statusCode() {
 		return this.original.statusCode;
@@ -45,7 +47,7 @@ class HTTPResponse extends AbstractResponse {
 
 	/**
 	 * Returns the headers set with writeHead for this response.
-	 * @return {Object} 
+	 * @return {Object}
 	 */
 	get headers() {
 		return this.original.getHeaders();
@@ -54,21 +56,20 @@ class HTTPResponse extends AbstractResponse {
 	/**
 	 * Returns the mime-type portion from the content-type header.
 	 *
-	 * @return {String} 
+	 * @return {String}
 	 */
 	get contentType() {
-		return (this.headers && this.headers["content-type"] || "").split(/;\s*/g)[0];
+		return AwesomeUtils.Request.parseContentType(this.headers && this.headers["content-type"] || "");
 	}
 
 	/**
 	 * Returns the charset (encoding) portion from the content-type
 	 * header for this response.
 	 *
-	 * @return {String} 
+	 * @return {String}
 	 */
 	get contentEncoding() {
-		let parameters = (this.headers && this.headers["content-type"] || "").split(/;\s*/g).slice(1).join(";");
-		return parameters && QS.parse(parameters).charset || "utf-8";
+		return AwesomeUtils.Request.parseContentEncoding(this.headers && this.headers["content-type"] || "");
 	}
 
 	/**

@@ -5,6 +5,8 @@
 const QS = require("querystring");
 const URL = require("url");
 
+const AwesomeUtils =  require("@awesomeeng/awesome-utils");
+
 const AbstractRequest = require("../AbstractRequest");
 
 const $CONTENT = Symbol("content");
@@ -97,7 +99,7 @@ class HTTPRequest extends AbstractRequest{
 	 * @return {string}
 	 */
 	get contentType() {
-		return this.headers && this.headers["content-type"] && this.headers["content-type"].replace(/^((.*);.*$|^(.*)$)/,"$2$3") || "";
+		return AwesomeUtils.Request.parseContentType(this.headers && this.headers["content-type"] || "");
 	}
 
 	/**
@@ -107,8 +109,7 @@ class HTTPRequest extends AbstractRequest{
 	 * @return {string}
 	 */
 	get contentEncoding() {
-		let parameters = this.headers && this.headers["content-type"] && this.headers["content-type"].replace(/^(.*;(.*)$|^.*$)/,"$2").trim() || "";
-		return parameters && QS.parse(parameters).charset || "utf-8";
+		return AwesomeUtils.Request.parseContentEncoding(this.headers && this.headers["content-type"] || "");
 	}
 
 	/**
