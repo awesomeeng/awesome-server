@@ -781,8 +781,8 @@ const extensions = {};
 
 /**
  * @private
- * Utility class for mapping mimetypes to extensions and vice versa.
  */
+// Utility class for mapping mimetypes to extensions and vice versa.
 class MimeTypes {
 	/**
 	 * @private
@@ -803,7 +803,7 @@ class MimeTypes {
 	/**
 	 * Returns a map of mimetypes to extensions.
 	 *
-	 * @return {[type]} [description]
+	 * @return {Object} 
 	 */
 	get mimetypes() {
 		return types;
@@ -812,7 +812,7 @@ class MimeTypes {
 	/**
 	 * Returns a map of extensions to mimetypes.
 	 *
-	 * @return {Object} [description]
+	 * @return {Object}
 	 */
 	get extension() {
 		return extensions;
@@ -821,9 +821,9 @@ class MimeTypes {
 	/**
 	 * Maps a mimetype to its known extension.
 	 *
-	 * @param  {string} type                [description]
-	 * @param  {string} [defaultValue=null] [description]
-	 * @return {string}                     [description]
+	 * @param  {string} type
+	 * @param  {string} [defaultValue=null]
+	 * @return {string}
 	 */
 	getExtensionForType(type,defaultValue=null) {
 		if (!type) return defaultValue;
@@ -833,9 +833,9 @@ class MimeTypes {
 	/**
 	 * Maps an extension to a given type.
 	 *
-	 * @param  {string} ext                 [description]
-	 * @param  {string} [defaultValue=null] [description]
-	 * @return {string}                     [description]
+	 * @param  {string} ext
+	 * @param  {string} [defaultValue=null]
+	 * @return {string}
 	 */
 	getTypeForExtension(ext,defaultValue=null) {
 		if (!ext) return defaultValue;

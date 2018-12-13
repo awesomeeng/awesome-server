@@ -163,7 +163,7 @@ class AwesomeServer {
 	 * config supplied to each server. Instead this config applies to the greater
 	 * AwesomeServer instance which is running the various servers.
 	 *
-	 * @return {[type]} [description]
+	 * @return {object}
 	 */
 	get config() {
 		return this[$CONFIG];
@@ -202,7 +202,7 @@ class AwesomeServer {
 	 * Starts the AwesomeServer instance, if not already running. This in turn will
 	 * start each added server and begin to route incoming requests.
 	 *
-	 * @return {Promise} [description]
+	 * @return {Promise}
 	 */
 	async start() {
 		if (this.running) return Promise.resolve();
@@ -229,7 +229,7 @@ class AwesomeServer {
 	 * Stops the AwesomeServer instance, if running. This in turn will
 	 * stop each added server and stop routing incoming requests.
 	 *
-	 * @return {Promise} [description]
+	 * @return {Promise}
 	 */
 	async stop() {
 		if (!this.running) return Promise.resolve();
