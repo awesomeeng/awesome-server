@@ -2,7 +2,6 @@
 
 "use strict";
 
-const QS = require("querystring");
 const URL = require("url");
 
 const AwesomeUtils =  require("@awesomeeng/awesome-utils");

@@ -2,7 +2,6 @@
 
 "use strict";
 
-const QS = require("querystring");
 const Readable = require("stream").Readable;
 
 const AwesomeUtils =  require("@awesomeeng/awesome-utils");
