@@ -1,6 +1,6 @@
 {
   "name": "@awesomeeng/awesome-server",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "author": "the awesome engineering company",
   "license": "MIT",
   "contributors": [
@@ -21,6 +21,7 @@
   },
   "optionalDependencies": {},
   "scripts": {
+    "lint": "eslint src examples test",
     "docs": "jsdoc2md src/** --separators > docs/API.md",
     "test": "mocha test",
     "tests": "mocha test"

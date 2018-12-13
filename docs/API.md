@@ -161,6 +161,9 @@ wrapper around nodejs&#39; https module.</p>
 <dt><a href="#StringStartsWithMatcher">StringStartsWithMatcher</a> ⇐ <code><a href="#AbstractPathMatcher">AbstractPathMatcher</a></code></dt>
 <dd><p>Matches the beginning of a string against a given path.</p>
 </dd>
+<dt><a href="#StringWildcardMatcher">StringWildcardMatcher</a> ⇐ <code><a href="#AbstractPathMatcher">AbstractPathMatcher</a></code></dt>
+<dd><p>Matches the any path.</p>
+</dd>
 </dl>
 
 <a name="AbstractController"></a>
@@ -911,7 +914,7 @@ Returns a Promise that will resolve on end().
 | Param | Type | Default |
 | --- | --- | --- |
 | statusCode | <code>number</code> |  | 
-| content | <code>string</code> \| <code>Error</code> |  | 
+| content | <code>string</code> \| <code>Error</code> | <code>null</code> | 
 | [headers] | <code>Object</code> \| <code>null</code> | <code></code> | 
 
 
@@ -962,6 +965,8 @@ extending classes:
     * [.config](#AbstractServer+config) ⇒ <code>AwesomeConfig</code> \| <code>Object</code>
     * [.running](#AbstractServer+running) ⇒ <code>boolean</code>
     * [.original](#AbstractServer+original) ⇒ <code>\*</code>
+    * [.hostname](#AbstractServer+hostname) ⇒ <code>string</code>
+    * [.port](#AbstractServer+port) ⇒ <code>number</code>
     * [.start(handler)](#AbstractServer+start) ⇒ <code>Promise</code>
     * [.stop()](#AbstractServer+stop) ⇒ <code>Promise</code>
 
@@ -1004,6 +1009,24 @@ Returns true if this server has been started.
 
 ### abstractServer.original ⇒ <code>\*</code>
 Returns the underlying server object that this AbstractServer represents.
+
+**Kind**: instance property of [<code>AbstractServer</code>](#AbstractServer)  
+
+* * *
+
+<a name="AbstractServer+hostname"></a>
+
+### abstractServer.hostname ⇒ <code>string</code>
+Returns the bound hostname for this server.
+
+**Kind**: instance property of [<code>AbstractServer</code>](#AbstractServer)  
+
+* * *
+
+<a name="AbstractServer+port"></a>
+
+### abstractServer.port ⇒ <code>number</code>
+Returns the bound port for this server.
 
 **Kind**: instance property of [<code>AbstractServer</code>](#AbstractServer)  
 
@@ -1070,6 +1093,7 @@ Please see the documentation at @link https://github.com/awesomeeng/AwesomeServe
 * [AwesomeServer](#AwesomeServer)
     * [new AwesomeServer()](#new_AwesomeServer_new)
     * _instance_
+        * [.config](#AwesomeServer+config) ⇒ <code>object</code>
         * [.servers](#AwesomeServer+servers) ⇒ [<code>Array.&lt;AbstractServer&gt;</code>](#AbstractServer)
         * [.routes](#AwesomeServer+routes) ⇒ <code>Array.&lt;string&gt;</code>
         * [.running](#AwesomeServer+running) ⇒ <code>boolean</code>
@@ -1085,8 +1109,8 @@ Please see the documentation at @link https://github.com/awesomeeng/AwesomeServe
         * [.redirect(method, path, toPath, [temporary])](#AwesomeServer+redirect)
         * [.serve(path, contentType, filename)](#AwesomeServer+serve)
         * [.push(path, referencePath, contentType, filename)](#AwesomeServer+push)
-        * [.resolve(filename)](#AwesomeServer+resolve) ⇒
-        * [.handler(request, response)](#AwesomeServer+handler) ⇒ <code>Promise</code>
+        * [.resolve(filename)](#AwesomeServer+resolve) ⇒ <code>string</code> \| <code>null</code>
+        * [.handler(response)](#AwesomeServer+handler) ⇒ <code>Promise</code>
     * _static_
         * [.AbstractServer](#AwesomeServer.AbstractServer) ⇒
         * [.AbstractRequest](#AwesomeServer.AbstractRequest) ⇒
@@ -1108,6 +1132,32 @@ Creates a new AwesomeServer instance.
 
 You may create multiple AwesomeServer instances and do different things with them.
 
+Takes an optional config object for passing in configuration about the overall
+AwesomeServer instance.  This is not the same as the config provided to each
+server when it is constructed/added via addHTTPServer(config) and the like.
+Those configs are separate.
+
+The default configuration looks like this:
+
+	 config = {
+	 	informative: true
+	 }
+
+	 config.informative - If true, log statements are provided for how AwesomeServer
+	 is executing. If false, no log statements are output. Error and warning
+	 log message are always output.
+
+
+* * *
+
+<a name="AwesomeServer+config"></a>
+
+### awesomeServer.config ⇒ <code>object</code>
+Returns the AwesomeServer instance config.  This is not the same as the
+config supplied to each server. Instead this config applies to the greater
+AwesomeServer instance which is running the various servers.
+
+**Kind**: instance property of [<code>AwesomeServer</code>](#AwesomeServer)  
 
 * * *
 
@@ -1145,7 +1195,6 @@ Starts the AwesomeServer instance, if not already running. This in turn will
 start each added server and begin to route incoming requests.
 
 **Kind**: instance method of [<code>AwesomeServer</code>](#AwesomeServer)  
-**Returns**: <code>Promise</code> - [description]  
 
 * * *
 
@@ -1156,7 +1205,6 @@ Stops the AwesomeServer instance, if running. This in turn will
 stop each added server and stop routing incoming requests.
 
 **Kind**: instance method of [<code>AwesomeServer</code>](#AwesomeServer)  
-**Returns**: <code>Promise</code> - [description]  
 
 * * *
 
@@ -1198,7 +1246,8 @@ module.  The basic structure of this config is below with the default values sho
 ```
 const config = {
   hostname: "localhost"
-  port: 7080
+  port: 7080,
+  informative: {inherits from top level config}
 };
 ```
 For more details about config values, please see [nodejs' http module]()
@@ -1237,7 +1286,8 @@ const config = {
   port: 7080,
   key: null,
   cert: null,
-  pfx: null
+  pfx: null,
+  informative: {inherits from top level config}
 };
 ```
 
@@ -1282,7 +1332,8 @@ const config = {
   port: 7080,
   key: null,
   cert: null,
-  pfx: null
+  pfx: null,
+  informative: {inherits from top level config}
 };
 ```
 
@@ -1450,6 +1501,10 @@ special intricacies to be aware of.
 			- Not contain any syntax errors.
 			- export a class that extends AbstractController or exports an instance of a class that extends AbstractController.
 
+		When using filename routing, you may provide additional arguments to the `route()`
+		function and these will be passed to the controller constructor. This allows you
+		to ensure critical data for the controller be passed upward as needed.
+
 Routes may be added whether or not AwesomeServer has been started.
 
 **Kind**: instance method of [<code>AwesomeServer</code>](#AwesomeServer)  
@@ -1588,7 +1643,7 @@ of a HTTP/2 response; instead of having to create a custom route every time.
 
 <a name="AwesomeServer+resolve"></a>
 
-### awesomeServer.resolve(filename) ⇒
+### awesomeServer.resolve(filename) ⇒ <code>string</code> \| <code>null</code>
 Given some file path, attempt to locate an existing version of that file path
 based on the following rules:
 
@@ -1604,7 +1659,7 @@ This function is useful for resolving against you developed code. It is also
 used by the AwesomeServe wherever a filename is used.
 
 **Kind**: instance method of [<code>AwesomeServer</code>](#AwesomeServer)  
-**Returns**: {(string|null)      fully resolved filename  
+**Returns**: <code>string</code> \| <code>null</code> - fully resolved filename  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1615,18 +1670,19 @@ used by the AwesomeServe wherever a filename is used.
 
 <a name="AwesomeServer+handler"></a>
 
-### awesomeServer.handler(request, response) ⇒ <code>Promise</code>
+### awesomeServer.handler(response) ⇒ <code>Promise</code>
 AwesomeServer's primary handler for incoming request.  Each server is given
 this method to process incoming request against.
 
 It is exposed here to be overloaded as needed.
+
+,args @param  {AbstractRequest}   request  The incoming request request object.
 
 **Kind**: instance method of [<code>AwesomeServer</code>](#AwesomeServer)  
 **Returns**: <code>Promise</code> - A promise that resolves when the request handling is complete.  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| request | [<code>AbstractRequest</code>](#AbstractRequest) | The incoming request request object. |
 | response | [<code>AbstractResponse</code>](#AbstractResponse) | THe incoming request response object. |
 
 
@@ -2993,6 +3049,8 @@ wrapper around nodejs' http module.
     * [new HTTPServer(config)](#new_HTTPServer_new)
     * [.running](#HTTPServer+running) ⇒ <code>boolean</code>
     * [.original](#HTTPServer+original) ⇒ <code>\*</code>
+    * [.hostname](#HTTPServer+hostname) ⇒ <code>string</code>
+    * [.port](#HTTPServer+port) ⇒ <code>number</code>
     * [.config](#AbstractServer+config) ⇒ <code>AwesomeConfig</code> \| <code>Object</code>
     * [.start(handler)](#HTTPServer+start) ⇒ <code>Promise</code>
     * [.stop()](#HTTPServer+stop) ⇒ <code>Promise</code>
@@ -3018,12 +3076,13 @@ module.  The basic structure of this config is below with the default values sho
 ```
 const config = {
   hostname: "localhost"
-  port: 7080
+  port: 0,
+  informative: true
 };
 ```
 For more details about config values, please see [nodejs' http module]()
 
-**An important note about config**: The default *host* setting for AwesomeServer
+**An important note about config**: The default *hostname* setting for AwesomeServer
 is `localhost`. This is different than the default for the underlying
 nodejs http module of `0.0.0.0`.
 
@@ -3052,6 +3111,26 @@ Returns the underlying, wrapped, nodejs http server.
 
 **Kind**: instance property of [<code>HTTPServer</code>](#HTTPServer)  
 **Overrides**: [<code>original</code>](#AbstractServer+original)  
+
+* * *
+
+<a name="HTTPServer+hostname"></a>
+
+### httpServer.hostname ⇒ <code>string</code>
+Returns the bound hostname for this server.
+
+**Kind**: instance property of [<code>HTTPServer</code>](#HTTPServer)  
+**Overrides**: [<code>hostname</code>](#AbstractServer+hostname)  
+
+* * *
+
+<a name="HTTPServer+port"></a>
+
+### httpServer.port ⇒ <code>number</code>
+Returns the bound port for this server.
+
+**Kind**: instance property of [<code>HTTPServer</code>](#HTTPServer)  
+**Overrides**: [<code>port</code>](#AbstractServer+port)  
 
 * * *
 
@@ -3363,12 +3442,17 @@ wrapper around nodejs' http2 module.
 
 * [HTTP2Server](#HTTP2Server) ⇐ [<code>AbstractServer</code>](#AbstractServer)
     * [new HTTP2Server(config)](#new_HTTP2Server_new)
-    * [.running](#HTTP2Server+running) ⇒ <code>boolean</code>
-    * [.original](#HTTP2Server+original) ⇒ <code>\*</code>
-    * [.config](#AbstractServer+config) ⇒ <code>AwesomeConfig</code> \| <code>Object</code>
-    * [.start(handler)](#HTTP2Server+start) ⇒ <code>Promise</code>
-    * [.stop()](#HTTP2Server+stop) ⇒ <code>Promise</code>
-    * [.handleRequest(handler, request, response)](#HTTP2Server+handleRequest)
+    * _instance_
+        * [.running](#HTTP2Server+running) ⇒ <code>boolean</code>
+        * [.original](#HTTP2Server+original) ⇒ <code>\*</code>
+        * [.hostname](#HTTP2Server+hostname) ⇒ <code>string</code>
+        * [.port](#HTTP2Server+port) ⇒ <code>number</code>
+        * [.config](#AbstractServer+config) ⇒ <code>AwesomeConfig</code> \| <code>Object</code>
+        * [.start(handler)](#HTTP2Server+start) ⇒ <code>Promise</code>
+        * [.stop()](#HTTP2Server+stop) ⇒ <code>Promise</code>
+        * [.handleRequest(handler, request, response)](#HTTP2Server+handleRequest)
+    * _static_
+        * [.resolveCertConfig(value, [type])](#HTTP2Server.resolveCertConfig) ⇒ <code>string</code>
 
 
 * * *
@@ -3390,10 +3474,11 @@ module.  The basic structure of this config is below with the default values sho
 ```
 const config = {
   hostname: "localhost"
-  port: 7080,
+  port: 0,
   key: null,
   cert: null,
-  pfx: null
+  pfx: null,
+  informative: true
 };
 ```
 
@@ -3404,7 +3489,7 @@ the file and if successful use that as the value.
 
 For more details about config values, please see [nodejs' *http2* module]()
 
-**An important note about config**: The default *host* setting for AwesomeServer
+**An important note about config**: The default *hostname* setting for AwesomeServer
 is `localhost`. This is different than the default for the underlying
 nodejs *http2* module of `0.0.0.0`.
 
@@ -3433,6 +3518,26 @@ Returns the underlying, wrapped, nodejs http2 server.
 
 **Kind**: instance property of [<code>HTTP2Server</code>](#HTTP2Server)  
 **Overrides**: [<code>original</code>](#AbstractServer+original)  
+
+* * *
+
+<a name="HTTP2Server+hostname"></a>
+
+### httP2Server.hostname ⇒ <code>string</code>
+Returns the bound hostname for this server.
+
+**Kind**: instance property of [<code>HTTP2Server</code>](#HTTP2Server)  
+**Overrides**: [<code>hostname</code>](#AbstractServer+hostname)  
+
+* * *
+
+<a name="HTTP2Server+port"></a>
+
+### httP2Server.port ⇒ <code>number</code>
+Returns the bound port for this server.
+
+**Kind**: instance property of [<code>HTTP2Server</code>](#HTTP2Server)  
+**Overrides**: [<code>port</code>](#AbstractServer+port)  
 
 * * *
 
@@ -3497,6 +3602,22 @@ the handler AwesomeServer provided when it started the server.
 | handler | <code>function</code> | 
 | request | <code>\*</code> | 
 | response | <code>\*</code> | 
+
+
+* * *
+
+<a name="HTTP2Server.resolveCertConfig"></a>
+
+### HTTP2Server.resolveCertConfig(value, [type]) ⇒ <code>string</code>
+Static utility function for loading a certificate from a file system
+or treating the passed string as the certificate.
+
+**Kind**: static method of [<code>HTTP2Server</code>](#HTTP2Server)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| value | <code>string</code> \| <code>buffer</code> |  | 
+| [type] | <code>string</code> | <code>&quot;\&quot;certificate\&quot;&quot;</code> | 
 
 
 * * *
@@ -3744,6 +3865,8 @@ wrapper around nodejs' https module.
     * _instance_
         * [.running](#HTTPSServer+running) ⇒ <code>boolean</code>
         * [.original](#HTTPSServer+original) ⇒ <code>\*</code>
+        * [.hostname](#HTTPSServer+hostname) ⇒ <code>string</code>
+        * [.port](#HTTPSServer+port) ⇒ <code>number</code>
         * [.config](#AbstractServer+config) ⇒ <code>AwesomeConfig</code> \| <code>Object</code>
         * [.start(handler)](#HTTPSServer+start) ⇒ <code>Promise</code>
         * [.stop()](#HTTPSServer+stop) ⇒ <code>Promise</code>
@@ -3771,10 +3894,11 @@ module.  The basic structure of this config is below with the default values sho
 ```
 const config = {
   hostname: "localhost"
-  port: 7080,
+  port: 0,
   key: null,
   cert: null,
-  pfx: null
+  pfx: null,
+  informative: true
 };
 ```
 
@@ -3785,7 +3909,7 @@ the file and if successful use that as the value.
 
 For more details about config values, please see [nodejs' *https* module]()
 
-**An important note about config**: The default *host* setting for AwesomeServer
+**An important note about config**: The default *hostname* setting for AwesomeServer
 is `localhost`. This is different than the default for the underlying
 nodejs *https* module of `0.0.0.0`.
 
@@ -3814,6 +3938,26 @@ Returns the underlying, wrapped, nodejs https server.
 
 **Kind**: instance property of [<code>HTTPSServer</code>](#HTTPSServer)  
 **Overrides**: [<code>original</code>](#AbstractServer+original)  
+
+* * *
+
+<a name="HTTPSServer+hostname"></a>
+
+### httpsServer.hostname ⇒ <code>string</code>
+Returns the bound hostname for this server.
+
+**Kind**: instance property of [<code>HTTPSServer</code>](#HTTPSServer)  
+**Overrides**: [<code>hostname</code>](#AbstractServer+hostname)  
+
+* * *
+
+<a name="HTTPSServer+port"></a>
+
+### httpsServer.port ⇒ <code>number</code>
+Returns the bound port for this server.
+
+**Kind**: instance property of [<code>HTTPSServer</code>](#HTTPSServer)  
+**Overrides**: [<code>port</code>](#AbstractServer+port)  
 
 * * *
 
@@ -4182,6 +4326,54 @@ path minus the parts of the path that matched.  If the given path is not a
 match, return the given path unchanged.
 
 **Kind**: instance method of [<code>StringStartsWithMatcher</code>](#StringStartsWithMatcher)  
+**Overrides**: [<code>subtract</code>](#AbstractPathMatcher+subtract)  
+
+* * *
+
+<a name="StringWildcardMatcher"></a>
+
+## StringWildcardMatcher ⇐ [<code>AbstractPathMatcher</code>](#AbstractPathMatcher)
+Matches the any path.
+
+**Kind**: global class  
+**Extends**: [<code>AbstractPathMatcher</code>](#AbstractPathMatcher)  
+
+* [StringWildcardMatcher](#StringWildcardMatcher) ⇐ [<code>AbstractPathMatcher</code>](#AbstractPathMatcher)
+    * [.toString()](#AbstractPathMatcher+toString) ⇒ <code>string</code>
+    * [.match()](#AbstractPathMatcher+match) ⇒ <code>boolean</code>
+    * [.subtract()](#AbstractPathMatcher+subtract) ⇒ <code>string</code>
+
+
+* * *
+
+<a name="AbstractPathMatcher+toString"></a>
+
+### stringWildcardMatcher.toString() ⇒ <code>string</code>
+Returns the string version of this PathMatcher; used during logging.
+
+**Kind**: instance method of [<code>StringWildcardMatcher</code>](#StringWildcardMatcher)  
+**Overrides**: [<code>toString</code>](#AbstractPathMatcher+toString)  
+
+* * *
+
+<a name="AbstractPathMatcher+match"></a>
+
+### stringWildcardMatcher.match() ⇒ <code>boolean</code>
+Returns true if the given path is a match to this specific PathMatcher.
+
+**Kind**: instance method of [<code>StringWildcardMatcher</code>](#StringWildcardMatcher)  
+**Overrides**: [<code>match</code>](#AbstractPathMatcher+match)  
+
+* * *
+
+<a name="AbstractPathMatcher+subtract"></a>
+
+### stringWildcardMatcher.subtract() ⇒ <code>string</code>
+If a given path is a match to this specific PathMatcher, return the given
+path minus the parts of the path that matched.  If the given path is not a
+match, return the given path unchanged.
+
+**Kind**: instance method of [<code>StringWildcardMatcher</code>](#StringWildcardMatcher)  
 **Overrides**: [<code>subtract</code>](#AbstractPathMatcher+subtract)  
 
 * * *
