@@ -13,6 +13,9 @@ server.addHTTPServer({
 	port: 7080
 });
 
+server.route("*","*",(path,request)=>{
+	Log.access("Request from "+request.origin+" for "+request.url.href);
+});
 server.start();
 
 // Serve a directory of files

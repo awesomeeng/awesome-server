@@ -14,6 +14,9 @@ server.addHTTP2Server({
 	cert: server.resolve("./certificate.pub"), // load our cert relative to this Server.js file.
 	key: server.resolve("./certificate.key") // load our key relative to this Server.js file.
 });
+server.route("*","*",(path,request)=>{
+	Log.access("Request from "+request.origin+" for "+request.url.href);
+});
 server.route("*","/hello",(path,request,response)=>{
 	return new Promise(async (resolve,reject)=>{
 		try {

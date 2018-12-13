@@ -27,5 +27,8 @@ server.addHTTPServer({
 	hostname: "localhost",
 	port: 7080
 });
+server.route("*","*",(path,request)=>{
+	Log.access("Request from "+request.origin+" for "+request.url.href);
+});
 server.route("/hello",new MyController());
 server.start();
