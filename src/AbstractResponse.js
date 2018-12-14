@@ -206,7 +206,7 @@ class AbstractResponse {
 	writeJSON(statusCode,content,headers=null) {
 		if (arguments.length===0) throw new Error("Missing content.");
 		if (arguments.length>0 && typeof statusCode!=="number") [statusCode,content,headers] = [200,...arguments];
-		if (content===undefined || content===null || content==="") throw new Error("Missing content.");
+		if (content===undefined || content===null) throw new Error("Missing content.");
 
 		headers = headers || {};
 		headers["Content-Type"] = headers["Content-Type"] || "application/json";
@@ -244,7 +244,7 @@ class AbstractResponse {
 	writeText(statusCode,content,headers=null) {
 		if (arguments.length===0) throw new Error("Missing content.");
 		if (arguments.length>0 && typeof statusCode!=="number") [statusCode,content,headers] = [200,...arguments];
-		if (content===undefined || content===null || content==="") throw new Error("Missing content.");
+		if (content===undefined || content===null) throw new Error("Missing content.");
 
 		headers = headers || {};
 		headers["Content-Type"] = headers["Content-Type"] || "text/plain; charset=utf-8";
@@ -280,7 +280,7 @@ class AbstractResponse {
 	writeCSS(statusCode,content,headers=null) {
 		if (arguments.length===0) throw new Error("Missing content.");
 		if (arguments.length>0 && typeof statusCode!=="number") [statusCode,content,headers] = [200,...arguments];
-		if (content===undefined || content===null || content==="") throw new Error("Missing content.");
+		if (content===undefined || content===null) throw new Error("Missing content.");
 
 		headers = headers || {};
 		headers["Content-Type"] = headers["Content-Type"] || "text/css; charset=utf-8";
@@ -318,7 +318,7 @@ class AbstractResponse {
 	writeHTML(statusCode,content,headers=null) {
 		if (arguments.length===0) throw new Error("Missing content.");
 		if (arguments.length>0 && typeof statusCode!=="number") [statusCode,content,headers] = [200,...arguments];
-		if (content===undefined || content===null || content==="") throw new Error("Missing content.");
+		if (content===undefined || content===null) throw new Error("Missing content.");
 
 		headers = headers || {};
 		headers["Content-Type"] = headers["Content-Type"] || "text/html; charset=utf-8";
