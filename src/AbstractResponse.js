@@ -5,7 +5,6 @@
 const FS = require("fs");
 
 const AwesomeUtils = require("@awesomeeng/awesome-utils");
-const Log = require("@awesomeeng/awesome-log");
 
 const $ORIGINAL = Symbol("original");
 

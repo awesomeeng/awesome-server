@@ -18,7 +18,7 @@ server.addHTTPServer({
 server.route("*","*",(path,request)=>{
 	Log.access("Request from "+request.origin+" for "+request.url.href);
 });
-server.route("*","/hello",async (path,request,response)=>{
+server.route("*","/hello",(path,request,response)=>{
 	return response.writeText("Hello world.");
 });
 server.start();
