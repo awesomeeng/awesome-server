@@ -441,7 +441,8 @@ It is up to the implementor on how this is obtained.
 <a name="AbstractRequest+method"></a>
 
 ### abstractRequest.method ⇒ <code>string</code>
-Returns the HTTP Method for this request.
+Returns the HTTP Method for this request. This must be
+an all upper case string.
 
 It is up to the implementor on how this is obtained.
 
@@ -1106,6 +1107,7 @@ Please see the documentation at @link https://github.com/awesomeeng/AwesomeServe
         * [.removeServer(server)](#AwesomeServer+removeServer) ⇒ <code>boolean</code>
         * [.route(method, path, handler)](#AwesomeServer+route)
         * [.unroute(method, path, handler)](#AwesomeServer+unroute) ⇒ <code>boolean</code>
+        * [.removeAllRoutes()](#AwesomeServer+removeAllRoutes)
         * [.redirect(method, path, toPath, [temporary])](#AwesomeServer+redirect)
         * [.serve(path, contentType, filename)](#AwesomeServer+serve)
         * [.push(path, referencePath, contentType, filename)](#AwesomeServer+push)
@@ -1535,6 +1537,15 @@ Routes may be removed whether or not AwesomeServer has been started.
 | path | <code>string</code> \| <code>RegExp</code> \| [<code>AbstractPathMatcher</code>](#AbstractPathMatcher) | see above. |
 | handler | <code>function</code> \| [<code>AbstractController</code>](#AbstractController) | see above. |
 
+
+* * *
+
+<a name="AwesomeServer+removeAllRoutes"></a>
+
+### awesomeServer.removeAllRoutes()
+Utility for removing all routes.
+
+**Kind**: instance method of [<code>AwesomeServer</code>](#AwesomeServer)  
 
 * * *
 
@@ -2796,7 +2807,7 @@ Returns the headers set with writeHead for this response.
 <a name="HTTPResponse+contentType"></a>
 
 ### httpResponse.contentType ⇒ <code>String</code>
-Returns the mime-type portion from the content-type header.
+Returns the mime-type portion from the Content-Type header.
 
 **Kind**: instance property of [<code>HTTPResponse</code>](#HTTPResponse)  
 **Overrides**: [<code>contentType</code>](#AbstractRequest+contentType)  
@@ -2806,7 +2817,7 @@ Returns the mime-type portion from the content-type header.
 <a name="HTTPResponse+contentEncoding"></a>
 
 ### httpResponse.contentEncoding ⇒ <code>String</code>
-Returns the charset (encoding) portion from the content-type
+Returns the charset (encoding) portion from the Content-Type
 header for this response.
 
 **Kind**: instance property of [<code>HTTPResponse</code>](#HTTPResponse)  
@@ -2840,7 +2851,8 @@ It is up to the implementor on how this is obtained.
 <a name="AbstractRequest+method"></a>
 
 ### httpResponse.method ⇒ <code>string</code>
-Returns the HTTP Method for this request.
+Returns the HTTP Method for this request. This must be
+an all upper case string.
 
 It is up to the implementor on how this is obtained.
 
