@@ -592,6 +592,13 @@ class AwesomeServer {
 	}
 
 	/**
+	 * Utility for removing all routes.
+	 */
+	removeAllRoutes() {
+		this[$ROUTES] = [];
+	}
+
+	/**
 	 * A shortcut method for routing HTTP redirects.
 	 *
 	 * @param  {string}  method                             The method to match.

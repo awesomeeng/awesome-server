@@ -8,8 +8,6 @@
 
 const assert = require("assert");
 
-const Request = require("request-promise-native");
-
 const AwesomeUtils = require("@awesomeeng/awesome-utils");
 // require("AwesomeLog").init().start();
 
@@ -38,6 +36,7 @@ describe("HTTPServer",function(){
 
 	afterEach(async function() {
 		await server.stop();
+		server.removeAllRoutes();
 	});
 
 	it("Started",function(){
@@ -56,7 +55,7 @@ describe("HTTPServer",function(){
 			await response.writeText("the quick brown fox jumped over the lazy dog.");
 		});
 
-		await Request.get(url+"/test");
+		await AwesomeUtils.Request.get(url+"/test");
 
 		assert(req);
 		assert(req instanceof AbstractRequest);
@@ -70,7 +69,7 @@ describe("HTTPServer",function(){
 			await response.writeText("the quick brown fox jumped over the lazy dog.");
 		});
 
-		await Request.get(url+"/test");
+		await AwesomeUtils.Request.get(url+"/test");
 
 		assert(resp);
 		assert(resp instanceof AbstractResponse);
@@ -78,57 +77,47 @@ describe("HTTPServer",function(){
 	});
 
 	it("get request",async function(){
-		let req,resp;
+		let req;
 		server.route("*","/test",async (path,request,response)=>{
 			req = request;
-			resp = response;
 			await response.writeText("the quick brown fox jumped over the lazy dog.");
 		});
 
-		let response = await Request.get(url+"/test");
+		let response = await AwesomeUtils.Request.get(url+"/test");
 
 		assert(req);
 		assert.equal(req.method,"GET");
 		assert.equal(req.url.href,"/test");
 		assert.equal(req.path,"/test");
 
-		assert(resp);
-		assert.equal(resp.finished,true);
-		assert.equal(resp.statusCode,200);
-		assert.equal(resp.contentType,"text/plain");
-		assert.equal(resp.contentEncoding,"utf-8");
+		assert(response);
+		assert.equal(response.statusCode,200);
+		assert.equal(response.contentType,"text/plain");
+		assert.equal(response.contentEncoding,"utf-8");
 
-		assert.equal(response,"the quick brown fox jumped over the lazy dog.");
+		assert.equal(await response.content,"the quick brown fox jumped over the lazy dog.");
 	});
 
 	it("post request",async function(){
-		let req,resp;
+		let req;
 		server.route("*","/test",async (path,request,response)=>{
 			req = request;
-			resp = response;
 			let body = await request.readText();
 			await response.writeText(body);
 		});
 
-		let response = await Request.post({
-			url: url+"/test",
-			headers: {
-				"content-type": "text/plain"
-			},
-			body: "Come, my friends, / 'Tis not too late to seek a newer world. / Push off, and sitting well in order smite / The sounding furrow"
-		});
+		let response = await AwesomeUtils.Request.post(url+"/test","text/plain","Come, my friends, / 'Tis not too late to seek a newer world. / Push off, and sitting well in order smite / The sounding furrow");
 
 		assert(req);
 		assert.equal(req.method,"POST");
 		assert.equal(req.url.href,"/test");
 		assert.equal(req.path,"/test");
 
-		assert(resp);
-		assert.equal(resp.finished,true);
-		assert.equal(resp.statusCode,200);
-		assert.equal(resp.contentType,"text/plain");
-		assert.equal(resp.contentEncoding,"utf-8");
+		assert(response);
+		assert.equal(response.statusCode,200);
+		assert.equal(response.contentType,"text/plain");
+		assert.equal(response.contentEncoding,"utf-8");
 
-		assert.equal(response,"Come, my friends, / 'Tis not too late to seek a newer world. / Push off, and sitting well in order smite / The sounding furrow");
+		assert.equal(await response.content,"Come, my friends, / 'Tis not too late to seek a newer world. / Push off, and sitting well in order smite / The sounding furrow");
 	});
 });

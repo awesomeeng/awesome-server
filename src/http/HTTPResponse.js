@@ -53,22 +53,22 @@ class HTTPResponse extends AbstractResponse {
 	}
 
 	/**
-	 * Returns the mime-type portion from the content-type header.
+	 * Returns the mime-type portion from the Content-Type header.
 	 *
 	 * @return {String}
 	 */
 	get contentType() {
-		return AwesomeUtils.Request.parseContentType(this.headers && this.headers["content-type"] || "");
+		return AwesomeUtils.Request.parseContentType(this.headers && this.headers["Content-Type"] || "");
 	}
 
 	/**
-	 * Returns the charset (encoding) portion from the content-type
+	 * Returns the charset (encoding) portion from the Content-Type
 	 * header for this response.
 	 *
 	 * @return {String}
 	 */
 	get contentEncoding() {
-		return AwesomeUtils.Request.parseContentEncoding(this.headers && this.headers["content-type"] || "");
+		return AwesomeUtils.Request.parseContentEncoding(this.headers && this.headers["Content-Type"] || "");
 	}
 
 	/**
