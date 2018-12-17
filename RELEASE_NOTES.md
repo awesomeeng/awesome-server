@@ -1,5 +1,13 @@
 # AwesomeServer Release Notes
 
+#### **Version 1.2.1**
+
+ - Remove external dev dependency on request and request-promise-native.
+
+ - Performance tuning and improvements.
+
+ - Allow empty length strings in response.write*() functions.
+
 #### **Version 1.2.0**
 
  - Turn off logging by default.
@@ -28,10 +36,13 @@
 
 #### **Version 1.1.0**
 
-- Removes default ports for HTTP, HTTPS and HTTP/2 servers.  Ports now default to 0, which means a random port is assigned if one is not provided.
-- All references to "127.0.0.1" changed to "localhost".
-- No longer does a Log.Access() for each request. This functionality is expected to be implemented by the user if needed.
-- When closing HTTP/2 servers, now ensures all HTTP/2 connections that are currently open are closed.
+ - Removes default ports for HTTP, HTTPS and HTTP/2 servers.  Ports now default to 0, which means a random port is assigned if one is not provided.
+
+ - All references to "127.0.0.1" changed to "localhost".
+
+ - No longer does a Log.Access() for each request. This functionality is expected to be implemented by the user if needed.
+
+ - When closing HTTP/2 servers, now ensures all HTTP/2 connections that are currently open are closed.
 
 #### **Version 1.0.0**
 
