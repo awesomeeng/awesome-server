@@ -3,6 +3,9 @@
 "use strict";
 
 const Log = require("@awesomeeng/awesome-log");
+Log.init({
+	buffering: true
+});
 Log.start();
 
 const AwesomeServer = require("@awesomeeng/awesome-server");
@@ -16,6 +19,6 @@ server.route("*","*",(path,request)=>{
 	Log.access("Request from "+request.origin+" for "+request.url.href);
 });
 server.route("*","/hello",async (path,request,response)=>{
-	await response.writeText("Hello world.");
+	return response.writeText("Hello world.");
 });
 server.start();

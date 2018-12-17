@@ -766,46 +766,44 @@ class AwesomeServer {
 		if (!(response instanceof AbstractResponse)) throw new Error("Invalid response.");
 
 		let method = request.method.toUpperCase();
-		let url = request.method+" "+(request.url && request.url.href || request.url && request.url.toString() || request.url.toString());
+		let url = method+" "+request.url.href; //(request.url && request.url.href || request.url && request.url.toString() || request.url.toString());
 		let path = request.path || "/";
 
 		// Log.access("Request "+url+" from "+request.origin+".");
 
-		let matching = this[$ROUTES].filter((route)=>{
-			return (route.method==="*" || route.method===method) && route.matcher.match(path) && route.routes && route.routes.length>0;
-		});
-
-		let routes = matching.reduce((routes,route)=>{
-			let mypath = route.matcher.subtract(path);
-			route.routes.forEach((r)=>{
-				routes.push({
-					fullpath: path,
-					path: mypath,
-					router: r
+		let routes = this[$ROUTES].reduce((routes,route)=>{
+			if (route && ((route.method==="*" || route.method===method) && route.routes && route.routes.length>0 && route.matcher.match(path))) {
+				let mypath = route.matcher.subtract(path);
+				route.routes.forEach((r)=>{
+					routes.push({
+						fullpath: path,
+						path: mypath,
+						router: r
+					});
 				});
-			});
+			}
 			return routes;
 		},[]);
 
-		// This executes the routes serially, instead of in parallel.
-		await new Promise((resolve)=>{
+		await new Promise((resolve,reject)=>{
 			try {
-				const nextRouter = async function nextRouter() {
+				const nextRoute = async function nextRoute() {
 					if (response.finished) return resolve();
-					if (routes.length<1) return resolve();
 
 					let route = routes.shift();
+
 					let p = route.router.call(this,route.path,request,response);
 					if (p instanceof Promise) await p;
 
-					setImmediate(nextRouter);
+					nextRoute();
 				};
 
-				nextRouter();
+				nextRoute();
 			}
 			catch (ex) {
 				Log.error("Error handling request "+url+".",ex);
 				response.writeError(500,"Error handling request "+url+".");
+				return reject(ex);
 			}
 		});
 

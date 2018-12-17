@@ -85,16 +85,8 @@ class HTTPResponse extends AbstractResponse {
 	 * @param statusMessage {(string|null)} optional.
 	 * @param headers {Object} optional.
 	 */
-	writeHead(statusCode,statusMessage,headers) {
-		if (arguments.length===2) [statusCode,statusMessage,headers] = [statusCode,null,statusMessage];
-
-		// we write our headers this way so they are programattically accessibly later.
-		Object.keys(headers||{}).forEach((key)=>{
-			this.original.setHeader(key,headers[key]);
-		});
-
-		if (statusMessage===undefined || statusMessage===null) return this.original.writeHead(statusCode);
-		else return this.original.writeHead(statusCode,statusMessage);
+	writeHead(/*statusCode,statusMessage,headers*/) {
+		return this.original.writeHead.apply(this.original,arguments);
 	}
 
 	/**

@@ -212,20 +212,10 @@ class AbstractResponse {
 		headers["Content-Type"] = headers["Content-Type"] || "application/json";
 		statusCode = statusCode || 200;
 
-		return new Promise(async (resolve,reject)=>{
-			try {
-				if (typeof content!=="string") content = JSON.stringify(content);
+		if (typeof content!=="string") content = JSON.stringify(content);
 
-				this.writeHead(statusCode,headers);
-				await this.write(content);
-				await this.end();
-
-				resolve();
-			}
-			catch (ex) {
-				return reject(ex);
-			}
-		});
+		this.writeHead(statusCode,headers);
+		return this.end(content);
 	}
 
 	/**
@@ -250,18 +240,8 @@ class AbstractResponse {
 		headers["Content-Type"] = headers["Content-Type"] || "text/plain; charset=utf-8";
 		statusCode = statusCode || 200;
 
-		return new Promise(async (resolve,reject)=>{
-			try {
-				this.writeHead(statusCode,headers);
-				await this.write(content);
-				await this.end();
-
-				resolve();
-			}
-			catch (ex) {
-				return reject(ex);
-			}
-		});
+		this.writeHead(statusCode,headers);
+		return this.end(content);
 	}
 
 	/**
@@ -286,20 +266,8 @@ class AbstractResponse {
 		headers["Content-Type"] = headers["Content-Type"] || "text/css; charset=utf-8";
 		statusCode = statusCode || 200;
 
-		return new Promise(async (resolve,reject)=>{
-			try {
-				this.writeHead(200,{
-					"Content-Type":"text/css"
-				});
-				await this.write(content);
-				await this.end();
-
-				resolve();
-			}
-			catch (ex) {
-				return reject(ex);
-			}
-		});
+		this.writeHead(statusCode,headers);
+		return this.end(content);
 	}
 
 	/**
@@ -324,18 +292,8 @@ class AbstractResponse {
 		headers["Content-Type"] = headers["Content-Type"] || "text/html; charset=utf-8";
 		statusCode = statusCode || 200;
 
-		return new Promise(async (resolve,reject)=>{
-			try {
-				this.writeHead(statusCode,headers);
-				await this.write(content);
-				await this.end();
-
-				resolve();
-			}
-			catch (ex) {
-				return reject(ex);
-			}
-		});
+		this.writeHead(statusCode,headers);
+		return this.end(content);
 	}
 
 	/**
@@ -362,21 +320,11 @@ class AbstractResponse {
 		headers["Content-Type"] = headers["Content-Type"] || "text/plain; charset=utf-8";
 		statusCode = statusCode || 200;
 
-		if (content!==undefined && content!==null && content instanceof Error && content.stack) content = content.message+"\n\n"+content.stack;
-		else if (content!==undefined && content!==null && content instanceof Error) content = content.message;
+		if (content && content instanceof Error && content.stack) content = content.message+"\n\n"+content.stack;
+		else if (content && content instanceof Error) content = content.message;
 
-		return new Promise(async (resolve,reject)=>{
-			try {
-				this.writeHead(statusCode,headers);
-				if (content!==undefined && content!==null) await this.write(content);
-				await this.end();
-
-				resolve();
-			}
-			catch (ex) {
-				return reject(ex);
-			}
-		});
+		this.writeHead(statusCode,headers);
+		return content!==undefined && content!==null ? this.end(content) : this.end();
 	}
 
 	/**
@@ -408,22 +356,11 @@ class AbstractResponse {
 		headers["Content-Type"] = headers["Content-Type"] || contentType;
 		statusCode = statusCode || 200;
 
-		return new Promise(async (resolve,reject)=>{
-			try {
-				if (!AwesomeUtils.FS.existsSync(filename)) throw new Error("File not found: "+filename);
+		if (!AwesomeUtils.FS.existsSync(filename)) throw new Error("File not found: "+filename);
 
-				Log.info("Serving "+filename);
-
-				this.writeHead(statusCode,headers);
-				let stream = FS.createReadStream(filename);
-				await this.pipeFrom(stream);
-				// no end() needed, pipeFrom handles it for us.
-				resolve();
-			}
-			catch (ex) {
-				return reject(ex);
-			}
-		});
+		this.writeHead(statusCode,headers);
+		let stream = FS.createReadStream(filename);
+		return this.pipeFrom(stream);
 	}
 }
 
