@@ -765,14 +765,13 @@ class AwesomeServer {
 		if (!response) throw new Error("Missing response.");
 		if (!(response instanceof AbstractResponse)) throw new Error("Invalid response.");
 
-		let method = request.method.toUpperCase();
-		let url = method+" "+request.url.href; //(request.url && request.url.href || request.url && request.url.toString() || request.url.toString());
+		let url = request.method+" "+request.url.href; //(request.url && request.url.href || request.url && request.url.toString() || request.url.toString());
 		let path = request.path || "/";
 
 		// Log.access("Request "+url+" from "+request.origin+".");
 
 		let routes = this[$ROUTES].reduce((routes,route)=>{
-			if (route && ((route.method==="*" || route.method===method) && route.routes && route.routes.length>0 && route.matcher.match(path))) {
+			if (route && ((route.method==="*" || route.method===request.method) && route.routes && route.routes.length>0 && route.matcher.match(path))) {
 				let mypath = route.matcher.subtract(path);
 				route.routes.forEach((r)=>{
 					routes.push({
@@ -785,31 +784,37 @@ class AwesomeServer {
 			return routes;
 		},[]);
 
-		await new Promise((resolve,reject)=>{
-			try {
+		try {
+			await new Promise((resolve,reject)=>{
 				const nextRoute = async function nextRoute() {
-					if (response.finished) return resolve();
+					try {
+						if (response.finished) return resolve();
 
-					let route = routes.shift();
+						let route = routes.shift();
+						if (!route) return resolve();
 
-					let p = route.router.call(this,route.path,request,response);
-					if (p instanceof Promise) await p;
+						let p = route.router.call(this,route.path,request,response);
+						if (p instanceof Promise) await p;
 
-					nextRoute();
+						setImmediate(nextRoute);
+					}
+					catch (ex) {
+						Log.error("Error in routing for "+url+".",ex);
+						return reject(ex);
+					}
 				};
 
 				nextRoute();
-			}
-			catch (ex) {
-				Log.error("Error handling request "+url+".",ex);
-				response.writeError(500,"Error handling request "+url+".");
-				return reject(ex);
-			}
-		});
+			});
 
-		if (!response.finished) {
-			Log.error("404 Not found "+url+".");
-			response.writeError(404,"404 Not found "+url+".");
+			if (!response.finished) {
+				Log.error("404 Not found "+url+".");
+				await response.writeError(404,"404 Not found "+url+".");
+			}
+		}
+		catch (ex) {
+			Log.error("Error handling request "+url+".",ex);
+			response.writeError(500,"Error handling request "+url+".");
 		}
 	}
 }

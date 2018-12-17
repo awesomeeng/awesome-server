@@ -63,7 +63,8 @@ class AbstractRequest {
 	}
 
 	/**
-	* Returns the HTTP Method for this request.
+	* Returns the HTTP Method for this request. This must be
+	* an all upper case string.
 	*
 	* It is up to the implementor on how this is obtained.
 	*
