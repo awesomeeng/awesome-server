@@ -64,6 +64,6 @@ For HTTP POST, PUT, and PATCH methods, additional content can be sent with the i
  - **encoding** The encoding for decoding the string. Defaults to `utf-8`.
  - returns **Promise > string**
 
-**readText** - Shortcut for `request.read()` but decodes the buffer into a text string and then parses if via `JSON.parse()`.
+**readJSON** - Shortcut for `request.read()` but decodes the buffer into a text string and then parses if via `JSON.parse()`.
  - **encoding** The encoding for decoding the string. Defaults to `utf-8`.
  - returns **Promise > Object**
