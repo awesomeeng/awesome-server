@@ -355,7 +355,12 @@ class AbstractResponse {
 		headers["Content-Type"] = headers["Content-Type"] || contentType;
 		statusCode = statusCode || 200;
 
-		if (!AwesomeUtils.FS.existsSync(filename)) throw new Error("File not found: "+filename);
+		if (!AwesomeUtils.FS.existsSync(filename)) {
+			this.writeHead(404,{
+				"content-type": "text/plain"
+			});
+			return this.end("Not Found: "+filename);
+		}
 
 		this.writeHead(statusCode,headers);
 		let stream = FS.createReadStream(filename);

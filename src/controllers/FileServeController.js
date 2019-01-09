@@ -37,7 +37,6 @@ class FileServeController extends AbstractController {
 
 		if (!contentType) contentType = MimeTypes.getTypeForExtension(filename,"application/octet-stream");
 
-
 		this[$FILENAME] = filename;
 		this[$CONTENTTYPE] = contentType;
 	}

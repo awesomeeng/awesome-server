@@ -60,7 +60,6 @@ class DirectoryServeController extends AbstractController {
 				if (!path || path==="/") path = "index.html";
 				let filename = Path.resolve(this.dir,path);
 
-
 				let exists = await AwesomeUtils.FS.exists(filename);
 				if (!exists) {
 					Log.warn("File not found: "+path);
