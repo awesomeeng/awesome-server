@@ -688,8 +688,8 @@ class AwesomeServer {
 		if (stat.isDirectory()) {
 			let controller = new DirectoryServeController(file);
 			let parent = _route.call(this,"*",path,controller);
-			_route.call(this,"*",path+"/".replace(/\/\/+/g,"/"),controller,parent);
-			_route.call(this,"*",path+"/".replace(/\/\/+/g,"/")+"*",controller,parent);
+			if ((path+"/").replace(/\/\/+/g,"/").replace(/\/\//,"/")!==path) _route.call(this,"*",(path+"/").replace(/\/\/+/g,"/").replace(/\/\//,"/"),controller,parent);
+			_route.call(this,"*",(path+"/").replace(/\/\/+/g,"/").replace(/\/\//,"/")+"*",controller,parent);
 		}
 		else if (stat.isFile()) {
 			this.route("*",path,new FileServeController(contentType,file));
