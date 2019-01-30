@@ -77,6 +77,36 @@ class DirectoryServeController extends AbstractController {
 			}
 		});
 	}
+
+	/**
+	 * head handler. Returns a Promise that resolves when the response
+	 * is completed.  If a request does not match a file in the
+	 * directory, a 404 error is returned.
+	 *
+	 * @param  {string}             path
+	 * @param  {AbstractRequest}    request
+	 * @param  {AbstractResponse}   response
+	 * @return {Promise}
+	 */
+	head(path,request,response) {
+		return new Promise(async (resolve,reject)=>{
+			try {
+				if (!path || path==="/") path = "index.html";
+				let filename = Path.resolve(this.dir,path);
+
+				let exists = await AwesomeUtils.FS.exists(filename);
+				if (!exists) Log.warn("File not found: "+path);
+
+				response.writeHead(exists?200:404);
+				await response.end();
+
+				resolve();
+			}
+			catch (ex) {
+				return reject(ex);
+			}
+		});
+	}
 }
 
 module.exports = DirectoryServeController;

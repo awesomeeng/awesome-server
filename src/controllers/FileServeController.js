@@ -2,6 +2,8 @@
 
 "use strict";
 
+const AwesomeUtils = require("@awesomeeng/awesome-utils");
+
 const MimeTypes = require("../MimeTypes");
 
 const AbstractController = require("../AbstractController");
@@ -70,6 +72,29 @@ class FileServeController extends AbstractController {
 	 */
 	get(path,request,response) {
 		return response.serve(200,this.contentType,this.filename);
+	}
+
+	/**
+	 * Get handler.
+	 *
+	 * @param  {string}             path
+	 * @param  {AbstractRequest}    request
+	 * @param  {AbstractResponse}   response
+	 * @return {Promise}
+	 */
+	head(path,request,response) {
+		return new Promise(async (resolve,reject)=>{
+			try {
+				let exists = await AwesomeUtils.FS.exists(this.filename);
+				response.writeHead(exists?200:404);
+				response.end();
+
+				resolve();
+			}
+			catch (ex) {
+				return reject(ex);
+			}
+		});
 	}
 }
 
