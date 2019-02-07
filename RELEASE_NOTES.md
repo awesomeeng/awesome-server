@@ -1,5 +1,19 @@
 # AwesomeServer Release Notes
 
+#### **Version 1.3.0**
+
+ - Add missing license file.
+
+ - Change serve for directories to cleanup wildcard additions.
+
+ - Adds HEAD calls for DirectoryServe and FileServe controllers.
+
+ - Fix serve() to better handle root paths.
+
+ - Fixes bug with DirectoryServerController and files that dont exist.
+
+ - Documentation: Fix minor typo.
+
 #### **Version 1.2.1**
 
  - Remove external dev dependency on request and request-promise-native.
