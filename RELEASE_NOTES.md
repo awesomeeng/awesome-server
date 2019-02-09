@@ -1,5 +1,9 @@
 # AwesomeServer Release Notes
 
+#### **Version 1.3.1**
+
+ - Updating external dependency versions.
+
 #### **Version 1.3.0**
 
  - Add missing license file.
