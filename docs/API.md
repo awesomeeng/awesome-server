@@ -1797,6 +1797,7 @@ come in. This controller is used from AwesomeServer.serve() when passed a direct
     * [new DirectoryServeController(dir)](#new_DirectoryServeController_new)
     * [.dir](#DirectoryServeController+dir) ⇒ <code>string</code>
     * [.get(path, request, response)](#DirectoryServeController+get) ⇒ <code>Promise</code>
+    * [.head(path, request, response)](#DirectoryServeController+head) ⇒ <code>Promise</code>
     * [.before()](#AbstractController+before) ⇒ <code>Promise</code> \| <code>void</code>
     * [.after()](#AbstractController+after) ⇒ <code>Promise</code> \| <code>void</code>
     * [.any()](#AbstractController+any) ⇒ <code>Promise</code> \| <code>void</code>
@@ -1831,6 +1832,24 @@ Returns the directory being served.
 
 ### directoryServeController.get(path, request, response) ⇒ <code>Promise</code>
 get handler. Returns a Promise that resolves when the response
+is completed.  If a request does not match a file in the
+directory, a 404 error is returned.
+
+**Kind**: instance method of [<code>DirectoryServeController</code>](#DirectoryServeController)  
+
+| Param | Type |
+| --- | --- |
+| path | <code>string</code> | 
+| request | [<code>AbstractRequest</code>](#AbstractRequest) | 
+| response | [<code>AbstractResponse</code>](#AbstractResponse) | 
+
+
+* * *
+
+<a name="DirectoryServeController+head"></a>
+
+### directoryServeController.head(path, request, response) ⇒ <code>Promise</code>
+head handler. Returns a Promise that resolves when the response
 is completed.  If a request does not match a file in the
 directory, a 404 error is returned.
 
@@ -1945,6 +1964,7 @@ come in. This controller is used from AwesomeServer.serve() when passed a file.
     * [.toPath](#FileServeController+toPath) ⇒ <code>string</code>
     * [.temporary](#FileServeController+temporary) ⇒ <code>boolean</code>
     * [.get(path, request, response)](#FileServeController+get) ⇒ <code>Promise</code>
+    * [.head(path, request, response)](#FileServeController+head) ⇒ <code>Promise</code>
     * [.any(path, request, response)](#FileServeController+any) ⇒ <code>Promise</code>
     * [.before()](#AbstractController+before) ⇒ <code>Promise</code> \| <code>void</code>
     * [.after()](#AbstractController+after) ⇒ <code>Promise</code> \| <code>void</code>
@@ -2030,6 +2050,22 @@ The temporary boolean passed into the controller.
 <a name="FileServeController+get"></a>
 
 ### fileServeController.get(path, request, response) ⇒ <code>Promise</code>
+Get handler.
+
+**Kind**: instance method of [<code>FileServeController</code>](#FileServeController)  
+
+| Param | Type |
+| --- | --- |
+| path | <code>string</code> | 
+| request | [<code>AbstractRequest</code>](#AbstractRequest) | 
+| response | [<code>AbstractResponse</code>](#AbstractResponse) | 
+
+
+* * *
+
+<a name="FileServeController+head"></a>
+
+### fileServeController.head(path, request, response) ⇒ <code>Promise</code>
 Get handler.
 
 **Kind**: instance method of [<code>FileServeController</code>](#FileServeController)  
@@ -2327,6 +2363,7 @@ come in. This controller is used from AwesomeServer.redirect() when passed a dir
     * [.toPath](#FileServeController+toPath) ⇒ <code>string</code>
     * [.temporary](#FileServeController+temporary) ⇒ <code>boolean</code>
     * [.get(path, request, response)](#FileServeController+get) ⇒ <code>Promise</code>
+    * [.head(path, request, response)](#FileServeController+head) ⇒ <code>Promise</code>
     * [.any(path, request, response)](#FileServeController+any) ⇒ <code>Promise</code>
     * [.before()](#AbstractController+before) ⇒ <code>Promise</code> \| <code>void</code>
     * [.after()](#AbstractController+after) ⇒ <code>Promise</code> \| <code>void</code>
@@ -2412,6 +2449,22 @@ The temporary boolean passed into the controller.
 <a name="FileServeController+get"></a>
 
 ### fileServeController.get(path, request, response) ⇒ <code>Promise</code>
+Get handler.
+
+**Kind**: instance method of [<code>FileServeController</code>](#FileServeController)  
+
+| Param | Type |
+| --- | --- |
+| path | <code>string</code> | 
+| request | [<code>AbstractRequest</code>](#AbstractRequest) | 
+| response | [<code>AbstractResponse</code>](#AbstractResponse) | 
+
+
+* * *
+
+<a name="FileServeController+head"></a>
+
+### fileServeController.head(path, request, response) ⇒ <code>Promise</code>
 Get handler.
 
 **Kind**: instance method of [<code>FileServeController</code>](#FileServeController)  
