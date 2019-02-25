@@ -60,7 +60,7 @@ class HTTPRequest extends AbstractRequest{
 	 * @return {string}
 	 */
 	get path() {
-		return this.original.url;
+		return this.url.pathname;
 	}
 
 	/**
