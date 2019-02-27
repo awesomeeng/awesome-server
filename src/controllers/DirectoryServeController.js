@@ -60,11 +60,20 @@ class DirectoryServeController extends AbstractController {
 				if (!path || path==="/") path = "index.html";
 				let filename = Path.resolve(this.dir,path);
 
-				let exists = await AwesomeUtils.FS.exists(filename);
-				if (!exists) {
+				let stat = await AwesomeUtils.FS.stat(filename);
+				if (!stat) {
 					Log.warn("File not found: "+path);
 					response.writeError(404,"File not found: "+path);
-					resolve();
+					return resolve();
+				}
+				if (stat && stat.isDirectory()) {
+					filename = Path.resolve(path,"./index.html");
+					let dirstat = await AwesomeUtils.FS.stat(filename);
+					if (!dirstat) {
+						Log.warn("File not found: "+path);
+						response.writeError(404,"File not found: "+path);
+						return resolve();
+					}
 				}
 
 				let contentType = MimeTypes.getTypeForExtension(filename,"application/octet-stream");
