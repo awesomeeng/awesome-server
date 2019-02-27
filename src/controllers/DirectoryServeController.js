@@ -103,10 +103,29 @@ class DirectoryServeController extends AbstractController {
 				if (!path || path==="/") path = "index.html";
 				let filename = Path.resolve(this.dir,path);
 
-				let exists = await AwesomeUtils.FS.exists(filename);
-				if (!exists) Log.warn("File not found: "+path);
+				let stat = await AwesomeUtils.FS.stat(filename);
+				if (!stat) {
+					Log.warn("File not found: "+path);
 
-				response.writeHead(exists?200:404);
+					response.writeHead(404);
+					await response.end();
+
+					return resolve();
+				}
+				if (stat && stat.isDirectory()) {
+					filename = Path.resolve(path,"./index.html");
+					let dirstat = await AwesomeUtils.FS.stat(filename);
+					if (!dirstat) {
+						Log.warn("File not found: "+path);
+
+						response.writeHead(404);
+						await response.end();
+
+						return resolve();
+					}
+				}
+
+				response.writeHead(200);
 				await response.end();
 
 				resolve();
