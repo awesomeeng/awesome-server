@@ -4,8 +4,6 @@
 
 const AwesomeUtils = require("@awesomeeng/awesome-utils");
 
-const MimeTypes = require("../MimeTypes");
-
 const AbstractController = require("../AbstractController");
 
 const $FILENAME = Symbol("filename");
@@ -37,7 +35,7 @@ class FileServeController extends AbstractController {
 
 		super();
 
-		if (!contentType) contentType = MimeTypes.getTypeForExtension(filename,"application/octet-stream");
+		if (!contentType) contentType = AwesomeUtils.MimeTypes.getTypeForExtension(filename,"application/octet-stream");
 
 		this[$FILENAME] = filename;
 		this[$CONTENTTYPE] = contentType;

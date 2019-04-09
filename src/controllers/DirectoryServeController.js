@@ -4,8 +4,6 @@
 
 const Path = require("path");
 
-const MimeTypes = require("../MimeTypes");
-
 const AwesomeUtils = require("@awesomeeng/awesome-utils");
 const Log = require("@awesomeeng/awesome-log");
 
@@ -76,7 +74,7 @@ class DirectoryServeController extends AbstractController {
 					}
 				}
 
-				let contentType = MimeTypes.getTypeForExtension(filename,"application/octet-stream");
+				let contentType = AwesomeUtils.MimeTypes.getTypeForExtension(filename,"application/octet-stream");
 
 				await response.serve(200,contentType,filename);
 				resolve();
