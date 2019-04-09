@@ -1,5 +1,15 @@
 # AwesomeServer Release Notes
 
+#### **Version 1.4.0**
+
+ - Moves MimeTypes out to AwesomeUtils.
+
+ - Adds HEAD response for directory paths.
+
+ - Made directory serve serve index.html if path is directory and both exist.
+
+ - Changed HTTPRequest.path to return the path, not the request url, which may contain the query string.
+
 #### **Version 1.3.1**
 
  - Updating external dependency versions.
