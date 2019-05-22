@@ -32,139 +32,102 @@ Controllers allow developers to keep their API code separate and clean and not r
 
  - **Free and Open**. AwesomeConfig is released under the MIT licene and complete free to use and modify.
 
-
-
-
-
 ## Getting Started
 
-AwesomeConfig is super easy to use.
+AwesomeServer is super easy to use.
 
 #### 1). Install It.
 
 ```shell
-npm install @awesomeeng/awesome-config
+npm install @awesomeeng/awesome-server
 ```
 
 #### 2). Require it.
 
 ```javascript
-let config = require("@awesomeeng/awesome-config");
+let AwesomeServer = require("@awesomeeng/awesome-config");
 ```
 
-#### 3). Initialize it.
+#### 3). Instantiate it.
 
 ```javascript
-config().init();
+let server = new AwesomeServer();
 ```
 
-Those of you paying attention will notice that the `init()` function is called not on the config object, but on the execution of the config function as specified thus: `config()`.  This is the tricky to how AwesomeConfig gets around having reserved words.  It takes a minute to get used to, but it becomes pretty obvious if you forget and use `config.init()` by mistake.
-
-#### 4). Add Configuration.
+#### 4). Add One or more Servers.
 ```javascript
-config().add({
-	a: {
-		javascript: "Object"
-	}
+server.addHTTPServer({
+	hostname: "localhost",
+	port: 4000
 });
-config().add(`
-	"or": {
-		"a": {
-			"string": "of JSON"
-		}
-	}
-`);
-config().add(`
-	or.use.our.custom.notation: "which allows"
-	json.or: {
-		key: {
-			value: "pairs"
-		}
-	}
-`);
-config().add("./or-config-files.json");
-config().add("./or-config-directories");
 ```
 
-With `config().add()` you add one or more configuration blocks to AwesomeConfig.  A configuration block can be...
+You can add HTTP servers with `addHTTPServer()` or HTTPS servers with `addHTTPSServer()` or HTTP/2 servers with `addHTTP2Server()`.
 
- - **A JavaScript object**
- ```javascript
- config().add({
- 	a: {
- 		javascript: "Object"
- 	}
- });
- ```
+AwesomeServer supports as many servers as you want to add for a single instance and they may be the same type or not.  Meaning you can add three HTTP servers and one HTTPS server or whatever combination you want.
 
- - or **A JSON String**
- ```javascript
- config().add(`
- 	"or": {
- 		"a": {
- 			"string": "of JSON"
- 		}
- 	}
- `);
- ```
+Also, AwesomeServer supports adding custom servers via the `addServer()` method.  There's a little bit more to it, so make sure to read the [Custom Servers](https://github.com/awesomeeng/awesome-server/blob/HEAD/docs/CustomServers.md) documentation.
 
- - or **An AwesomeConfig Notation String**
- ```javascript
- config().add(`
-	or.use.our.custom.notation: "which allows"
- 	json.or: {
- 		key: {
- 			value: "pairs"
- 		}
- 	}
- `);
- ```
+#### 5). Add Routes
 
- - or **A Filename**
- ```javascript
- config().add("./or-config-files.json");
- ```
-
- - or **A Directory**
- ```javascript
- config().add("./or-config-directories");
- ```
-
-You can call `config().add()` as many times as you want adding as many configuration blocks as you want.  When AwesomeConfig is started (coming up in the next section), AwesomeConfig takes all of the configuration objects and merges them together into a single unified configuration.
-
-Again, you will notice that we are using `config()` instead of `config` when adding our configuration.  A good rule of thumb to remember is if you are calling a function on configuration like `init()` or `add()` or `start()`, you do it on the `config()` execution.
-
-#### 5). Start It.
 ```javascript
-config().start();
+server.route("GET","/test",(path,request,response)=>{
+});
+
+// or
+
+server.route("/test","./MyTestController.js");
 ```
 
-After all your configuration blocks have been added, you start AwesomeConfig.  Once `start()` is called your configuration merge together into a single unified view, all variables and conditions are resolved, and the entire unified configuration is made immutable.
+Routes take three arguments: method, path, and handler.
 
-#### 6). Use It!
+Method is any valid HTTP METHOD (GET, POST, PUT, DELETE, HEAD, OPTIONS, CONNECT, TRACE, PATCH). Method may also be `*` to match any HTTP method.
+
+Path is one of seven (7) possible path rules:
+ - Exact. `/this/is/an/exact/path`
+ - Starts With. `/this/is/a/starsWith/path/*`
+ - Ends With. `*/this/is/an/endsWith/path`
+ - Contains. `*/this/is/a/contains/path/*`
+ - Or Expression. `/this/might/match|/or/this/might/match`
+ - Regular Expression. `^/some\sregualr\expression/`
+ - Custom Matcher. A class that extends `AbstractPathMatcher`.
+
+Handler is a function or a reference to a controller, that is executed when an incoming request matches the method and path of the route.
+
+#### 6). Start It.
 ```javascript
-console.log(config.a.javascript); // "Object"
-console.log(config.or.use.our.custom.notation); // "which allows"
+server.start();
 ```
 
-The `config` object we required earlier now has access to the unified config and functions just like any JavaScript object would.
+The `start()` method begins listening on each server and handling incoming request.
 
-Additionally you can use it in any other module working in the same process:
-```javascript
-let config = require("@awesoemeng/awesome-config");
-console.log(config.json.or.key.value); // "pairs"
-```
+## Controllers
+
+Once place AwesomeServer distinguishes itself is in allowing developers to use controllers instead of just routing everything. A Controller is a class that is intended to handle all interaction methods for some given endpoint.
+
+Say we have an endpoint at `/auth/session`. We can build a controller called `MyAuthSessionController` to handle all requests for that endpoint. Each controller should be separated into its own file, like `MyAuthSessionController.js` where it defines and exports a class.  Controller classes must extend `AwesomeServer.AbstractController`. A Controller is then implemented by adding one or more HTTP method function like `get()` or `post()`. Finally, a controller is adding to the routing of the servers with `server.route(path,controller)` where `controller` is the filename to the `MyAuthSessionController`.
+
+Controllers are a great way to isolate and encapsualte behaviors into thier own structures instead of having a massive class full of `routing` and behaviors.
+
+There is a lot more to controllers, so we suggest interested parties check out the [Controller Documentation](https://github.com/awesomeeng/awesome-server/blob/HEAD/docs/Controllers.md).
 
 ## Documentation
 
-That's the basics of AwesomeConfig, but there is of course a lot more to it.
+That's the basics of AwesomeServer, but there is of course a lot more to it.
 
-At this point, we suggest you check the [project readme](https://github.com/awesomeeng/awesome-config) out. Additionally there is specific documentation for Variables and Placeholders, Conditions, and the like.
+At this point, we suggest you check the [project readme](https://github.com/awesomeeng/awesome-server) out. Additionally there is specific documentation for Routing, Paths, Controllers, Requests, Responses, HTTP/2 Techniques, and Custom Servers.
 
-- [Understanding Merging](https://github.com/awesomeeng/awesome-config)
-- [Understanding Merging](https://github.com/awesomeeng/awesome-config/blob/master/docs/Merging.md)
-- [Variables and Placeholders](https://github.com/awesomeeng/awesome-config/blob/master/docs/VariablesAndPlaceholders.md)
-- [Condition Expressions](https://github.com/awesomeeng/awesome-config/blob/master/docs/Conditions.md)
+ - [Read Me First!](https://github.com/awesomeeng/awesome-server)
+ - [HTTP Setup and Configuration](https://github.com/awesomeeng/awesome-server/blob/master/docs/HTTP.md)
+ - [HTTPS Setup and Configuration](https://github.com/awesomeeng/awesome-server/blob/master/docs/HTTPS.md)
+ - [HTTP/2 Setup and Configuration](https://github.com/awesomeeng/awesome-server/blob/master/docs/HTTP2.md)
+ - [Routing](https://github.com/awesomeeng/awesome-server/blob/master/docs/Routing.md)
+ - [Paths](https://github.com/awesomeeng/awesome-server/blob/master/docs/Paths.md)
+ - [Controllers](https://github.com/awesomeeng/awesome-server/blob/master/docs/Controllers.md)
+ - [Requests](https://github.com/awesomeeng/awesome-server/blob/master/docs/Requests.md)
+ - [Responses](https://github.com/awesomeeng/awesome-server/blob/master/docs/Responses.md)
+ - [HTTP/2 Techniques](https://github.com/awesomeeng/awesome-server/blob/master/docs/HTTP2Techniques.md)
+ - [Custom Servers](https://github.com/awesomeeng/awesome-server/blob/master/docs/CustomServers.md)
 
 ## AwesomeStack
 
