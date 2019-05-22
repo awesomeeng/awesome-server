@@ -1,4 +1,4 @@
-# [AwesomeConfig](../README.md) > Introducing AwesomeServer
+# [AwesomeServer](../README.md) > Introducing AwesomeServer
 
 AwesomeServer is a powerful http/https/http2 web framework for building enterprise ready node.js applications. Unlike products like express or fastify AwesomeServer is focused on allowing developers to easily write endpoints/controllers instead of stringing together a collection of middleware libraries. It provides easy but powerful routing structure, an opt-in controller based structure, consistent and helpful request and response objects, simple http/2 cache pushing, and integerated logging support.
 
@@ -28,9 +28,9 @@ Controllers allow developers to keep their API code separate and clean and not r
 
  - **async/await**. AwesomeServer is written with promises and async/await specifically in mind.
 
- - **No External Dependencies**. AwesomeConfig is written and maintained by The Awesome Engineering Company and has no dependency that was not written by us. This means consistency of code throughout the product and that we have zero dependencies that were not written inhouse.  This means safer code for you and your product.
+ - **No External Dependencies**. AwesomeServer is written and maintained by The Awesome Engineering Company and has no dependency that was not written by us. This means consistency of code throughout the product and that we have zero dependencies that were not written inhouse.  This means safer code for you and your product.
 
- - **Free and Open**. AwesomeConfig is released under the MIT licene and complete free to use and modify.
+ - **Free and Open**. AwesomeServer is released under the MIT licene and complete free to use and modify.
 
 ## Getting Started
 
@@ -45,7 +45,7 @@ npm install @awesomeeng/awesome-server
 #### 2). Require it.
 
 ```javascript
-let AwesomeServer = require("@awesomeeng/awesome-config");
+let AwesomeServer = require("@awesomeeng/awesome-server");
 ```
 
 #### 3). Instantiate it.
@@ -131,7 +131,7 @@ At this point, we suggest you check the [project readme](https://github.com/awes
 
 ## AwesomeStack
 
-AwesomeStack is a free and open source set of libraries for rapidly building enterprise ready nodejs applications, of which, AwesomeConfig is one part.  Each library is written to provide a stable, performant, part of your application stack that can be used on its own, or part of the greater AwesomeStack setup.
+AwesomeStack is a free and open source set of libraries for rapidly building enterprise ready nodejs applications, of which, AwesomeServer is one part.  Each library is written to provide a stable, performant, part of your application stack that can be used on its own, or part of the greater AwesomeStack setup.
 
 AwesomeStack includes...
 
@@ -143,6 +143,6 @@ AwesomeStack includes...
 
  - **[AwesomeCLI](https://github.com/awesomeeng/awesome-cli)** - Rapidly implement Command Line Interfaces (CLI) for your application.
 
-All AwesomeStack libraries and AwesomeStack itself is completely free and open source (MIT license), maintained by The Awesome Engineering Company, and has zero external dependencies. This means you can have confidence in your stack and not spend time worrying about licensing and code changing out from under your.
+All AwesomeStack libraries and AwesomeStack itself is completely free and open source (MIT license) and has zero external dependencies. This means you can have confidence in your stack and not spend time worrying about licensing and code changing out from under you. Additionally, AwesomeStack and all of is components are maintained by The Awesome Engineering Company ensuring you a single point of contact and responsibility and unified support for your entire application.
 
 You can learn more about AwesomeStack here: https://github.com/awesomeeng/awesome-stack
