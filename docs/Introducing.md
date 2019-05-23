@@ -28,9 +28,9 @@ Controllers allow developers to keep their API code separate and clean and not r
 
  - **async/await**. AwesomeServer is written with promises and async/await specifically in mind.
 
- - **No External Dependencies**. AwesomeServer is written and maintained by The Awesome Engineering Company and has no dependency that was not written by us. This means consistency of code throughout the product and that we have zero dependencies that were not written inhouse.  This means safer code for you and your product.
+ - **No External Dependencies**. AwesomeServer is written and maintained by The Awesome Engineering Company and has no dependency that was not written by us. This means consistency of code throughout the product and that we have zero dependencies that were not written in-house.  This means safer code for you and your product.
 
- - **Free and Open**. AwesomeServer is released under the MIT licene and complete free to use and modify.
+ - **Free and Open**. AwesomeServer is released under the MIT License and complete free to use and modify.
 
 ## Getting Started
 
@@ -131,11 +131,11 @@ At this point, we suggest you check the [project readme](https://github.com/awes
 
 ## AwesomeStack
 
-AwesomeStack is a free and open source set of libraries for rapidly building enterprise ready nodejs applications, of which, AwesomeServer is one part.  Each library is written to provide a stable, performant, part of your application stack that can be used on its own, or part of the greater AwesomeStack setup.
+AwesomeServer is one part of the free and open source set of libraries called AwesomeStack for rapidly building enterprise ready nodejs applications.  Each library is written to provide a stable, performant, part of your application stack that can be used on its own or as part of the greater AwesomeStack setup.
 
 AwesomeStack includes...
 
- - **[AwesomeServer](https://github.com/awesomeeng/awesome-server)** - A http/https/http2 API Server focused on implementing API end points.
+ - **[AwesomeServer](https://github.com/awesomeeng/awesome-server)** - A HTTP/HTTPS/HTTP2 API Server focused on implementing API endpoints.
 
  - **[AwesomeLog](https://github.com/awesomeeng/awesome-log)** - Performant Logging for your application needs.
 
