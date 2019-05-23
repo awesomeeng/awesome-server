@@ -28,7 +28,7 @@ Controllers allow developers to keep their API code separate and clean and not r
 
  - **async/await**. AwesomeServer is written with promises and async/await specifically in mind.
 
- - **No External Dependencies**. AwesomeServer is written and maintained by The Awesome Engineering Company and has no dependency that was not written by us. This means consistency of code throughout the product and that we have zero dependencies that were not written in-house.  This means safer code for you and your product.
+ - **No External Dependencies**. AwesomeConfig is written and maintained by The Awesome Engineering Company and has no dependency that was not written by us. This means consistency of code throughout the product and zero dependencies that were not written by us.  This means safer code and better support for you and your product.
 
  - **Free and Open**. AwesomeServer is released under the MIT License and complete free to use and modify.
 
