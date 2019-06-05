@@ -67,7 +67,7 @@ extending classes:</p>
     stop()
 </code></pre></dd>
 <dt><a href="#AwesomeServer">AwesomeServer</a></dt>
-<dd><p>AwesomeServer is a customizable API Server framework for Enterprise Ready nodejs
+<dd><p>AwesomeServer is a customizable API Server framework for enterprise nodejs
 applications. It is an easy to setup HTTP or HTTPS or HTTP/2 server allowing you to
 provide flexible routing and controllers for responding to incoming requests in a
 consistent, repeatable fashion.</p>
@@ -1082,7 +1082,7 @@ or rejects on an error.
 <a name="AwesomeServer"></a>
 
 ## AwesomeServer
-AwesomeServer is a customizable API Server framework for Enterprise Ready nodejs
+AwesomeServer is a customizable API Server framework for enterprise nodejs
 applications. It is an easy to setup HTTP or HTTPS or HTTP/2 server allowing you to
 provide flexible routing and controllers for responding to incoming requests in a
 consistent, repeatable fashion.
