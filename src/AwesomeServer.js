@@ -28,7 +28,7 @@ const $ROUTES = Symbol("routes");
 const $RUNNING = Symbol("running");
 
 /**
- * AwesomeServer is a customizable API Server framework for Enterprise Ready nodejs
+ * AwesomeServer is a customizable API Server framework for enterprise nodejs
  * applications. It is an easy to setup HTTP or HTTPS or HTTP/2 server allowing you to
  * provide flexible routing and controllers for responding to incoming requests in a
  * consistent, repeatable fashion.
