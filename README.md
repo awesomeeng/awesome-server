@@ -1,3 +1,13 @@
+<a href="https://www.npmjs.com/package/@awesomeeng/awesome-server">![npm](https://img.shields.io/npm/v/@awesomeeng/awesome-server.svg "npm Details")</a>
+<a href="./LICENSE">![GitHub](https://img.shields.io/github/license/awesomeeng/awesome-server.svg "License Details")</a>
+<a href="http://npm-stats.com/~packages/@awesomeeng/awesome-server">![npm](https://img.shields.io/npm/dt/@awesomeeng/awesome-server.svg "npm download stats")</a>
+<a href="https://github.com/awesomeeng/awesome-server/graphs/contributors">![GitHub contributors](https://img.shields.io/github/contributors-anon/awesomeeng/awesome-server.svg "Github Contributors")</a>
+<a href="https://github.com/awesomeeng/awesome-server/commits/master">![GitHub last commit](https://img.shields.io/github/last-commit/awesomeeng/awesome-server.svg "Github Commit Log")</a>
+<br/><a href="https://nodejs.org/en/">![node](https://img.shields.io/node/v/@awesomeeng/awesome-server.svg "NodeJS")</a>
+<a href="https://github.com/awesomeeng/awesome-server/issues">![GitHub issues](https://img.shields.io/github/issues/awesomeeng/awesome-server.svg "Github Issues")</a>
+<a href="https://snyk.io/vuln/search?type=npm&q=@awesomeeng/awesome-server">![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/awesomeeng/awesome-server.svg "Synk Vulnerabilities Database")</a>
+<a href="https://www.npmjs.com/package/@awesomeeng/awesome-server">![David](https://img.shields.io/david/awesomeeng/awesome-server.svg)</a>
+
 # AwesomeServer
 
 AwesomeServer is a customizable API Server framework for enterprise nodejs applications. It is an easy to setup HTTP or HTTPS or HTTP/2 server allowing you to provide flexible routing and controllers for responding to incoming requests in a consistent, repeatable, performant fashion.
