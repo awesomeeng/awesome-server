@@ -995,7 +995,17 @@ const _routeDirectory = function _routeDirectory(parent,dir,path="/",additionalA
 
 		if (stats.isDirectory()) return _routeDirectory.call(this,parent,filename,filepath,additionalArgs);
 
-		if (ext===".js" || ext===".node") _route.call(this,"*",filepath,filename,parent,additionalArgs);
+		if (ext===".js" || ext===".node") {
+			_route.call(this,"*",filepath,filename,parent,additionalArgs);
+			try {
+				stats = FS.statSync(filename);
+			}
+			catch (ex) {
+				stats = null;
+			}
+
+			if (stats && !stats.isDirectory()) _route.call(this,"*",filepath+"/*",filename,parent,additionalArgs);
+		}
 	});
 };
 
