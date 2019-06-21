@@ -614,6 +614,7 @@ class AwesomeServer {
 		if (typeof toPath!=="string") throw new Error("Invalid toPath.");
 
 		this.route(method,path,new RedirectController(toPath,temporary));
+		Log.info("Redirect created for "+method.toUpperCase()+" "+path+" to "+toPath);
 	}
 
 	/**
@@ -691,13 +692,20 @@ class AwesomeServer {
 
 			let wc = (path+"/").replace(/\/\/+/g,"/").replace(/\/\//,"/");
 			wc = wc.replace(/\/\*\//,"/");
-			if (wc!==path) _route.call(this,"*",wc,controller,parent);
+			if (wc!==path) {
+				_route.call(this,"*",wc,controller,parent);
+				Log.info("DirectoryServe created for "+wc+" from "+file);
+			}
 
 			let wce = ((path+"/").replace(/\/\/+/g,"/").replace(/\/\//,"/")+"*").replace(/\/\*\//,"/");
-			if (wce!==path && wce!==wc) _route.call(this,"*",wce,controller,parent);
+			if (wce!==path && wce!==wc) {
+				_route.call(this,"*",wce,controller,parent);
+				Log.info("DirectoryServe created for "+wce+" from "+file);
+			}
 		}
 		else if (stat.isFile()) {
 			this.route("*",path,new FileServeController(contentType,file));
+			Log.info("FileServe created for "+path+" from "+file);
 		}
 		else {
 			throw new Error("Invalid filename, is neither directory or file: "+filename);
@@ -732,6 +740,7 @@ class AwesomeServer {
 
 		if (stat.isFile()) {
 			this.route("*",path,new PushServeController(referencePath,contentType,file));
+			Log.info("Push created for "+path+" from "+referencePath+"/"+file);
 		}
 		else {
 			throw new Error("Invalid filename, is not a file: "+filename);
