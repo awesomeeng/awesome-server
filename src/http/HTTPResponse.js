@@ -72,6 +72,18 @@ class HTTPResponse extends AbstractResponse {
 	}
 
 	/**
+	 * Set a header for outgoing requests. Any header set via setHeader()
+	 * is merged with any headers set by writeHead() before the final response
+	 * is sent.
+	 *
+	 * @param {string} name
+	 * @param {string} value
+	 */
+	setHeader(/*name,value*/) {
+		return this.original.setHeader.apply(this.original,arguments);
+	}
+
+	/**
 	 * Sets the status code and headers for the response. This may only be
 	 * called once per request and cannot be called after a write() or
 	 * and end() has been called.

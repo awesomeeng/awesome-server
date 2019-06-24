@@ -117,6 +117,18 @@ class AbstractResponse {
 	}
 
 	/**
+	 * Set a header for outgoing requests. Any header set via setHeader()
+	 * is merged with any headers set by writeHead() before the final response
+	 * is sent.
+	 *
+	 * @param {string} name 
+	 * @param {string} value
+	 */
+	setHeader(/*name,value*/) {
+		throw new Error("To be implemented by subclass.");
+	}
+
+	/**
 	 * Sets the status code and headers for the response. This may only be
 	 * called once per request and cannot be called after a write() or
 	 * and end() has been called.

@@ -2,7 +2,6 @@
 
 "use strict";
 
-
 /**
  * Defines an AbstractController. For more information on controllers, please
  * see our Controller documentation:
