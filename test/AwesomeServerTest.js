@@ -10,7 +10,7 @@ const assert = require("assert");
 const URL = require("url");
 
 const AwesomeUtils = require("@awesomeeng/awesome-utils");
-// require("AwesomeLog").init().start();
+// require("@awesomeeng/awesome-log").init().start();
 
 const AwesomeServer = require("../src/AwesomeServer");
 const AbstractController = require("../src/AbstractController");
@@ -56,7 +56,7 @@ describe("AwesomeServer",function(){
 
 		let request = new (class Request extends AbstractRequest{
 			get origin() {
-				return "localhost:1234";
+				return "127.0.0.1:1234";
 			}
 
 			get method() {
@@ -64,7 +64,7 @@ describe("AwesomeServer",function(){
 			}
 
 			get url() {
-				return URL.parse("http://localhost/index.html");
+				return URL.parse("http://127.0.0.1/index.html");
 			}
 
 			get path() {
@@ -99,7 +99,7 @@ describe("AwesomeServer",function(){
 		assert.equal(server.servers.length,0);
 
 		server.addHTTPServer({
-			hostname: "localhost",
+			hostname: "127.0.0.1",
 			port: 1234
 		});
 
@@ -112,7 +112,7 @@ describe("AwesomeServer",function(){
 		assert.equal(server.servers.length,0);
 
 		server.addHTTPSServer({
-			hostname: "localhost",
+			hostname: "127.0.0.1",
 			port: 1234
 		});
 
@@ -125,7 +125,7 @@ describe("AwesomeServer",function(){
 		assert.equal(server.servers.length,0);
 
 		server.addHTTP2Server({
-			hostname: "localhost",
+			hostname: "127.0.0.1",
 			port: 1234
 		});
 
@@ -138,15 +138,15 @@ describe("AwesomeServer",function(){
 		assert.equal(server.servers.length,0);
 
 		server.addHTTPServer({
-			hostname: "localhost",
+			hostname: "127.0.0.1",
 			port: 1234
 		});
 		server.addHTTPSServer({
-			hostname: "localhost",
+			hostname: "127.0.0.1",
 			port: 1234
 		});
 		server.addHTTP2Server({
-			hostname: "localhost",
+			hostname: "127.0.0.1",
 			port: 1234
 		});
 
@@ -164,7 +164,7 @@ describe("AwesomeServer",function(){
 
 		let server = new AwesomeServer();
 		server.addHTTPServer({
-			hostname: "localhost",
+			hostname: "127.0.0.1",
 			port
 		});
 
@@ -179,7 +179,7 @@ describe("AwesomeServer",function(){
 
 		let server = new AwesomeServer();
 		server.addHTTPSServer({
-			hostname: "localhost",
+			hostname: "127.0.0.1",
 			port
 		});
 
@@ -189,12 +189,12 @@ describe("AwesomeServer",function(){
 		await server.stop();
 	});
 
-	it("Create Basic HTTP Server",async function(){
+	it("Create Basic HTTP2 Server",async function(){
 		let port = await AwesomeUtils.Net.randomPort();
 
 		let server = new AwesomeServer();
 		server.addHTTP2Server({
-			hostname: "localhost",
+			hostname: "127.0.0.1",
 			port
 		});
 

@@ -142,14 +142,14 @@ describe("AwesomeServer.Routing",function(){
 		let server = new AwesomeServer();
 
 		server.route("*","/","./controllers");
-		assert.equal(server.routes.length,5); // 1 for the directory itself, 1 for each controller.
+		assert.equal(server.routes.length,9); // 1 for the directory itself, 2 for each controller.
 	});
 
 	it("unroute controller directory",function(){
 		let server = new AwesomeServer();
 
 		server.route("*","/","./controllers");
-		assert.equal(server.routes.length,5); // 1 for the directory itself, 1 for each controller.
+		assert.equal(server.routes.length,9); // 1 for the directory itself, 2 for each controller.
 
 		server.unroute("*","/","./controllers");
 		assert.equal(server.routes.length,0);
