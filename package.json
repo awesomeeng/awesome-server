@@ -14,9 +14,9 @@
     "@awesomeeng/awesome-utils": "1.4.8"
   },
   "devDependencies": {
-    "jsdoc-to-markdown": "*",
-    "mocha": "*",
-    "autocannon": "*"
+    "autocannon": "*",
+    "jsdoc-to-markdown": "^5.0.2",
+    "mocha": "*"
   },
   "optionalDependencies": {},
   "scripts": {
