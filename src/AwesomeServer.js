@@ -846,7 +846,7 @@ class AwesomeServer {
  */
 const _route = function _route(method,path,handler,parent=null,additionalArgs=[]) {
 	if (typeof method==="string" && path instanceof AbstractController) [method,path,handler,parent] = ["*",...arguments];
-	if (typeof method==="string" && AbstractController.isPrototypeOf(path)) [method,path,handler,parent] = ["*",...arguments];
+	if (typeof method==="string" && Object.prototype.isPrototypeOf.call(AbstractController,path)) [method,path,handler,parent] = ["*",...arguments];
 
 	if (!method) throw new Error("Missing method.");
 	if (typeof method!=="string") throw new Error("Invalid method.");
@@ -866,7 +866,7 @@ const _route = function _route(method,path,handler,parent=null,additionalArgs=[]
 	if (handler instanceof AbstractController) {
 		_routeController.call(this,route,handler);
 	}
-	else if (AbstractController.isPrototypeOf(handler)) {
+	else if (Object.prototype.isPrototypeOf.call(AbstractController,handler)) {
 		_routeController.call(this,route,Reflect.construct(handler,additionalArgs));
 	}
 	else if (handler instanceof Function) {
@@ -953,7 +953,7 @@ const _routeFile = function routeControllerFile(route,filename,additionalArgs=[]
 		Log.error("Loaded controller not found "+filename);
 		throw new Error("Loaded controller not found "+filename);
 	}
-	else if (clazz instanceof Function && AbstractController.isPrototypeOf(clazz)) {
+	else if (clazz instanceof Function && Object.prototype.isPrototypeOf.call(AbstractController,clazz)) {
 		let instance;
 		try {
 			instance = Reflect.construct(clazz,additionalArgs);
@@ -1024,7 +1024,7 @@ const _routeDirectory = function _routeDirectory(parent,dir,path="/",additionalA
  */
 const _unroute = function _unroute(method,path,handler) {
 	if (typeof method==="string" && path instanceof AbstractController) [method,path,handler] = ["*",...arguments];
-	if (typeof method==="string" && AbstractController.isPrototypeOf(path)) [method,path,handler] = ["*",...arguments];
+	if (typeof method==="string" && Object.prototype.isPrototypeOf.call(AbstractController,path)) [method,path,handler] = ["*",...arguments];
 
 	if (!method) throw new Error("Missing method.");
 	if (typeof method!=="string") throw new Error("Invalid method.");
