@@ -1,5 +1,13 @@
 # AwesomeServer Release Notes
 
+#### **Version 1.5.0**
+
+ - Dependencies updated.
+ - Documentation updates.
+ - adds response.setHeader.
+ - Add more log messages around push/redirect/serve.
+ - Directories will now route filenames and filenames.startsWith.
+
 #### **Version 1.4.0**
 
  - Moves MimeTypes out to AwesomeUtils.
