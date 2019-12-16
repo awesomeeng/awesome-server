@@ -4,6 +4,7 @@ This document details the various types of Paths you can provide for routing wit
 
 ## Contents
  - [Basic Paths](#basic-paths)
+ - [Positional Parameter Paths](#positional-parameter-paths)
  - [Regular Expression Paths](#regular-expression-paths)
  - [Custom Paths](#custom-paths)
 
@@ -60,6 +61,47 @@ server.route("GET","*/test/*|/hello",someHandler);
 ```
 
 In this case, any request *path* that contained "/test/" OR exactly was "/hello" would match the route.
+
+## Positional Parameter Paths
+
+Positional Parameter Paths are a common use case for REST expressions.  A Positional Parameter Path is one that expresses some path as containing one or more parameters. Here's an example:
+
+	/test/:id
+
+In this case, the path has one positional parameter, `id`. This would match `/test/abc` or `/test/123` but would not match `/test` or `/test/` or `/test/abc/123`.
+
+A positional parameter is indicated by a colon `:` character followed by a name consisting of one or more characters, numbers, or underscores.  No other character can be used in naming.  So `:id` and `:My_First_Id` are valid, but `:this$field` is not.  Generally speaking, keep your parameter names to simple words.
+
+When using a Positional Parameter Path, the `path` argument received by your request handler is an Object instead of the remaining path. This is because positional parameter paths are otherwise exact matches and the path string returned would be empty.
+
+The Object sent as the `path` argument to your request handler will contain all the values of the positional parameters as key/value pairs.  **All values for the positional parameters values are always of type string.**  So, a Positional Parameter Path of `/test/:id/:value` would send the following object as the path when handling the `/test/abc/123` route:
+
+```javascript
+{
+	id: "abc",
+	value: "123"
+}
+```
+
+**Positional Parameters cannot be used in direct conjunction with wildcard path matchers described above.**  `/test/:id/*` would not be a valid positional parameter path, but instead would be treated as a Starts With Path.
+
+Positional parameters can be used in conjunction with the Or Matcher also described above.
+
+Here is an entire example of using Positional Parameter Paths:
+
+```javascript
+const AwesomeServer = require("@awesomeeng/awesome-server");
+
+let server = new AwesomeServer();
+server.addHTTPServer({
+	hostname: "localhost",
+	port: 7080
+});
+server.route("*","/test/:id/:value",(params,request,response)=>{
+	return response.writeText("I received an id of '"+params.id+"' and a value of '"+params.value+"'.");
+});
+server.start();
+```
 
 ## Regular Expression Paths
 

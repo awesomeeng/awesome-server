@@ -787,20 +787,29 @@ class AwesomeServer {
 		if (!(response instanceof AbstractResponse)) throw new Error("Invalid response.");
 
 		let url = request.method+" "+request.url.href; //(request.url && request.url.href || request.url && request.url.toString() || request.url.toString());
-		let path = request.path || "/";
+		let path = decodeURIComponent(request.path || "/");
 
 		// Log.access("Request "+url+" from "+request.origin+".");
 
 		let routes = this[$ROUTES].reduce((routes,route)=>{
-			if (route && ((route.method==="*" || route.method===request.method) && route.routes && route.routes.length>0 && route.matcher.match(path))) {
-				let mypath = route.matcher.subtract(path);
-				route.routes.forEach((r)=>{
-					routes.push({
-						fullpath: path,
-						path: mypath,
-						router: r
-					});
-				});
+			if (route) {
+				if (route.method==="*" || route.method===request.method) {
+					if (route.routes && route.routes.length>0) {
+						let matchResult = route.matcher.match(path);
+						if (matchResult) {
+							let mypath = route.matcher.subtract(path);
+							route.routes.forEach((r)=>{
+								routes.push({
+									fullpath: path,
+									path: mypath,
+									result: matchResult,
+									router: r
+								});
+							});
+
+						}
+					}
+				}
 			}
 			return routes;
 		},[]);
@@ -814,7 +823,9 @@ class AwesomeServer {
 						let route = routes.shift();
 						if (!route) return resolve();
 
-						let p = route.router.call(this,route.path,request,response);
+						let pathOrParams = route.path;
+						if (route.result && route.result!==true) pathOrParams = route.result;
+						let p = route.router.call(this,pathOrParams,request,response);
 						if (p instanceof Promise) await p;
 
 						setImmediate(nextRoute);

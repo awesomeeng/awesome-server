@@ -67,6 +67,7 @@ class AbstractPathMatcher {
 		else if (type==="string" && path.endsWith("*") && !path.startsWith("*")) return new (require("./matchers/StringStartsWithMatcher"))(path);
 		else if (type==="string" && path.startsWith("*") && !path.endsWith("*")) return new (require("./matchers/StringEndsWithMatcher"))(path);
 		else if (type==="string" && path.startsWith("*") && path.endsWith("*")) return new (require("./matchers/StringContainsMatcher"))(path);
+		else if (type==="string" && path.indexOf(":")>-1) return new (require("./matchers/StringPositionalMatcher"))(path);
 		else if (type==="string") return new (require("./matchers/StringExactMatcher"))(path);
 		else throw new Error("Invalid path.");
 	}

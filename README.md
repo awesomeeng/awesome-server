@@ -181,6 +181,7 @@ Handlers can be one of several different means of describing how to handle a req
 	 });
  });
  ```
+ If using a Positional Parameter Path, the signature of the handler function will be `(params,request,response)`.
 
  > **controller**: You can pass a controller or controller class in as a handler.  The controller
  will then be executed when the route matches.  If a controller class is passed in, an instance of the controller is instantiated and used. Learn more about the awesomeness that is controllers in the [Controllers](#controllers) section below.
@@ -229,7 +230,11 @@ Most of the routing stuff above allows you to specify the *path* you want to mat
 ```
 /path|/path*|*/path
 ```
- -  a **Regular Expression**:
+ - a **Positional Parameter Expression** path string:
+```
+/path/:param
+```
+ - a **Regular Expression**:
 ```
 ^/path/
 ```
@@ -304,6 +309,8 @@ AwesomeServer ships with a set of examples for your reference.
  - [HTTP2FileServer](./examples/HTTP2FileServer): An example of doing a slightly more complicated HTTP/2 server using Push Serve Routing and File Serve Routing fallback.
 
  - [MultipleRoutes](./examples/MultipleRoutes): An example of doing multiple routes for a single request and why route ordering is important.
+
+ - [PositionalParams](./examples/PositionalParams): An example of using Positional Parameters Paths.
 
 ## The Awesome Engineering Company
 

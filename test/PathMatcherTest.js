@@ -15,6 +15,7 @@ const StringStartsWithMatcher = require("../src/matchers/StringStartsWithMatcher
 const StringEndsWithMatcher = require("../src/matchers/StringEndsWithMatcher");
 const StringContainsMatcher = require("../src/matchers/StringContainsMatcher");
 const StringExactMatcher = require("../src/matchers/StringExactMatcher");
+const StringPositionalMatcher = require("../src/matchers/StringPositionalMatcher");
 
 const CustomMatcher = (class CustomMatcher extends AbstractPathMatcher {});
 
@@ -26,7 +27,15 @@ describe("PathMatcher",function(){
 		assert(AbstractPathMatcher.getMatcher("*/asdf") instanceof StringEndsWithMatcher);
 		assert(AbstractPathMatcher.getMatcher("/asdf/*") instanceof StringStartsWithMatcher);
 		assert(AbstractPathMatcher.getMatcher("*/asdf/*") instanceof StringContainsMatcher);
+		assert(AbstractPathMatcher.getMatcher("/asdf/:id") instanceof StringPositionalMatcher);
+		assert(AbstractPathMatcher.getMatcher("/:abc/:id|/xyz/:id") instanceof StringOrMatcher);
 		assert(AbstractPathMatcher.getMatcher(new CustomMatcher()) instanceof CustomMatcher);
+
+		// ensure that wildcard matches win over positional matchers.
+		assert(AbstractPathMatcher.getMatcher("*/asdf/:id") instanceof StringEndsWithMatcher);
+		assert(AbstractPathMatcher.getMatcher("/asdf/:id/*") instanceof StringStartsWithMatcher);
+		assert(AbstractPathMatcher.getMatcher("*/asdf/:id/*") instanceof StringContainsMatcher);
+
 	});
 
 	it("StringExactMatcher",function(){
@@ -53,6 +62,49 @@ describe("PathMatcher",function(){
 		assert.equal(matcher.subtract("/test/abc/xyz"),"/test/abc/xyz");
 		assert.equal(matcher.subtract("/abc/test/xyz"),"/abc/test/xyz");
 		assert.equal(matcher.subtract("/abc/xyz/test"),"/abc/xyz/test");
+	});
+
+	it("StringPositionalMatcher",function(){
+		let matcher = AbstractPathMatcher.getMatcher("/test/:a/:b/:c");
+		let match;
+
+		assert(matcher);
+		assert(matcher instanceof AbstractPathMatcher);
+		assert(matcher instanceof StringPositionalMatcher);
+
+		assert(!matcher.match(""));
+		assert(!matcher.match("/"));
+		assert(!matcher.match("/test"));
+		assert(!matcher.match("/test/1"));
+		assert(!matcher.match("/test/1/2"));
+		assert(matcher.match("/test/1/2/3"));
+		assert(!matcher.match("/test/1/2/3/4"));
+		assert(!matcher.match("/test/1/2/3/4/5"));
+		assert(!matcher.match("/test/12345"));
+		assert(!matcher.match("/test/1,2,3"));
+		assert(!matcher.match("/test/1,2,3,4,5"));
+
+		assert.strictEqual(matcher.toString(),"\"/test/:a/:b/:c\"");
+
+		assert.equal(matcher.subtract(""),"");
+		assert.equal(matcher.subtract("/"),"/");
+		assert.equal(matcher.subtract("/test"),"/test");
+		assert.equal(matcher.subtract("/test/1"),"/test/1");
+		assert.equal(matcher.subtract("/test/1/2"),"/test/1/2");
+		assert.equal(matcher.subtract("/test/1/2/3"),"");
+		assert.equal(matcher.subtract("/test/1/2/3/4"),"/test/1/2/3/4");
+		assert.equal(matcher.subtract("/test/1/2/3/4/5"),"/test/1/2/3/4/5");
+
+		match = matcher.match("/test/1/2/3");
+		assert(match);
+		assert.deepStrictEqual(match,{
+			a: "1",
+			b: "2",
+			c: "3"
+		});
+
+		match = matcher.match("/test/1/2/3/4");
+		assert(!match);
 	});
 
 	it("StringStartsWithMatcher",function(){

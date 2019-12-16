@@ -93,6 +93,8 @@ Route takes three arguments: `method`, `path`, and `handler`.
 
  - Or Expression: `/this/might/match|/or/this/might/match`
 
+ - Positional Parameters: `/this/:positional/:parameter`
+
  - Regular Expression: `^/some\sregualr\sexpression/`
 
  - Custom Matcher: A class that extends `AbstractPathMatcher`.

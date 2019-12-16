@@ -179,6 +179,36 @@ class AbstractRequest {
 	}
 
 	/**
+	 * Given some pattern, return the matching positional parameters
+	 * from the path.  If path is supplied as an argument, use that. If
+	 * path is not supplied, use the current url path.
+	 *
+	 * Pattern uses the standard format used by most nodejs REST
+	 * frameworks:
+	 *
+	 * 		/test/:id/:value
+	 *
+	 * Where any name that starts with a colon is a positional
+	 * parameter.  Names must use only the A-Z, a-z, 0-9, or _
+	 * characters.
+	 *
+	 * The pattern must be an exact match.
+	 *
+	 * If the pattern does not match, null is returned.
+	 *
+	 * @param  {[type]} pattern [description]
+	 * @param  {[type]} path    [description]
+	 * @return {[type]}         [description]
+	 */
+	positional(pattern,path) {
+		if (!pattern) return {};
+		if (path===undefined || path===null) path = this.path;
+		let re = new RegExp("^"+pattern.replace(/:([A-Za-z0-9_]+)/g,"(?<$1>[^/]+?)")+"$");
+		let match = re.exec(path);
+		return match && Object.assign({},match.groups) || null;
+	}
+
+	/**
 	 * Conveience method to read the body content of the request as
 	 * as plain text string using the given encoding (or utf-8 if
 	 * no encoding is given).
