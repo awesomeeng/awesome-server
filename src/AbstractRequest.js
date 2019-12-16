@@ -196,9 +196,9 @@ class AbstractRequest {
 	 *
 	 * If the pattern does not match, null is returned.
 	 *
-	 * @param  {[type]} pattern [description]
-	 * @param  {[type]} path    [description]
-	 * @return {[type]}         [description]
+	 * @param  {string} pattern
+	 * @param  {undefined|null|string} path
+	 * @return {null|Object}        
 	 */
 	positional(pattern,path) {
 		if (!pattern) return {};
