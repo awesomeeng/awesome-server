@@ -1,6 +1,10 @@
 # AwesomeServer Release Notes
 
 
+#### **Version 1.6.2**
+
+ - Fixes minor error in directory resolution error reporting.
+
 #### **Version 1.6.1**
 
  - Adds support for typescript files (.ts) when routing to directories. This allows tools like ts-node to work with AwesomeServer.
