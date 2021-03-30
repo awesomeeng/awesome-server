@@ -1015,7 +1015,7 @@ const _routeDirectory = function _routeDirectory(parent,dir,path="/",additionalA
 
 		if (stats.isDirectory()) return _routeDirectory.call(this,parent,filename,filepath,additionalArgs);
 
-		if (ext===".js" || ext===".node") {
+		if (ext===".js" || ext===".node" || ext===".ts") {
 			_route.call(this,"*",filepath,filename,parent,additionalArgs);
 			try {
 				stats = FS.statSync(filename);
