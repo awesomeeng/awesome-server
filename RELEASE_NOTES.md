@@ -1,6 +1,10 @@
 # AwesomeServer Release Notes
 
 
+#### **Version 1.6.1**
+
+ - Adds support for typescript files (.ts) when routing to directories. This allows tools like ts-node to work with AwesomeServer.
+
 #### **Version 1.6.0**
 
  - Adds Positional Parameter matcher for handling paths with positional parameters. Please see [The Documentation](https://github.com/awesomeeng/awesome-server/blob/master/docs/Paths.md#positional-parameter-paths) for more details.

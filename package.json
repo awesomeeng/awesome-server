@@ -1,6 +1,6 @@
 {
   "name": "@awesomeeng/awesome-server",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "author": "the awesome engineering company",
   "license": "MIT",
   "contributors": [
@@ -12,11 +12,12 @@
   },
   "dependencies": {
     "@awesomeeng/awesome-utils": "1.4.10"
-  },
-  "devDependencies": {
-    "autocannon": "*",
-    "jsdoc-to-markdown": "^5.0.2",
-    "mocha": "*"
+},
+"devDependencies": {
+	"autocannon": "^7.0.5",
+    "jsdoc-to-markdown": "^5.0.3",
+	"eslint": "^7.23.0",
+    "mocha": "^8.3.2"
   },
   "optionalDependencies": {},
   "scripts": {
