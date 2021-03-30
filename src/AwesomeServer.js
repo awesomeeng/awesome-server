@@ -885,7 +885,7 @@ const _route = function _route(method,path,handler,parent=null,additionalArgs=[]
 	}
 	else if (typeof handler==="string") {
 		let resolved = _resolve(handler);
-		if (resolved===null) throw new Error("Invalid handler, file or directory not found: "+filename);
+		if (resolved===null) throw new Error("Invalid handler, file or directory not found: "+handler);
 
 		let filename = resolved.filename;
 		let stat = resolved.stat;
