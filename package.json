@@ -15,7 +15,7 @@
 },
 "devDependencies": {
 	"autocannon": "^7.0.5",
-    "jsdoc-to-markdown": "^5.0.3",
+    "jsdoc-to-markdown": "^8.0.0",
 	"eslint": "^7.23.0",
     "mocha": "^8.3.2"
   },
