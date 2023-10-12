@@ -129,29 +129,39 @@ class HTTP2Server extends HTTPSServer {
 	 * @return {Promise}
 	 */
 	start(handler) {
+		// If already started, do nothing.
 		if (this[$SERVER]) return Promise.resolve();
 
+		// holder for each HTTP2 Session.
 		this[$SESSIONS] = [];
 
+		// EXtract some key info.
 		let hostname = this.config.hostname || this.config.host || "localhost";
 		let port = this.config.port || 0;
 
+		// Log that we start starting.
 		if (this.config.informative) Log.info("Starting HTTP/2 Server on "+hostname+":"+port+"...");
+
+		// REturn a promise, then start.
 		return new Promise((resolve,reject)=>{
 			try {
-
+				// Get our cert values.
 				this.config.cert = HTTP2Server.resolveCertConfig(this.config.cert,"cert",this.config.informative);
 				this.config.key = HTTP2Server.resolveCertConfig(this.config.key,"key",this.config.informative);
 				this.config.pfx = HTTP2Server.resolveCertConfig(this.config.pfx,"pfx",this.config.informative);
 
+				// Create our server.
 				let server = HTTP2.createSecureServer(this.config);
 
+				// handle errors
 				server.on("error",(err)=>{
 					Log.error("Error on HTTP/2 Server on "+hostname+":"+port+":",err);
 				});
 
+				// handle requests
 				server.on("request",this.handleRequest.bind(this,handler));
 
+				// handle sessions (http2 thing)
 				server.on("session",(session)=>{
 					this[$SESSIONS].push(session);
 					session.on("close",()=>{
@@ -161,6 +171,7 @@ class HTTP2Server extends HTTPSServer {
 					});
 				});
 
+				// handle connections (http2 thing)
 				server.on("connection",(connection)=>{
 					this[$CONNECTIONS].push(connection);
 					connection.on("close",()=>{
@@ -170,6 +181,7 @@ class HTTP2Server extends HTTPSServer {
 					});
 				});
 
+				// handle secure connections (http2 thing)
 				server.on("secureConnection",(connection)=>{
 					this[$CONNECTIONS].push(connection);
 					connection.on("close",()=>{
@@ -179,6 +191,7 @@ class HTTP2Server extends HTTPSServer {
 					});
 				});
 
+				// start listening.
 				server.listen(port,hostname,this.config.backlog,(err)=>{
 					if (err) {
 						Log.error("Error starting server on "+hostname+":"+port+".",err);
@@ -209,16 +222,22 @@ class HTTP2Server extends HTTPSServer {
 	 * @return {Promise}
 	 */
 	stop() {
+		// If not started, do nothing.
 		if (!this[$SERVER]) return Promise.resolve();
 
+		// extract key info
 		let hostname = this.hostname || "localhost";
 		let port = this.port || 0;
 
+		// Log stopping.
 		if (this.config.informative) Log.info("Stopping HTTP/2 Server on "+hostname+":"+port+"...");
+
+		// return promise, then stop.
 		return new Promise(async (resolve,reject)=>{
 			try {
 				let server = this[$SERVER];
 
+				// close any outstanding sessions.
 				await Promise.all(this[$SESSIONS].map((session)=>{
 					return new Promise((resolve,reject)=>{
 						try {
@@ -231,10 +250,13 @@ class HTTP2Server extends HTTPSServer {
 						}
 					});
 				}));
+
+				// destroy any open connections.
 				this[$CONNECTIONS].map((connection)=>{
 					connection.destroy();
 				});
 
+				// Close the server.
 				server.close((err)=>{
 					if (err) {
 						Log.error("Error stopping HTTP/2 server on "+hostname+":"+port+".",err);
@@ -282,12 +304,18 @@ class HTTP2Server extends HTTPSServer {
 	 * @return {string}
 	 */
 	static resolveCertConfig(value,type="certificate",informative=true) {
+		// If the cert is a filename, read that in and use that value.
 		if (value && typeof value==="string" && !value.startsWith("----")) {
+			// resolve the filename relative to the implementation
 			let filename = Path.resolve(process.cwd(),value);
+
+			// Log that we are using the cert from a file.
 			if (informative) Log.info("Loading "+type+" from "+filename+".");
 
+			// IF the file doesnt exist, there's a problem.
 			if (AwesomeUtils.FS.existsSync(filename)) {
 				try {
+					// read the file
 					let pfx = FS.readFileSync(filename);
 					if (!pfx) throw new Error(type+" file empty: "+filename+".");
 					value = pfx;
@@ -304,6 +332,7 @@ class HTTP2Server extends HTTPSServer {
 			if (informative) Log.info("Using passed contents for "+type+" value.");
 		}
 
+		// return either the passed in cert value, or the cert value read from the file.
 		return value;
 	}
 }

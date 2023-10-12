@@ -91,26 +91,32 @@ class AbstractController {
 			try {
 				let method = request.method.toLowerCase();
 
+				// each of these need to handle if the return value from a controller is a promise, and await if it is.
 				let prom;
 				let f = method && (this[method.toLowerCase()] || this[method.toUpperCase()] || this["handle"+method.slice(0,1).toUpperCase()+method.slice(1).toLowerCase()]) || null;
 				if (f && f instanceof Function) {
-
+					// before
 					prom = this.before(path,request,response);
 					if (prom instanceof Promise) prom = await prom;
 
+					// actual
 					prom = f.call(this,path,request,response);
 					if (prom instanceof Promise) prom = await prom;
 
+					// after
 					prom = this.after(path,request,response);
 					if (prom instanceof Promise) prom = await prom;
 				}
 				else {
+					// before
 					prom = this.before(path,request,response);
 					if (prom instanceof Promise) prom = await prom;
 
+					// actual
 					prom = this.any(path,request,response);
 					if (prom instanceof Promise) prom = await prom;
 
+					// after
 					prom = this.after(path,request,response);
 					if (prom instanceof Promise) prom = await prom;
 				}

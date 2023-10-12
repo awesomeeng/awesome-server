@@ -83,6 +83,7 @@ class FileServeController extends AbstractController {
 	head(path,request,response) {
 		return new Promise(async (resolve,reject)=>{
 			try {
+				// check if file exists.
 				let exists = await AwesomeUtils.FS.exists(this.filename);
 				response.writeHead(exists?200:404);
 				response.end();

@@ -60,14 +60,20 @@ class AbstractPathMatcher {
 	static getMatcher(path) {
 		let type = typeof path;
 		if (!path) throw new Error("Missing path.");
+		// If a matcher, use that.
 		else if (path instanceof AbstractPathMatcher) return path;
+		// If a regex, use that.
 		else if (path instanceof RegExp) return new (require("./matchers/RegExpMatcher"))(path);
+		// If a OR condition, use that.
 		else if (type==="string" && path.indexOf("|")>-1) return new (require("./matchers/StringOrMatcher"))(path);
+		// IF a wildcard, use that
 		else if (type==="string" && path==="*") return new (require("./matchers/StringWildcardMatcher"))(path);
 		else if (type==="string" && path.endsWith("*") && !path.startsWith("*")) return new (require("./matchers/StringStartsWithMatcher"))(path);
 		else if (type==="string" && path.startsWith("*") && !path.endsWith("*")) return new (require("./matchers/StringEndsWithMatcher"))(path);
 		else if (type==="string" && path.startsWith("*") && path.endsWith("*")) return new (require("./matchers/StringContainsMatcher"))(path);
+		// If positional params, use that.
 		else if (type==="string" && path.indexOf(":")>-1) return new (require("./matchers/StringPositionalMatcher"))(path);
+		// finally, use an exact string match.
 		else if (type==="string") return new (require("./matchers/StringExactMatcher"))(path);
 		else throw new Error("Invalid path.");
 	}

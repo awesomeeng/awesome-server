@@ -113,22 +113,31 @@ class HTTPServer extends AbstractServer {
 	 * @return {Promise}
 	 */
 	start(handler) {
+		// IF we already started, do nothing.
 		if (this[$SERVER]) return Promise.resolve();
 
+		// extract out some key items
 		let hostname = this.config.hostname || this.config.host || "localhost";
 		let port = this.config.port || 0;
 
+		// log that we are starting.
 		if (this.config.informative) Log.info("Starting HTTP Server on "+hostname+":"+port+"...");
+
+		// return a promise, then start
 		return new Promise((resolve,reject)=>{
 			try {
+				// create our http server.
 				let server = HTTP.createServer(this.config);
 
+				// error handling
 				server.on("error",(err)=>{
 					Log.error("Error on HTTP Server on "+hostname+":"+port+":",err);
 				});
 
+				// request handling
 				server.on("request",this.handleRequest.bind(this,handler));
 
+				// start listening.
 				server.listen(port,hostname,this.config.backlog,(err)=>{
 					if (err) {
 						Log.error("Error starting server on "+hostname+":"+port+".",err);
@@ -159,12 +168,17 @@ class HTTPServer extends AbstractServer {
 	 * @return {Promise}
 	 */
 	stop() {
+		// If not started, do nothing.
 		if (!this[$SERVER]) return Promise.resolve();
 
+		// extract out some key info
 		let hostname = this.hostname || "localhost";
 		let port = this.port || 0;
 
+		// Log we are stopping.
 		if (this.config.informative) Log.info("Stopping HTTP Server on "+hostname+":"+port+"...");
+
+		// return a promise, then stop
 		return new Promise((resolve,reject)=>{
 			try {
 				let server = this[$SERVER];

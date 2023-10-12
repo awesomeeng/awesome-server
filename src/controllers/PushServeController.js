@@ -84,6 +84,7 @@ class PushServeController extends AbstractController {
 	 * @return {Promise}
 	 */
 	get(path,request,response) {
+		// we can push if its a get.
 		return new Promise(async (resolve,reject)=>{
 			try {
 				if (response.pushSupported) {

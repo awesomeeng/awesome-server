@@ -34,8 +34,10 @@ class PushResponse {
 	 * @return {Promise}
 	 */
 	static create(parent,headers) {
+		// return a promise, then create a push response.
 		return new Promise((resolve,reject)=>{
 			try {
+				// we are just wrapping the native push response, but we want to do a little extra.
 				parent.original.createPushResponse(headers||{},(err,stream)=>{
 					if (err) return reject(err);
 					if (stream && stream.code && stream.code==="ERR_HTTP2_INVALID_STREAM") return reject(new Error("HTTP/2 Stream closed."));
@@ -58,18 +60,23 @@ class PushResponse {
 	 * @param {Object} [headers={}]
 	 */
 	constructor(parent,stream,headers={}) {
+		// error handling, but seems unlikely.
 		if (!parent) throw new Error("Missing parent.");
 		if (!stream) throw new Error("Missing stream.");
 		if (!headers) throw new Error("Missing headers.");
 
+		// setup some key private variables.
 		this[$PARENT] = parent;
 		this[$STREAM] = stream;
 		this[$HEADERS] = headers;
 		this[$CLOSED] = false;
 
+		// handle close events.
 		this.stream.on("close",()=>{
 			this[$CLOSED] = true;
 		});
+
+		// handle error events.
 		this.stream.stream.on("error",()=>{
 			// this event handler must be here or node will die when the error gets swallowed by http2.
 			// See https://github.com/nodejs/node/issues/22323
@@ -126,12 +133,17 @@ class PushResponse {
 	 * @param headers {Object} optional.
 	 */
 	writeHead(statusCode,statusMessage,headers) {
+		// if closed, dont do anthing
 		if (this.closed) return;
 
+		// argument overloading
 		if (arguments.length===1) [statusCode,statusMessage,headers] = [statusCode,null,null];
 		if (arguments.length===2) [statusCode,statusMessage,headers] = [statusCode,null,statusMessage];
 
+		// set headers
 		headers = headers || {};
+
+		// write head
 		return this.stream.writeHead(statusCode,statusMessage,headers);
 	}
 
@@ -147,8 +159,10 @@ class PushResponse {
 	 * @return {Promise}
 	 */
 	write(data,encoding) {
+		// if closed, do nothing.
 		if (this.closed) return Promise.resolve();
 
+		// return a promise, then write
 		return new Promise((resolve,reject)=>{
 			try {
 				this.stream.write(data,encoding,(err)=>{
@@ -175,8 +189,10 @@ class PushResponse {
 	 * @return {Promise}
 	 */
 	end(data,encoding) {
+		// if closed, do nothing
 		if (this.closed) return Promise.resolve();
 
+		// return promise, then end.
 		return new Promise((resolve,reject)=>{
 			try {
 				this.stream.end(data,encoding,(err)=>{
@@ -208,15 +224,20 @@ class PushResponse {
 	 * @return {Promise}
 	 */
 	pipeFrom(readable) {
+		// validate arguments
 		if (!readable) throw new Error("Missing readable.");
 		if (!(readable instanceof Readable)) throw new Error("Invalid readable.");
 
+		// return a promise, then handle piping.
 		return new Promise((resolve,reject)=>{
 			try {
+				// end handler
 				readable.on("end",async ()=>{
 					await this.end();
 					resolve();
 				});
+
+				// data handler.
 				readable.on("data",async (chunk)=>{
 					await this.write(chunk);
 				});

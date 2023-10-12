@@ -55,15 +55,20 @@ class DirectoryServeController extends AbstractController {
 	get(path,request,response) {
 		return new Promise(async (resolve,reject)=>{
 			try {
+				// if not a full path, index.html it.
 				if (!path || path==="/") path = "index.html";
+
+				// resolve the filename relative to the implementation
 				let filename = Path.resolve(this.dir,path);
 
+				// validate the file exists.
 				let stat = await AwesomeUtils.FS.stat(filename);
 				if (!stat) {
 					Log.warn("File not found: "+path);
 					response.writeError(404,"File not found: "+path);
 					return resolve();
 				}
+				// if it is a directory, we need to serve things from inside it.
 				if (stat && stat.isDirectory()) {
 					filename = Path.resolve(path,"./index.html");
 					let dirstat = await AwesomeUtils.FS.stat(filename);
@@ -74,9 +79,13 @@ class DirectoryServeController extends AbstractController {
 					}
 				}
 
+				// guess the content type from the extension
 				let contentType = AwesomeUtils.MimeTypes.getTypeForExtension(filename,"application/octet-stream");
 
+				// serve the file
 				await response.serve(200,contentType,filename);
+
+				// and resolve our promise.
 				resolve();
 			}
 			catch (ex) {
@@ -98,9 +107,13 @@ class DirectoryServeController extends AbstractController {
 	head(path,request,response) {
 		return new Promise(async (resolve,reject)=>{
 			try {
+				// if not a full path, index.html it.
 				if (!path || path==="/") path = "index.html";
+
+				// resolve the file relative to the implementation.
 				let filename = Path.resolve(this.dir,path);
 
+				// validate the file exist.
 				let stat = await AwesomeUtils.FS.stat(filename);
 				if (!stat) {
 					Log.warn("File not found: "+path);
@@ -110,6 +123,7 @@ class DirectoryServeController extends AbstractController {
 
 					return resolve();
 				}
+				// if it is a directory, we need to serve what is inside it.
 				if (stat && stat.isDirectory()) {
 					filename = Path.resolve(path,"./index.html");
 					let dirstat = await AwesomeUtils.FS.stat(filename);
@@ -123,9 +137,13 @@ class DirectoryServeController extends AbstractController {
 					}
 				}
 
+				// this is just a HEAD call so we only need a status code.
 				response.writeHead(200);
+
+				// and end.
 				await response.end();
 
+				// resolve the promise.
 				resolve();
 			}
 			catch (ex) {

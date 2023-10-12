@@ -131,6 +131,7 @@ class HTTPRequest extends AbstractRequest{
 	read() {
 		if (this[$CONTENT]) return Promise.resolve(this[$CONTENT]);
 
+		// read from the incoming pipe.
 		return new Promise((resolve,reject)=>{
 			try {
 				let buf = Buffer.alloc(0);

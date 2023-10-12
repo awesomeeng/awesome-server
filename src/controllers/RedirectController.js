@@ -62,10 +62,15 @@ class FileServeController extends AbstractController {
 	 * @return {Promise}
 	 */
 	async any(path,request,response) {
+		// log the redirect
 		Log.info("Redirecting "+(this.temporary?"temporarilly":"permanently")+" to "+this.toPath);
+
+		// send it
 		response.writeHead(this.temporary ? 302 : 301,{
 			Location: this.toPath
 		});
+
+		// and end it.
 		await response.end();
 	}
 }

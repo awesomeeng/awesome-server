@@ -2,10 +2,11 @@
 
 "use strict";
 
+// External dependencies
 const FS = require("fs");
-
 const AwesomeUtils = require("@awesomeeng/awesome-utils");
 
+// Define our symbols for privacy.
 const $ORIGINAL = Symbol("original");
 
 /**
@@ -215,17 +216,23 @@ class AbstractResponse {
 	 * @return {Promise}
 	 */
 	writeJSON(statusCode,content,headers=null) {
+		// argument overloading
 		if (arguments.length===0) throw new Error("Missing content.");
 		if (arguments.length>0 && typeof statusCode!=="number") [statusCode,content,headers] = [200,...arguments];
 		if (content===undefined || content===null) throw new Error("Missing content.");
 
+		// Set our response properties.
 		headers = headers || {};
 		headers["Content-Type"] = headers["Content-Type"] || "application/json";
 		statusCode = statusCode || 200;
 
+		// turn it into json if not already so.
 		if (typeof content!=="string") content = JSON.stringify(content);
 
+		// write the header
 		this.writeHead(statusCode,headers);
+
+		// write content and end.
 		return this.end(content);
 	}
 
@@ -243,15 +250,20 @@ class AbstractResponse {
 	 * @return {Promise}
 	 */
 	writeText(statusCode,content,headers=null) {
+		// argument overloading
 		if (arguments.length===0) throw new Error("Missing content.");
 		if (arguments.length>0 && typeof statusCode!=="number") [statusCode,content,headers] = [200,...arguments];
 		if (content===undefined || content===null) throw new Error("Missing content.");
 
+		// set response properties
 		headers = headers || {};
 		headers["Content-Type"] = headers["Content-Type"] || "text/plain; charset=utf-8";
 		statusCode = statusCode || 200;
 
+		// write head
 		this.writeHead(statusCode,headers);
+
+		// write content and end.
 		return this.end(content);
 	}
 
@@ -269,15 +281,20 @@ class AbstractResponse {
 	 * @return {Promise}
 	 */
 	writeCSS(statusCode,content,headers=null) {
+		// argument overloading
 		if (arguments.length===0) throw new Error("Missing content.");
 		if (arguments.length>0 && typeof statusCode!=="number") [statusCode,content,headers] = [200,...arguments];
 		if (content===undefined || content===null) throw new Error("Missing content.");
 
+		// set reponse properties
 		headers = headers || {};
 		headers["Content-Type"] = headers["Content-Type"] || "text/css; charset=utf-8";
 		statusCode = statusCode || 200;
 
+		// write head
 		this.writeHead(statusCode,headers);
+
+		// write content and end.
 		return this.end(content);
 	}
 
@@ -295,15 +312,20 @@ class AbstractResponse {
 	 * @return {Promise}
 	 */
 	writeHTML(statusCode,content,headers=null) {
+		// argument overloading
 		if (arguments.length===0) throw new Error("Missing content.");
 		if (arguments.length>0 && typeof statusCode!=="number") [statusCode,content,headers] = [200,...arguments];
 		if (content===undefined || content===null) throw new Error("Missing content.");
 
+		// set response properties
 		headers = headers || {};
 		headers["Content-Type"] = headers["Content-Type"] || "text/html; charset=utf-8";
 		statusCode = statusCode || 200;
 
+		// write head
 		this.writeHead(statusCode,headers);
+
+		// write content and end.
 		return this.end(content);
 	}
 
@@ -324,17 +346,27 @@ class AbstractResponse {
 	 * @return {Promise}
 	 */
 	writeError(statusCode,content=null,headers=null) {
+		// argument overloading.
 		if (arguments.length===0) throw new Error("Missing content.");
 		if (arguments.length>0 && typeof statusCode!=="number") [statusCode,content,headers] = [200,...arguments];
 
+		// set response properties.
 		headers = headers || {};
 		headers["Content-Type"] = headers["Content-Type"] || "text/plain; charset=utf-8";
 		statusCode = statusCode || 200;
 
-		if (content && content instanceof Error && content.stack) content = content.message+"\n\n"+content.stack;
+		// If we have a stack trace, that's the content.
+		// If we also have a cause, include that.
+		if (content && content instanceof Error && content.stack) {
+			content = content.message+"\n\n"+content.stack;
+			if (content.cause) content += "\n\n"+content.cause;
+		}
 		else if (content && content instanceof Error) content = content.message;
 
+		// write head
 		this.writeHead(statusCode,headers);
+
+		// write content (if any) and end.
 		return content!==undefined && content!==null ? this.end(content) : this.end();
 	}
 
@@ -356,6 +388,7 @@ class AbstractResponse {
 	 * @return {Promise}
 	 */
 	serve(statusCode,contentType,filename,headers=null) {
+		// argument overloading
 		if (arguments.length===0) throw new Error("Missing content.");
 		if (arguments.length>0 && typeof statusCode!=="number") [statusCode,contentType,filename,headers] = [200,...arguments];
 		if (contentType===undefined || contentType===null || contentType==="") throw new Error("Missing contentType.");
@@ -363,10 +396,12 @@ class AbstractResponse {
 		if (filename===undefined || filename===null || filename==="") throw new Error("Missing filename.");
 		if (typeof filename!=="string") throw new Error("Invalid filename.");
 
+		// set response properties
 		headers = headers || {};
 		headers["Content-Type"] = headers["Content-Type"] || contentType;
 		statusCode = statusCode || 200;
 
+		// if the file is not found, 404.
 		if (!AwesomeUtils.FS.existsSync(filename)) {
 			this.writeHead(404,{
 				"content-type": "text/plain"
@@ -374,7 +409,11 @@ class AbstractResponse {
 			return this.end("Not Found: "+filename);
 		}
 
+		// write head
 		this.writeHead(statusCode,headers);
+
+		// create a stream for the file and pipe to response.
+		// Look at us go!
 		let stream = FS.createReadStream(filename);
 		return this.pipeFrom(stream);
 	}

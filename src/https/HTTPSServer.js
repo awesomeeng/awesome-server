@@ -124,26 +124,36 @@ class HTTPSServer extends HTTPServer {
 	* @return {Promise}
 	*/
 	start(handler) {
+		// If already started, do nothing.
 		if (this[$SERVER]) return Promise.resolve();
 
+		// extract some key info
 		let hostname = this.config.hostname || this.config.host || "localhost";
 		let port = this.config.port || 0;
 
+		// log that we are starting.
 		if (this.config.informative) Log.info("Starting HTTPS Server on "+hostname+":"+port+"...");
+
+		// return a promise, then start.
 		return new Promise((resolve,reject)=>{
 			try {
+				// get our cert stuff.
 				this.config.cert = HTTPSServer.resolveCertConfig(this.config.cert,"cert",this.config.informative);
 				this.config.key = HTTPSServer.resolveCertConfig(this.config.key,"key",this.config.informative);
 				this.config.pfx = HTTPSServer.resolveCertConfig(this.config.pfx,"pfx",this.config.informative);
 
+				// create the server
 				let server = HTTPS.createServer(this.config);
 
+				// handle erros
 				server.on("error",(err)=>{
 					Log.error("Error on HTTPS Server on "+hostname+":"+port+":",err);
 				});
 
+				// handle request
 				server.on("request",this.handleRequest.bind(this,handler));
 
+				// start listening.
 				server.listen(port,hostname,this.config.backlog,(err)=>{
 					if (err) {
 						Log.error("Error starting server on "+hostname+":"+port+".",err);
@@ -176,12 +186,17 @@ class HTTPSServer extends HTTPServer {
 	 * @return {Promise}
 	 */
 	stop() {
+		// If not started, do nothing.
 		if (!this[$SERVER]) return Promise.resolve();
 
+		// extract some key info.
 		let hostname = this.hostname || "localhost";
 		let port = this.port || 0;
 
+		// Log we are stopping.
 		if (this.config.informative) Log.info("Stopping HTTPS Server on "+hostname+":"+port+"...");
+
+		// return promise then stop.
 		return new Promise((resolve,reject)=>{
 			try {
 				let server = this[$SERVER];
@@ -232,12 +247,18 @@ class HTTPSServer extends HTTPServer {
 	 * @return {string}
 	 */
 	static resolveCertConfig(value,type="certificate",informative=true) {
+		// handle the case where the cert string passed in is a filename to the cert.
 		if (value && typeof value==="string" && !value.startsWith("----")) {
+			// resolve the filename relative to the implementation.
 			let filename = Path.resolve(process.cwd(),value);
+
+			// Log out we are using the cert file.
 			if (informative) Log.info("Loading "+type+" from "+filename+".");
 
+			// If it exists.
 			if (AwesomeUtils.FS.existsSync(filename)) {
 				try {
+					// read the contexts.
 					let pfx = FS.readFileSync(filename);
 					if (!pfx) throw new Error(type+" file empty: "+filename+".");
 					value = pfx;
@@ -254,6 +275,7 @@ class HTTPSServer extends HTTPServer {
 			if (informative) Log.info("Using passed contents for "+type+" value.");
 		}
 
+		// return either the certs as it was passed in or the contents of the cert file.
 		return value;
 	}
 }

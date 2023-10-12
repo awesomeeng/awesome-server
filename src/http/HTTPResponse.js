@@ -113,6 +113,7 @@ class HTTPResponse extends AbstractResponse {
 	 * @return {Promise}
 	 */
 	write(data,encoding) {
+		// write out to the underlying http object.
 		return new Promise((resolve,reject)=>{
 			try {
 				this.original.write(data,encoding,(err)=>{
@@ -173,6 +174,7 @@ class HTTPResponse extends AbstractResponse {
 		if (!readable) throw new Error("Missing readable.");
 		if (!(readable instanceof Readable)) throw new Error("Invalid readable.");
 
+		// pipe a stream into the response.
 		return new Promise((resolve,reject)=>{
 			try {
 				readable.on("end",async ()=>{

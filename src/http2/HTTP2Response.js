@@ -87,22 +87,30 @@ class HTTP2Response extends HTTPSResponse {
 	 * @return {Promise}
 	 */
 	push(statusCode,path,contentType,content,headers={}) {
+		// If push is not supported, error.
 		if (!this.pushSupported) return Promise.reject(new Error("Push not supported."));
+
+		// if we dont have a stream on the original request, we are not http2.
 		if (!this.original.stream) return Promise.reject(new Error("Not http2 request, probably downgraded to http1."));
 
+		// argument overloading.
 		if (arguments.length===1 && typeof statusCode!=="number") [statusCode,path,contentType,content,headers] = [200,null,"application/json",statusCode,null];
 		if (typeof statusCode!=="number") [statusCode,path,contentType,content,headers] = [200,...arguments];
 
+		// some error checking.
 		if (!statusCode) throw new Error("Missing status code number.");
 		if (typeof statusCode!=="number") throw new Error("Invalid status code number.");
 		if (!contentType) throw new Error("Missing contentType.");
 		if (typeof contentType!=="string") throw new Error("Invalid contentType.");
 		if (content===undefined) throw new Error("Missing content.");
 
+		// return a promise, then do our push.
 		return new Promise(async (resolve,reject)=>{
 			try {
+				// Log that we are pushing content.
 				Log.info("Pushed to client: "+path);
 
+				// set respone properties including lots of HTTP@ special headers.
 				headers = headers || {};
 				headers[HTTP2.constants.HTTP2_HEADER_STATUS] = headers[HTTP2.constants.HTTP2_HEADER_STATUS] || 200;
 				headers[HTTP2.constants.HTTP2_HEADER_CONTENT_TYPE] = headers[HTTP2.constants.HTTP2_HEADER_CONTENT_TYPE] || contentType;
@@ -110,11 +118,19 @@ class HTTP2Response extends HTTPSResponse {
 				headers[HTTP2.constants.HTTP2_HEADER_METHOD] = headers[HTTP2.constants.HTTP2_HEADER_METHOD] || "GET";
 				headers[HTTP2.constants.HTTP2_HEADER_SCHEME] = headers[HTTP2.constants.HTTP2_HEADER_SCHEME] || "https";
 
+				// create a PushResponse object, to senf the push.
 				let pusher = await PushResponse.create(this,headers);
+
+				// write the head to the push
 				pusher.writeHead(statusCode);
+
+				// write the content to the push.
 				await pusher.write(content);
+
+				// end the push.
 				await pusher.end();
 
+				// resolve the promise man.
 				resolve();
 			}
 			catch (ex) {
@@ -210,22 +226,30 @@ class HTTP2Response extends HTTPSResponse {
 	 * @return {Promise}             [description]
 	 */
 	pushServe(statusCode,path,contentType,filename,headers) {
+		// if push not supported, error.
 		if (!this.pushSupported) return Promise.reject(new Error("Push not supported."));
+
+		// IF we got downgraded, return
 		if (!this.original.stream) return Promise.reject(new Error("Not http2 request, probably downgraded to http1."));
 
+		// argument overloading
 		if (arguments.length===1 && typeof statusCode!=="number") [statusCode,path,contentType,filename,headers] = [200,null,null,statusCode,null];
 		if (typeof statusCode!=="number") [statusCode,path,contentType,filename,headers] = [200,...arguments];
 
+		// validate incoming arguments
 		if (!statusCode) throw new Error("Missing status code number.");
 		if (typeof statusCode!=="number") throw new Error("Invalid status code number.");
 		if (!contentType) throw new Error("Missing contentType.");
 		if (typeof contentType!=="string") throw new Error("Invalid contentType.");
 		if (!filename) throw new Error("Missing filename.");
 
+		// return promise, then push
 		return new Promise(async (resolve,reject)=>{
 			try {
+				// If the file doesnt exist, just fail fast.
 				if (!AwesomeUtils.FS.existsSync(filename)) throw new Error("File not found: "+filename);
 
+				// Log that we are pushing.
 				Log.info("Pushed to client "+path+" from "+filename);
 
 				// we actually want two sets of headers, one for creating
@@ -246,13 +270,20 @@ class HTTP2Response extends HTTPSResponse {
 					}
 				});
 
+				// create a stream for reading and piping.
 				let stream = FS.createReadStream(filename);
 
+				// Create out Push Response.
 				let pusher = await PushResponse.create(this,h2headers);
+
+				// write head
 				pusher.writeHead(statusCode,headers);
+				
+				// Pipe
 				await pusher.pipeFrom(stream);
 				// no end because the pipeFrom will do it for us.
 
+				// resolve our promise dude.
 				resolve();
 			}
 			catch (ex) {

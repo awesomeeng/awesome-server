@@ -5,23 +5,23 @@
 const Path = require("path");
 const FS = require("fs");
 
+// EXternal Dependencies
 const Log = require("@awesomeeng/awesome-log");
-// Log.start();
-
 const AwesomeUtils = require("@awesomeeng/awesome-utils");
 
+// Internal Dependencies
 const AbstractServer = require("./AbstractServer");
 const AbstractRequest = require("./AbstractRequest");
 const AbstractResponse = require("./AbstractResponse");
 const AbstractController = require("./AbstractController");
-
 const AbstractPathMatcher = require("./AbstractPathMatcher");
-
 const FileServeController = require("./controllers/FileServeController");
 const DirectoryServeController = require("./controllers/DirectoryServeController");
 const PushServeController = require("./controllers/PushServeController");
 const RedirectController = require("./controllers/RedirectController");
 
+// DEfine our symbols which is how we do private methods and members, which was not 
+// a thing when this was written originally.
 const $CONFIG = Symbol("config");
 const $SERVERS = Symbol("servers");
 const $ROUTES = Symbol("routes");
@@ -205,14 +205,18 @@ class AwesomeServer {
 	 * @return {Promise}
 	 */
 	async start() {
+		// If already started, do nothing.
 		if (this.running) return Promise.resolve();
 
+		// Log out we are startings
 		if (this.config.informative) Log.info("Starting...");
 
+		// If no servers were defined, then there's nothing to do.
 		if (this[$SERVERS].size<1) {
 			Log.warn("No servers defined. Nothing to do.");
 		}
 		else {
+			// start all defined servers
 			await Promise.all([...this[$SERVERS]].map((server)=>{
 				let prom = server.start(this.handler.bind(this));
 				if (prom instanceof Promise) return prom;
@@ -222,6 +226,7 @@ class AwesomeServer {
 
 		this[$RUNNING] = true;
 
+		// log we started.
 		if (this.config.informative) Log.info("Started.");
 	}
 
@@ -232,10 +237,13 @@ class AwesomeServer {
 	 * @return {Promise}
 	 */
 	async stop() {
+		// If not running, nothing to do.
 		if (!this.running) return Promise.resolve();
 
+		// Log we are stopping
 		if (this.config.informative) Log.info("Stopping...");
 
+		// Stop each server.
 		await Promise.all([...this[$SERVERS]].map((server)=>{
 			let prom = server.stop();
 			if (prom instanceof Promise) return prom;
@@ -244,6 +252,7 @@ class AwesomeServer {
 
 		this[$RUNNING] = false;
 
+		// log we stopped
 		if (this.config.informative) Log.info("Stopped.");
 	}
 
@@ -674,22 +683,28 @@ class AwesomeServer {
 	 * @param  {string}                               filename    Filename or directory to serve.
 	 */
 	serve(path,contentType,filename) {
+		// handle function overloading
 		if (arguments.length===2) [path,contentType,filename] = [path,null,contentType];
 
+		// we need a path (the route) and a file to serve.
 		if (!path) throw new Error("Missing path.");
 		if (!filename) throw new Error("Missing filename.");
 		if (typeof filename!=="string") throw new Error("Invalid filename.");
 
+		// resolve the filename relative to the usage.
 		let resolved = _resolve(filename);
 		if (!resolved) throw new Error("Filename or directory not found: "+filename);
 
+		// you know, set some shit
 		let file = resolved.filename;
 		let stat = resolved.stat;
 
+		// if we are a directory, serve one way.
 		if (stat.isDirectory()) {
 			let controller = new DirectoryServeController(file);
 			let parent = _route.call(this,"*",path,controller);
 
+			// handle wildcards
 			let wc = (path+"/").replace(/\/\/+/g,"/").replace(/\/\//,"/");
 			wc = wc.replace(/\/\*\//,"/");
 			if (wc!==path) {
@@ -697,16 +712,20 @@ class AwesomeServer {
 				Log.info("DirectoryServe created for "+wc+" from "+file);
 			}
 
+			// and more wildcards
 			let wce = ((path+"/").replace(/\/\/+/g,"/").replace(/\/\//,"/")+"*").replace(/\/\*\//,"/");
 			if (wce!==path && wce!==wc) {
 				_route.call(this,"*",wce,controller,parent);
 				Log.info("DirectoryServe created for "+wce+" from "+file);
 			}
 		}
+		// if we are a file, server a different way.
 		else if (stat.isFile()) {
 			this.route("*",path,new FileServeController(contentType,file));
 			Log.info("FileServe created for "+path+" from "+file);
 		}
+		// if we are neither a file or a directory, a pipe or a device, or something weird,
+		// we cannot serve it. Make angry noises.
 		else {
 			throw new Error("Invalid filename, is neither directory or file: "+filename);
 		}
@@ -725,23 +744,29 @@ class AwesomeServer {
 	 * @param  {string}                               filename       Filename or directory to serve.
 	 */
 	push(path,referencePath,contentType,filename) {
+		// argument overloading
 		if (arguments.length===3) [path,referencePath,contentType,filename] = [path,referencePath,null,contentType];
 
+		// Need path, reference path, and filename. See docs.
 		if (!path) throw new Error("Missing path.");
 		if (!referencePath) throw new Error("Missing referencePath.");
 		if (!filename) throw new Error("Missing filename.");
 		if (typeof filename!=="string") throw new Error("Invalid filename.");
 
+		// resolve the file relative to the usage.
 		let resolved = _resolve(filename);
 		if (!resolved) throw new Error("Filename not found: "+filename);
 
+		// set stuff
 		let file = resolved.filename;
 		let stat = resolved.stat;
 
+		// If a file, serve via push controller.
 		if (stat.isFile()) {
 			this.route("*",path,new PushServeController(referencePath,contentType,file));
 			Log.info("Push created for "+path+" from "+referencePath+"/"+file);
 		}
+		// if anything else, including a directory, we dont do that. Push can only serve files.
 		else {
 			throw new Error("Invalid filename, is not a file: "+filename);
 		}
@@ -766,6 +791,7 @@ class AwesomeServer {
 	 * @return {(string|null)}      fully resolved filename
 	 */
 	resolve(filename) {
+		// just use internal resolver.
 		let resolved = _resolve(filename);
 		return resolved && resolved.filename || null;
 	}
@@ -781,16 +807,20 @@ class AwesomeServer {
 	 * @return {Promise} A promise that resolves when the request handling is complete.
 	 */
 	async handler(request,response) {
+		// seems unlikely that we wouldnt get a request or a response, but just in case.
 		if (!request) throw new Error("Missing request.");
 		if (!(request instanceof AbstractRequest)) throw new Error("Invalid request.");
 		if (!response) throw new Error("Missing response.");
 		if (!(response instanceof AbstractResponse)) throw new Error("Invalid response.");
 
+		// going to need to pull out some things.
 		let url = request.method+" "+request.url.href; //(request.url && request.url.href || request.url && request.url.toString() || request.url.toString());
 		let path = decodeURIComponent(request.path || "/");
 
+		// this is a debugging thing, not used in when this library is shipped.
 		// Log.access("Request "+url+" from "+request.origin+".");
 
+		// find all matching routes
 		let routes = this[$ROUTES].reduce((routes,route)=>{
 			if (route) {
 				if (route.method==="*" || route.method===request.method) {
@@ -814,20 +844,26 @@ class AwesomeServer {
 			return routes;
 		},[]);
 
+		// for each route, step through them one at a time. WE do it this way
+		// instead of a for..each or something because we want some finer control.
 		try {
 			await new Promise((resolve,reject)=>{
 				const nextRoute = async function nextRoute() {
 					try {
+						// if response already closed, do nothing.
 						if (response.finished) return resolve();
 
+						// get next route
 						let route = routes.shift();
 						if (!route) return resolve();
 
+						// Call the router
 						let pathOrParams = route.path;
 						if (route.result && route.result!==true) pathOrParams = route.result;
 						let p = route.router.call(this,pathOrParams,request,response);
 						if (p instanceof Promise) await p;
 
+						// get ready to try the next route
 						setImmediate(nextRoute);
 					}
 					catch (ex) {
@@ -836,9 +872,12 @@ class AwesomeServer {
 					}
 				};
 
+				// call it to start.
 				nextRoute();
 			});
 
+			// If we got through all the routes and nothing closed the response, we 
+			// are a 404, nothing was a definitive handler.
 			if (!response.finished) {
 				Log.error("404 Not found "+url+".");
 				await response.writeError(404,"404 Not found "+url+".");
@@ -852,19 +891,24 @@ class AwesomeServer {
 }
 
 /**
- * Internal route function.
  * @private
+ * 
+ * Internal route function for setting up route processing. THis is called when a route is added, which in turn
+ * creates a route function to handle the route when a request comes in that matches.
  */
 const _route = function _route(method,path,handler,parent=null,additionalArgs=[]) {
+	// argument overloading
 	if (typeof method==="string" && path instanceof AbstractController) [method,path,handler,parent] = ["*",...arguments];
 	if (typeof method==="string" && Object.prototype.isPrototypeOf.call(AbstractController,path)) [method,path,handler,parent] = ["*",...arguments];
 
+	// At a minimum we need a method, a path (route), and a handler.
 	if (!method) throw new Error("Missing method.");
 	if (typeof method!=="string") throw new Error("Invalid method.");
 	if (!path) throw new Error("Missing path.");
 	if (typeof path!=="string" && !(path instanceof RegExp)) throw new Error("Invalid path.");
 	if (!handler) throw new Error("Missing handler.");
 
+	// set up our object for each route.
 	method = method.toUpperCase();
 	let route = {
 		method,
@@ -874,15 +918,19 @@ const _route = function _route(method,path,handler,parent=null,additionalArgs=[]
 		matcher: AbstractPathMatcher.getMatcher(path)
 	};
 
+	// If out handler is a Controller, handle it thus.
 	if (handler instanceof AbstractController) {
 		_routeController.call(this,route,handler);
 	}
+	// If our handler is a controller, but has a weird signature we handle it via reflection.
 	else if (Object.prototype.isPrototypeOf.call(AbstractController,handler)) {
 		_routeController.call(this,route,Reflect.construct(handler,additionalArgs));
 	}
+	// if handler is just a function, handle it thus.
 	else if (handler instanceof Function) {
 		_routeFunction.call(this,route,handler);
 	}
+	// If handler is a string, its a filename, serve it.
 	else if (typeof handler==="string") {
 		let resolved = _resolve(handler);
 		if (resolved===null) throw new Error("Invalid handler, file or directory not found: "+handler);
@@ -900,25 +948,31 @@ const _route = function _route(method,path,handler,parent=null,additionalArgs=[]
 			throw new Error("Invalid handler, is neither directory or file: "+filename);
 		}
 	}
+	// IF we didnt handle, throw.
 	if (!route.routes) throw new Error("Invalid handler.");
 
+	// remove any prior defined matching route
 	this.unroute(method,path,handler);
+	// And then add this new one in
 	this[$ROUTES].push(route);
 	if (parent) {
 		parent.children = parent.children || [];
 		parent.children.push(route);
 	}
 
+	// log that we added a route.
 	if (this.config.informative) Log.info("Added route "+method+" "+route.matcher.toString());
 
 	return route;
 };
 
 /**
- * Internal route function specifically for function cases.
  * @private
+ * 
+ * Internal route function specifically for function cases.
  */
 const _routeFunction = function _routeContoller(route,handler) {
+	// Adds a wrapper around the router function and then makes that the route handler
 	route.routes = [function router(path,request,response) {
 		return new Promise(async (resolve,reject)=>{
 			try {
@@ -942,6 +996,7 @@ const _routeFunction = function _routeContoller(route,handler) {
  * @private
  */
 const _routeController = function _routeController(route,controller) {
+	// wrap the controller in a handler function and route with that.
 	_routeFunction.call(this,route,controller.handler.bind(controller));
 	return route;
 };
@@ -951,6 +1006,8 @@ const _routeController = function _routeController(route,controller) {
  * @private
  */
 const _routeFile = function routeControllerFile(route,filename,additionalArgs=[]) {
+	// determines if the handler is a controller name and relative to the implementation
+	// in which case we can route it as a controller.
 	let clazz;
 	try {
 		clazz = AwesomeUtils.Module.require(filename);
@@ -994,12 +1051,14 @@ const _routeFile = function routeControllerFile(route,filename,additionalArgs=[]
 };
 
 /**
- * Internal route function specifically for directory cases.
  * @private
+ * 
+ * Internal route function specifically for directory cases.
  */
 const _routeDirectory = function _routeDirectory(parent,dir,path="/",additionalArgs=[]) {
 	parent.routes = [];
 
+	// serve a directory of files.
 	FS.readdirSync(dir).forEach((filename)=>{
 		filename = Path.resolve(dir,filename);
 		let filepath = ((path && path!=="/" && path!=="." && path!==".." ? path+"/" : "/")+Path.basename(filename,Path.extname(filename))).replace(/\/\/+/g,"/");
@@ -1015,6 +1074,7 @@ const _routeDirectory = function _routeDirectory(parent,dir,path="/",additionalA
 
 		if (stats.isDirectory()) return _routeDirectory.call(this,parent,filename,filepath,additionalArgs);
 
+		// If the served file is a JS file call routing again cuz it might be a controller.
 		if (ext===".js" || ext===".node" || ext===".ts") {
 			_route.call(this,"*",filepath,filename,parent,additionalArgs);
 			try {
@@ -1030,13 +1090,16 @@ const _routeDirectory = function _routeDirectory(parent,dir,path="/",additionalA
 };
 
 /**
- * Internal unroute function.
  * @private
+ * 
+ * Internal unroute function to remove matching routes.
  */
 const _unroute = function _unroute(method,path,handler) {
+	// argument overloading
 	if (typeof method==="string" && path instanceof AbstractController) [method,path,handler] = ["*",...arguments];
 	if (typeof method==="string" && Object.prototype.isPrototypeOf.call(AbstractController,path)) [method,path,handler] = ["*",...arguments];
 
+	// Need a minimum of a method and path.
 	if (!method) throw new Error("Missing method.");
 	if (typeof method!=="string") throw new Error("Invalid method.");
 	if (!path) throw new Error("Missing path.");
@@ -1066,14 +1129,16 @@ const _unroute = function _unroute(method,path,handler) {
 		});
 	});
 
+	// Log if we remove something.
 	if (matching.length>0 && this.config.informative) Log.info("Removed route "+method+" "+path.toString());
 
 	return matching.length>0;
 };
 
 /**
- * Internal _resolve function.
  * @private
+ * 
+ * Internal _resolve function.
  */
 const _resolve = function resolve(filename) {
 	const getStat = (f)=>{
