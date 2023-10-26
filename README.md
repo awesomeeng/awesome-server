@@ -5,8 +5,6 @@
 <a href="https://github.com/awesomeeng/awesome-server/commits/master">![GitHub last commit](https://img.shields.io/github/last-commit/awesomeeng/awesome-server.svg "Github Commit Log")</a>
 <br/><a href="https://nodejs.org/en/">![node](https://img.shields.io/node/v/@awesomeeng/awesome-server.svg "NodeJS")</a>
 <a href="https://github.com/awesomeeng/awesome-server/issues">![GitHub issues](https://img.shields.io/github/issues/awesomeeng/awesome-server.svg "Github Issues")</a>
-<a href="https://snyk.io/vuln/search?type=npm&q=@awesomeeng/awesome-server">![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/awesomeeng/awesome-server.svg "Synk Vulnerabilities Database")</a>
-<a href="https://www.npmjs.com/package/@awesomeeng/awesome-server">![David](https://img.shields.io/david/awesomeeng/awesome-server.svg)</a>
 
 # AwesomeServer
 
