@@ -1,6 +1,18 @@
 # AwesomeServer Release Notes
 
 
+#### **Version 1.6.5**
+
+ - Adds typescript types.
+
+#### **Version 1.6.4**
+
+ - Adds typescript types.
+
+#### **Version 1.6.3**
+
+ - Adds typescript types.
+
 #### **Version 1.6.2**
 
  - Fixes minor error in directory resolution error reporting.

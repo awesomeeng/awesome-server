@@ -1,31 +1,33 @@
 {
   "name": "@awesomeeng/awesome-server",
-  "version": "1.6.2",
+  "version": "1.6.5",
   "author": "the awesome engineering company",
   "license": "MIT",
   "contributors": [
     "Glen R. Goodwin"
   ],
   "main": "./src/AwesomeServer.js",
+  "types": "./types/AwesomeServer.d.ts",
   "engines": {
     "node": ">=10.5.0"
   },
   "dependencies": {
     "@awesomeeng/awesome-utils": "1.4.10"
-},
-"devDependencies": {
-	"autocannon": "^7.0.5",
-    "jsdoc-to-markdown": "^5.0.3",
-	"eslint": "^7.23.0",
-    "mocha": "^8.3.2"
   },
-  "optionalDependencies": {},
+  "devDependencies": {
+    "autocannon": "^7.0.5",
+    "eslint": "^7.23.0",
+    "jsdoc-to-markdown": "^5.0.3",
+    "mocha": "^8.3.2",
+    "typescript": "^5.5.2"
+  },
   "scripts": {
     "lint": "eslint src examples test",
     "docs": "jsdoc2md src/** --separators > docs/API.md",
     "test": "mocha test",
     "tests": "mocha test",
-    "bench": "autocannon -c 100 -d 5 -p 10 http://localhost:7080/hello"
+    "bench": "autocannon -c 100 -d 5 -p 10 http://localhost:7080/hello",
+    "types": "tsc src/*.js src/**/*.js --declaration --allowJs --emitDeclarationOnly --outDir types"
   },
   "description": "AwesomeServer is a customizable API Server framework for enterprise nodejs applications. It is an easy to setup HTTP or HTTPS or HTTP/2 server allowing you to provide flexible routing and controllers for responding to incoming requests in a consistent, repeatable, performant fashion.",
   "directories": {
