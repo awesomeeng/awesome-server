@@ -1,0 +1,23 @@
+{
+  "name": "@awesomeeng/awesome-server",
+  "version": "1.0.0",
+  "description": "A customizable API Server framework for enterprise nodejs applications.",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest",
+    "prepare": "npm run build"
+  },
+  "author": "The Awesome Engineering Company",
+  "license": "MIT",
+  "dependencies": {
+    "@awesomeeng/awesome-log": "*",
+    "@awesomeeng/awesome-utils": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^0.33.0"
+  }
+}

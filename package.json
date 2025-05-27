@@ -15,11 +15,12 @@
     "@awesomeeng/awesome-utils": "1.4.10"
   },
   "devDependencies": {
+    "@types/node": "^22.15.23",
     "autocannon": "^7.0.5",
     "eslint": "^7.23.0",
     "jsdoc-to-markdown": "^5.0.3",
     "mocha": "^8.3.2",
-    "typescript": "^5.5.2"
+    "typescript": "^5.8.3"
   },
   "scripts": {
     "lint": "eslint src examples test",
